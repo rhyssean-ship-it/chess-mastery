@@ -8,17 +8,26 @@ import openings from '../data/openings';
 import strategyLessons from '../data/strategyLessons';
 import endgameLessons from '../data/endgameLessons';
 
+function getBarColor(value) {
+  if (value >= 80) return 'from-correct/80 to-correct';
+  if (value >= 50) return 'from-amber/80 to-amber';
+  return 'from-incorrect/80 to-incorrect';
+}
+
 function BarChart({ data }) {
   const maxVal = Math.max(...data.map(d => d.value), 1);
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {data.map(d => (
         <div key={d.label} className="flex items-center gap-3">
-          <span className="text-xs text-text-dim w-28 text-right truncate">{d.label}</span>
-          <div className="flex-1 h-5 bg-bg-hover rounded-full overflow-hidden">
-            <div className="h-full bg-gold rounded-full transition-all" style={{ width: `${(d.value / maxVal) * 100}%` }} />
+          <span className="text-xs text-text-dim w-32 text-right truncate" title={d.label}>{d.label}</span>
+          <div className="flex-1 h-6 bg-bg-hover/50 rounded overflow-hidden">
+            <div
+              className={`h-full bg-gradient-to-r ${getBarColor(d.value)} rounded progress-fill`}
+              style={{ width: `${(d.value / maxVal) * 100}%` }}
+            />
           </div>
-          <span className="text-xs text-text w-10">{d.value}%</span>
+          <span className={`text-xs font-semibold w-12 tabular-nums ${d.value >= 80 ? 'text-correct' : d.value >= 50 ? 'text-amber' : 'text-incorrect'}`}>{d.value}%</span>
         </div>
       ))}
     </div>
@@ -55,45 +64,42 @@ export default function ProgressDashboard() {
       <p className="text-text-dim text-sm mb-8">Track your chess improvement over time.</p>
 
       {/* Tactics */}
-      <section className="mb-10">
+      <section className="mb-6">
         <h2 className="text-lg font-display mb-4">Tactics Stats</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-          <div className="bg-bg-card border border-bg-hover rounded-xl p-4 text-center card-stagger">
-            <div className="text-xl font-bold stat-animate">{puzzleStats.total}</div>
-            <div className="text-xs text-text-dim">Puzzles Solved</div>
-          </div>
-          <div className="bg-bg-card border border-bg-hover rounded-xl p-4 text-center card-stagger">
-            <div className="text-xl font-bold stat-animate">{overallAccuracy}%</div>
-            <div className="text-xs text-text-dim">Accuracy</div>
-          </div>
-          <div className="bg-bg-card border border-bg-hover rounded-xl p-4 text-center card-stagger">
-            <div className="text-xl font-bold text-gold stat-animate">{streak}</div>
-            <div className="text-xs text-text-dim">Day Streak</div>
-          </div>
-          <div className="bg-bg-card border border-bg-hover rounded-xl p-4 text-center card-stagger">
-            <div className="text-xl font-bold stat-animate">{getDueCount(puzzles.map(p => p.id))}</div>
-            <div className="text-xs text-text-dim">Due Today</div>
-          </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
+          {[
+            { value: puzzleStats.total, label: 'Puzzles Solved', accent: false },
+            { value: `${overallAccuracy}%`, label: 'Accuracy', accent: false },
+            { value: streak, label: 'Day Streak', accent: true },
+            { value: getDueCount(puzzles.map(p => p.id)), label: 'Due Today', accent: true },
+          ].map((s, i) => (
+            <div key={i} className={`card-base p-5 text-center card-stagger ${s.accent ? 'accent-border-left' : ''}`}>
+              <div className={`text-2xl font-bold stat-animate tabular-nums ${s.accent ? 'text-gold' : ''}`}>{s.value}</div>
+              <div className="text-[11px] text-text-dim mt-1.5 uppercase tracking-wider">{s.label}</div>
+            </div>
+          ))}
         </div>
         {categoryData.length > 0 && (
-          <div className="bg-bg-card border border-bg-hover rounded-xl p-4">
-            <h3 className="text-sm text-text-dim mb-3">Accuracy by Category</h3>
+          <div className="card-base p-5">
+            <h3 className="text-sm text-text-dim mb-4 font-medium">Accuracy by Category</h3>
             <BarChart data={categoryData} />
           </div>
         )}
       </section>
 
+      <hr className="section-divider" />
+
       {/* Openings */}
-      <section className="mb-10">
+      <section className="mb-6">
         <h2 className="text-lg font-display mb-4">Openings Progress</h2>
-        <div className="bg-bg-card border border-bg-hover rounded-xl overflow-hidden">
+        <div className="card-base overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-bg-hover text-text-dim text-xs">
-                <th className="text-left px-4 py-2">Opening</th>
-                <th className="text-center px-4 py-2">Studied</th>
-                <th className="text-center px-4 py-2">Drills</th>
-                <th className="text-center px-4 py-2">Last Accuracy</th>
+              <tr className="border-b border-bg-hover text-text-dim text-[11px] uppercase tracking-wider">
+                <th className="text-left px-5 py-3">Opening</th>
+                <th className="text-center px-4 py-3">Studied</th>
+                <th className="text-center px-4 py-3">Drills</th>
+                <th className="text-center px-4 py-3">Accuracy</th>
               </tr>
             </thead>
             <tbody>
@@ -102,13 +108,18 @@ export default function ProgressDashboard() {
                 const wStats = openingStats[`${op.id}-white`];
                 const bStats = openingStats[`${op.id}-black`];
                 const drills = (wStats?.attempts || 0) + (bStats?.attempts || 0);
-                const lastAcc = wStats?.lastAccuracy || bStats?.lastAccuracy || '-';
+                const lastAcc = wStats?.lastAccuracy || bStats?.lastAccuracy || null;
                 return (
-                  <tr key={op.id} className="border-b border-bg-hover/50">
-                    <td className="px-4 py-2">{op.name}</td>
-                    <td className="px-4 py-2 text-center">{studied ? <span className="text-correct">&#10003;</span> : '-'}</td>
-                    <td className="px-4 py-2 text-center">{drills || '-'}</td>
-                    <td className="px-4 py-2 text-center">{lastAcc !== '-' ? `${lastAcc}%` : '-'}</td>
+                  <tr key={op.id} className="border-b border-bg-hover/40 hover:bg-bg-hover/30 transition-colors">
+                    <td className="px-5 py-2.5 font-medium">{op.name}</td>
+                    <td className="px-4 py-2.5 text-center">{studied ? <span className="text-correct">&#10003;</span> : <span className="text-text-dim/30">—</span>}</td>
+                    <td className="px-4 py-2.5 text-center tabular-nums">{drills || <span className="text-text-dim/30">—</span>}</td>
+                    <td className="px-4 py-2.5 text-center tabular-nums">
+                      {lastAcc !== null
+                        ? <span className={lastAcc >= 80 ? 'text-correct' : lastAcc >= 50 ? 'text-amber' : 'text-incorrect'}>{lastAcc}%</span>
+                        : <span className="text-text-dim/30">—</span>
+                      }
+                    </td>
                   </tr>
                 );
               })}
@@ -117,32 +128,37 @@ export default function ProgressDashboard() {
         </div>
       </section>
 
+      <hr className="section-divider" />
+
       {/* Strategy & Endgames */}
-      <section className="mb-10">
+      <section className="mb-6">
         <h2 className="text-lg font-display mb-4">Strategy & Endgames</h2>
-        <div className="space-y-3">
+        <div className="space-y-4">
           <ProgressBar value={strategyCompleted.length} max={strategyLessons.length} label="Strategy Lessons" />
           <ProgressBar value={endgameCompleted.length} max={endgameLessons.length} label="Endgame Lessons" />
         </div>
       </section>
 
+      <hr className="section-divider" />
+
       {/* Visualisation */}
-      <section className="mb-10">
+      <section className="mb-6">
         <h2 className="text-lg font-display mb-4">Visualisation Drills</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {['board-vision', 'blindfold', 'piece-counting'].map(type => {
             const s = drillStats[type];
+            const label = type.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
             return (
-              <div key={type} className="bg-bg-card border border-bg-hover rounded-xl p-4">
-                <h4 className="text-sm font-semibold mb-1 capitalize">{type.replace('-', ' ')}</h4>
+              <div key={type} className="card-base p-5">
+                <h4 className="text-sm font-semibold mb-2">{label}</h4>
                 {s ? (
-                  <>
-                    <p className="text-xs text-text-dim">Best: {s.best}</p>
-                    <p className="text-xs text-text-dim">Attempts: {s.attempts}</p>
-                    <p className="text-xs text-text-dim">Avg accuracy: {s.attempts > 0 ? Math.round(s.totalAccuracy / s.attempts) : 0}%</p>
-                  </>
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-xs"><span className="text-text-dim">Best Score</span><span className="font-medium">{s.best}</span></div>
+                    <div className="flex justify-between text-xs"><span className="text-text-dim">Attempts</span><span className="font-medium">{s.attempts}</span></div>
+                    <div className="flex justify-between text-xs"><span className="text-text-dim">Avg Accuracy</span><span className="font-medium">{s.attempts > 0 ? Math.round(s.totalAccuracy / s.attempts) : 0}%</span></div>
+                  </div>
                 ) : (
-                  <p className="text-xs text-text-dim">No attempts yet</p>
+                  <p className="text-xs text-text-dim/50">No attempts yet</p>
                 )}
               </div>
             );
@@ -150,17 +166,22 @@ export default function ProgressDashboard() {
         </div>
       </section>
 
+      <hr className="section-divider" />
+
       {/* Recent activity */}
-      <section className="mb-10">
+      <section className="mb-6">
         <h2 className="text-lg font-display mb-4">Recent Activity</h2>
         {recentActivity.length === 0 ? (
-          <p className="text-text-dim text-sm">No activity yet. Start learning!</p>
+          <div className="card-base p-8 text-center">
+            <div className="text-3xl mb-3 opacity-20">&#9813;</div>
+            <p className="text-text-dim text-sm">No activity yet. Start learning!</p>
+          </div>
         ) : (
           <div className="space-y-2">
             {recentActivity.map((a, i) => (
-              <div key={i} className="bg-bg-card border border-bg-hover rounded-xl px-4 py-2 flex justify-between text-sm">
-                <span>{a.action}</span>
-                <span className="text-text-dim">{new Date(a.date).toLocaleDateString()}</span>
+              <div key={i} className="card-base px-5 py-3 flex justify-between text-sm card-stagger" style={{ animationDelay: `${i * 30}ms` }}>
+                <span className="truncate mr-3">{a.action}</span>
+                <span className="text-text-dim text-xs whitespace-nowrap tabular-nums">{new Date(a.date).toLocaleDateString()}</span>
               </div>
             ))}
           </div>
@@ -168,20 +189,14 @@ export default function ProgressDashboard() {
       </section>
 
       {/* Reset */}
-      <div className="pt-6 border-t border-bg-hover">
-        <button onClick={() => setShowReset(true)} className="bg-incorrect/20 text-incorrect px-5 py-2 rounded-lg text-sm hover:bg-incorrect/30 transition-all btn-press">
+      <div className="pt-6 border-t border-bg-hover/50">
+        <button onClick={() => setShowReset(true)} className="bg-incorrect/15 text-incorrect border border-incorrect/20 px-5 py-2 rounded-lg text-sm hover:bg-incorrect/25 transition-all btn-press">
           Reset All Progress
         </button>
       </div>
 
       {showReset && (
-        <Modal
-          title="Reset All Progress"
-          onClose={() => setShowReset(false)}
-          onConfirm={handleReset}
-          confirmText="Reset Everything"
-          danger
-        >
+        <Modal title="Reset All Progress" onClose={() => setShowReset(false)} onConfirm={handleReset} confirmText="Reset Everything" danger>
           <p>This will permanently delete all your progress, puzzle history, annotations, and drill scores. This cannot be undone.</p>
         </Modal>
       )}

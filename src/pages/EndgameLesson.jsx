@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Chess } from 'chess.js';
 import ChessBoard from '../components/ChessBoard';
+import Breadcrumb from '../components/Breadcrumb';
 import endgameLessons from '../data/endgameLessons';
 import { progressService } from '../services/progressService';
 
@@ -92,7 +93,7 @@ export default function EndgameLesson() {
 
   return (
     <div className="page-enter max-w-3xl mx-auto px-6 py-10">
-      <Link to="/endgames" className="text-text-dim hover:text-gold text-sm no-underline mb-4 inline-block">&larr; Back to Endgames</Link>
+      <Breadcrumb to="/endgames" label="Back to Endgames" />
       <h1 className="text-2xl font-display text-gold mb-1">{lesson.title}</h1>
       <p className="text-text-dim text-sm mb-8">{lesson.category} &middot; {lesson.difficulty}</p>
 
@@ -145,7 +146,7 @@ export default function EndgameLesson() {
             {isComplete ? (
               <span className="text-correct text-sm">&#10003; Completed</span>
             ) : (
-              <button onClick={markComplete} className="bg-bg-card border border-bg-hover px-5 py-2.5 rounded-lg text-sm hover:bg-bg-hover transition-all btn-press">
+              <button onClick={markComplete} className="card-base !rounded-lg px-5 py-2.5 text-sm hover:bg-bg-hover transition-all btn-press">
                 Mark as Complete
               </button>
             )}

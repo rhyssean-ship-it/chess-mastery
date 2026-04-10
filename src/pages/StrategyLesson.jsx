@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import ChessBoard from '../components/ChessBoard';
+import Breadcrumb from '../components/Breadcrumb';
 import strategyLessons from '../data/strategyLessons';
 import { progressService } from '../services/progressService';
 
@@ -21,7 +22,7 @@ export default function StrategyLesson() {
 
   return (
     <div className="page-enter max-w-3xl mx-auto px-6 py-10">
-      <Link to="/strategy" className="text-text-dim hover:text-gold text-sm no-underline mb-4 inline-block">&larr; Back to Strategy</Link>
+      <Breadcrumb to="/strategy" label="Back to Strategy" />
       <h1 className="text-2xl font-display text-gold mb-1">{lesson.title}</h1>
       <p className="text-text-dim text-sm mb-8">{lesson.difficulty} &middot; {lesson.readTime}</p>
 

@@ -122,7 +122,7 @@ export default function GameReview() {
           value={pgnInput}
           onChange={e => setPgnInput(e.target.value)}
           placeholder="Paste PGN here..."
-          className="w-full h-48 bg-bg-card border border-bg-hover rounded-xl p-4 text-text text-sm font-mono resize-none focus:outline-none focus:border-gold/50"
+          className="w-full h-48 card-base p-4 text-text text-sm font-mono resize-none focus:outline-none focus:border-gold/50"
         />
         {error && <p className="text-incorrect text-sm mt-2">{error}</p>}
         <button onClick={loadGame} className="mt-4 bg-gold text-bg px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
@@ -140,7 +140,7 @@ export default function GameReview() {
 
   return (
     <div className="page-enter max-w-6xl mx-auto px-6 py-10">
-      <button onClick={() => setLoaded(false)} className="text-text-dim hover:text-gold text-sm mb-4 inline-block transition-all">&larr; Load Another Game</button>
+      <button onClick={() => setLoaded(false)} className="inline-flex items-center gap-1.5 text-text-dim hover:text-gold text-sm mb-5 group transition-colors"><svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform"><path fillRule="evenodd" d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" clipRule="evenodd" /></svg><span>Load Another Game</span></button>
       <h1 className="text-2xl font-display text-gold mb-1">Game Review</h1>
       <p className="text-text-dim text-sm mb-8">Annotate and study your games move by move.</p>
 
@@ -150,10 +150,10 @@ export default function GameReview() {
 
           {/* Navigation */}
           <div className="flex gap-2 mt-3">
-            <button onClick={() => setCurrentIndex(-1)} className="flex-1 py-1.5 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press">&#x23EE;</button>
-            <button onClick={() => setCurrentIndex(Math.max(-1, currentIndex - 1))} className="flex-1 py-1.5 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press">&larr;</button>
-            <button onClick={() => setCurrentIndex(Math.min(moves.length - 1, currentIndex + 1))} className="flex-1 py-1.5 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press">&rarr;</button>
-            <button onClick={() => setCurrentIndex(moves.length - 1)} className="flex-1 py-1.5 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press">&#x23ED;</button>
+            <button onClick={() => setCurrentIndex(-1)} className="flex-1 py-1.5 rounded-lg card-base text-sm hover:bg-bg-hover transition-all btn-press">&#x23EE;</button>
+            <button onClick={() => setCurrentIndex(Math.max(-1, currentIndex - 1))} className="flex-1 py-1.5 rounded-lg card-base text-sm hover:bg-bg-hover transition-all btn-press">&larr;</button>
+            <button onClick={() => setCurrentIndex(Math.min(moves.length - 1, currentIndex + 1))} className="flex-1 py-1.5 rounded-lg card-base text-sm hover:bg-bg-hover transition-all btn-press">&rarr;</button>
+            <button onClick={() => setCurrentIndex(moves.length - 1)} className="flex-1 py-1.5 rounded-lg card-base text-sm hover:bg-bg-hover transition-all btn-press">&#x23ED;</button>
           </div>
         </div>
 
@@ -182,14 +182,14 @@ export default function GameReview() {
                 onChange={e => setNoteText(e.target.value)}
                 onBlur={saveNote}
                 placeholder="Add a note about this position..."
-                className="w-full h-20 bg-bg-card border border-bg-hover rounded-xl p-3 text-sm text-text resize-none focus:outline-none focus:border-gold/50"
+                className="w-full h-20 card-base p-3 text-sm text-text resize-none focus:outline-none focus:border-gold/50"
               />
             </div>
           )}
 
           {/* Opening match */}
           {matchedOpening && (
-            <div className="bg-bg-card border border-gold/20 rounded-xl p-4">
+            <div className="card-base !border-gold/20 p-4">
               <p className="text-sm text-text-dim">
                 This position matches the opening: <span className="text-gold font-semibold">{matchedOpening.name}</span> — <a href={`/openings/${matchedOpening.id}`} className="text-gold underline">see the Openings section</a> for tips.
               </p>

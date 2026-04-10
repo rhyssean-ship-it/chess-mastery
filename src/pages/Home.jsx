@@ -40,7 +40,7 @@ export default function Home() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto mb-12">
           {features.map((s, i) => (
             <Link key={s.label} to={s.to} className="no-underline card-stagger" style={{ animationDelay: `${i * 80}ms` }}>
-              <div className="bg-bg-card border border-bg-hover rounded-xl p-5 text-left card-hover hover:border-gold/20">
+              <div className="card-base p-5 text-left card-hover hover:border-gold/20">
                 <span className="text-2xl block mb-2">{s.icon}</span>
                 <h3 className="font-display text-sm font-semibold">{s.label}</h3>
                 <p className="text-xs text-text-dim mt-0.5">{s.desc}</p>
@@ -73,7 +73,7 @@ export default function Home() {
           { value: stats.total, label: 'Puzzles Solved' },
           { value: streak, label: 'Day Streak', accent: true },
         ].map((s, i) => (
-          <div key={i} className="bg-bg-card border border-bg-hover rounded-xl p-5 text-center card-stagger card-hover" style={{ animationDelay: `${i * 60}ms` }}>
+          <div key={i} className="card-base p-5 text-center card-stagger card-hover" style={{ animationDelay: `${i * 60}ms` }}>
             <div className={`text-2xl font-bold stat-animate ${s.accent ? 'text-gold' : ''}`}>{s.value}</div>
             <div className="text-[11px] text-text-dim mt-1.5 uppercase tracking-wider">{s.label}</div>
           </div>
@@ -85,10 +85,10 @@ export default function Home() {
         <Link to="/tactics" className="bg-gold text-bg px-6 py-2.5 rounded-xl font-semibold no-underline hover:bg-gold-dim transition-all btn-press shadow-lg shadow-gold/10">
           Start Today's Puzzles
         </Link>
-        <Link to="/openings" className="bg-bg-card border border-bg-hover text-text px-6 py-2.5 rounded-xl no-underline hover:border-gold/30 transition-all btn-press">
+        <Link to="/openings" className="card-base text-text px-6 py-2.5 no-underline hover:border-gold/30 transition-all btn-press">
           Study Openings
         </Link>
-        <Link to="/game-review" className="bg-bg-card border border-bg-hover text-text px-6 py-2.5 rounded-xl no-underline hover:border-gold/30 transition-all btn-press">
+        <Link to="/game-review" className="card-base text-text px-6 py-2.5 no-underline hover:border-gold/30 transition-all btn-press">
           Review a Game
         </Link>
       </div>
@@ -98,14 +98,14 @@ export default function Home() {
         <div>
           <h2 className="text-base font-display mb-3 text-text-dim">Recent Activity</h2>
           {recentActivity.length === 0 ? (
-            <div className="bg-bg-card border border-bg-hover rounded-xl p-8 text-center">
+            <div className="card-base p-8 text-center">
               <div className="text-3xl mb-3 opacity-30">&#9813;</div>
               <p className="text-text-dim text-sm">No activity yet. Start a lesson or solve some puzzles!</p>
             </div>
           ) : (
             <div className="space-y-2">
               {recentActivity.map((a, i) => (
-                <div key={i} className="bg-bg-card border border-bg-hover rounded-lg px-4 py-2.5 flex justify-between text-sm card-stagger" style={{ animationDelay: `${i * 40}ms` }}>
+                <div key={i} className="card-base !rounded-lg px-4 py-2.5 flex justify-between text-sm card-stagger" style={{ animationDelay: `${i * 40}ms` }}>
                   <span className="truncate mr-3">{a.action}</span>
                   <span className="text-text-dim text-xs whitespace-nowrap">{new Date(a.date).toLocaleDateString()}</span>
                 </div>
@@ -117,7 +117,7 @@ export default function Home() {
         {/* Quote */}
         <div>
           <h2 className="text-base font-display mb-3 text-text-dim">Inspiration</h2>
-          <div className="bg-bg-card border border-bg-hover rounded-xl p-6 h-[calc(100%-32px)] flex flex-col justify-center">
+          <div className="card-base p-6 h-[calc(100%-32px)] flex flex-col justify-center">
             <div className="text-gold/30 text-4xl font-display leading-none mb-2">"</div>
             <p className="italic text-text-dim leading-relaxed mb-3">{quote.text}</p>
             <p className="text-gold text-sm not-italic font-medium">— {quote.author}</p>
