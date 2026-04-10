@@ -1,20 +1,7 @@
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
-const boardThemes = [
-  { id: 'brown', label: 'Classic Brown', light: '#f0d9b5', dark: '#b58863' },
-  { id: 'green', label: 'Tournament Green', light: '#ffffdd', dark: '#86a666' },
-  { id: 'blue', label: 'Ice Blue', light: '#dee3e6', dark: '#8ca2ad' },
-  { id: 'purple', label: 'Royal Purple', light: '#e8dff5', dark: '#957ab0' },
-];
-
-const pieceSets = [
-  { id: 'cburnett', label: 'Cburnett (Default)' },
-];
-
 export default function Settings() {
   const [settings, setSettings] = useLocalStorage('settings', {
-    boardTheme: 'brown',
-    pieceSet: 'cburnett',
     soundEnabled: false,
     showCoordinates: true,
     autoPromoteQueen: true,
@@ -29,31 +16,6 @@ export default function Settings() {
     <div className="page-enter max-w-2xl mx-auto px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Settings</h1>
       <p className="text-text-dim text-base mb-10">Customise your learning experience.</p>
-
-      {/* Board Theme */}
-      <section className="mb-10">
-        <h2 className="text-xl font-display mb-4">Board Theme</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {boardThemes.map(theme => (
-            <button
-              key={theme.id}
-              onClick={() => update('boardTheme', theme.id)}
-              className={`card-base p-4 text-center btn-press transition-all ${settings.boardTheme === theme.id ? '!border-gold/50 bg-gold/5' : 'hover:border-gold/20'}`}
-            >
-              <div className="w-full aspect-square rounded-lg overflow-hidden mb-2 mx-auto max-w-[80px] grid grid-cols-2 grid-rows-2">
-                <div style={{ background: theme.light }} />
-                <div style={{ background: theme.dark }} />
-                <div style={{ background: theme.dark }} />
-                <div style={{ background: theme.light }} />
-              </div>
-              <span className="text-sm">{theme.label}</span>
-              {settings.boardTheme === theme.id && <div className="text-gold text-xs mt-1">&#10003; Active</div>}
-            </button>
-          ))}
-        </div>
-      </section>
-
-      <hr className="section-divider" />
 
       {/* Preferences */}
       <section className="mb-10">
