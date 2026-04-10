@@ -30,9 +30,8 @@ class StockfishService {
       }
 
       // Create a wrapper worker via Blob URL that loads stockfish.js via importScripts
-      const workerCode = `
-        importScripts('/stockfish/stockfish.js');
-      `;
+      const sfUrl = new URL('/stockfish/stockfish.js', window.location.origin).href;
+      const workerCode = `importScripts('${sfUrl}');`;
       const blob = new Blob([workerCode], { type: 'application/javascript' });
       const url = URL.createObjectURL(blob);
 
