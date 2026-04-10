@@ -138,7 +138,7 @@ export default function TacticsQueue() {
     return (
       <div className="page-enter max-w-3xl mx-auto px-6 py-16 text-center">
         <h1 className="text-3xl font-display text-gold mb-1">Session Complete</h1>
-        <p className="text-text-dim text-sm mb-8">You've finished all due puzzles for today. Great work!</p>
+        <p className="text-text-dim text-base mb-8">You've finished all due puzzles for today. Great work!</p>
         <button onClick={() => { setQueueIndex(0); resetToPuzzle(queue[0]); }} className="bg-gold text-bg px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
           Restart Session
         </button>
@@ -185,7 +185,7 @@ export default function TacticsQueue() {
           {solveState === 'playing' && (
             <button
               onClick={() => setShowHint(true)}
-              className="w-full py-2 rounded-lg bg-bg-card border border-bg-hover text-sm text-text-dim hover:text-text hover:bg-bg-hover transition-all btn-press"
+              className="w-full py-2 rounded-lg bg-bg-card border border-bg-hover text-base text-text-dim hover:text-text hover:bg-bg-hover transition-all btn-press"
             >
               {showHint ? puzzle.hint : 'Show Hint'}
             </button>
@@ -208,10 +208,10 @@ export default function TacticsQueue() {
                 <p className="text-base text-text-dim">That's not the best move.</p>
               </div>
               <div className="flex gap-3">
-                <button onClick={tryAgain} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press">
+                <button onClick={tryAgain} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press">
                   Try Again
                 </button>
-                <button onClick={showSolution} className="flex-1 py-2 rounded-lg bg-gold/20 text-gold text-sm hover:bg-gold/30 transition-all btn-press">
+                <button onClick={showSolution} className="flex-1 py-2 rounded-lg bg-gold/20 text-gold text-base hover:bg-gold/30 transition-all btn-press">
                   Show Solution
                 </button>
               </div>

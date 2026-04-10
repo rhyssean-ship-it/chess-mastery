@@ -2,7 +2,7 @@ export default function ProgressBar({ value, max, label, className = '' }) {
   const pct = max > 0 ? Math.round((value / max) * 100) : 0;
   return (
     <div className={className} role="progressbar" aria-valuenow={value} aria-valuemin={0} aria-valuemax={max} aria-label={label}>
-      {label && <div className="flex justify-between text-sm mb-1.5">
+      {label && <div className="flex justify-between text-base mb-1.5">
         <span className="text-text-dim">{label}</span>
         <span className="text-text font-medium">{value}/{max}</span>
       </div>}

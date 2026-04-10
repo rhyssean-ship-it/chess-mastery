@@ -17,7 +17,7 @@ export default function Modal({ title, children, onClose, onConfirm, confirmText
         onClick={e => e.stopPropagation()}
         style={{ animation: 'modalIn 200ms ease-out' }}
       >
-        <h3 id="modal-title" className="text-lg font-display mb-3">{title}</h3>
+        <h3 id="modal-title" className="text-xl font-display mb-3">{title}</h3>
         <div className="text-text-dim text-base leading-relaxed mb-6">{children}</div>
         <div className="flex gap-3 justify-end">
           <button

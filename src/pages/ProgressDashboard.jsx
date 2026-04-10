@@ -65,7 +65,7 @@ export default function ProgressDashboard() {
 
       {/* Tactics */}
       <section className="mb-6">
-        <h2 className="text-lg font-display mb-4">Tactics Stats</h2>
+        <h2 className="text-xl font-display mb-4">Tactics Stats</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
           {[
             { value: puzzleStats.total, label: 'Puzzles Solved', accent: false },
@@ -91,7 +91,7 @@ export default function ProgressDashboard() {
 
       {/* Openings */}
       <section className="mb-6">
-        <h2 className="text-lg font-display mb-4">Openings Progress</h2>
+        <h2 className="text-xl font-display mb-4">Openings Progress</h2>
         <div className="card-base overflow-hidden">
           <table className="w-full text-sm">
             <thead>
@@ -132,7 +132,7 @@ export default function ProgressDashboard() {
 
       {/* Strategy & Endgames */}
       <section className="mb-6">
-        <h2 className="text-lg font-display mb-4">Strategy & Endgames</h2>
+        <h2 className="text-xl font-display mb-4">Strategy & Endgames</h2>
         <div className="space-y-4">
           <ProgressBar value={strategyCompleted.length} max={strategyLessons.length} label="Strategy Lessons" />
           <ProgressBar value={endgameCompleted.length} max={endgameLessons.length} label="Endgame Lessons" />
@@ -143,7 +143,7 @@ export default function ProgressDashboard() {
 
       {/* Visualisation */}
       <section className="mb-6">
-        <h2 className="text-lg font-display mb-4">Visualisation Drills</h2>
+        <h2 className="text-xl font-display mb-4">Visualisation Drills</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {['board-vision', 'blindfold', 'piece-counting'].map(type => {
             const s = drillStats[type];
@@ -170,7 +170,7 @@ export default function ProgressDashboard() {
 
       {/* Recent activity */}
       <section className="mb-6">
-        <h2 className="text-lg font-display mb-4">Recent Activity</h2>
+        <h2 className="text-xl font-display mb-4">Recent Activity</h2>
         {recentActivity.length === 0 ? (
           <div className="card-base p-8 text-center">
             <div className="text-3xl mb-3 opacity-20">&#9813;</div>
@@ -190,7 +190,7 @@ export default function ProgressDashboard() {
 
       {/* Reset */}
       <div className="pt-6 border-t border-bg-hover/50">
-        <button onClick={() => setShowReset(true)} className="bg-incorrect/15 text-incorrect border border-incorrect/20 px-5 py-2 rounded-lg text-sm hover:bg-incorrect/25 transition-all btn-press">
+        <button onClick={() => setShowReset(true)} className="bg-incorrect/15 text-incorrect border border-incorrect/20 px-5 py-2 rounded-lg text-base hover:bg-incorrect/25 transition-all btn-press">
           Reset All Progress
         </button>
       </div>

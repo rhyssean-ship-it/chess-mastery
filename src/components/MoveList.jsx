@@ -22,7 +22,7 @@ export default function MoveList({ history, currentIndex, onSelectMove }) {
 
   return (
     <div className="bg-bg-card rounded-xl p-3 max-h-72 overflow-y-auto border border-bg-hover">
-      <table className="w-full text-sm">
+      <table className="w-full text-base">
         <tbody>
           {pairs.map(p => (
             <tr key={p.number}>

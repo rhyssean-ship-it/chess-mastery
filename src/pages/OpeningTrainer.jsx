@@ -134,7 +134,7 @@ export default function OpeningTrainer() {
                     <p className="text-text-dim text-base mb-4">
                       {testCorrect === testTotal ? 'Perfect! You know this opening well.' : 'Keep practicing to improve your recall.'}
                     </p>
-                    <button onClick={() => { setTestMode(false); progressService.recordOpeningDrill(id, 'white', Math.round((testCorrect / testTotal) * 100)); }} className="bg-gold text-bg px-5 py-2 rounded-lg font-semibold btn-press text-sm hover:bg-gold-dim transition-all">
+                    <button onClick={() => { setTestMode(false); progressService.recordOpeningDrill(id, 'white', Math.round((testCorrect / testTotal) * 100)); }} className="bg-gold text-bg px-5 py-2 rounded-lg font-semibold btn-press text-base hover:bg-gold-dim transition-all">
                       Back to Study
                     </button>
                   </div>
@@ -153,10 +153,10 @@ export default function OpeningTrainer() {
             <>
               {/* Move navigation with kbd hints */}
               <div className="flex gap-2">
-                <button onClick={goPrev} disabled={currentMove < 0} className="flex-1 py-2.5 rounded-lg bg-bg-card border border-bg-hover text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-bg-hover transition-all btn-press flex items-center justify-center gap-2">
+                <button onClick={goPrev} disabled={currentMove < 0} className="flex-1 py-2.5 rounded-lg bg-bg-card border border-bg-hover text-base disabled:opacity-30 disabled:cursor-not-allowed hover:bg-bg-hover transition-all btn-press flex items-center justify-center gap-2">
                   <kbd>&larr;</kbd> Prev
                 </button>
-                <button onClick={goNext} disabled={currentMove >= moves.length - 1} className="flex-1 py-2.5 rounded-lg bg-bg-card border border-bg-hover text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-bg-hover transition-all btn-press flex items-center justify-center gap-2">
+                <button onClick={goNext} disabled={currentMove >= moves.length - 1} className="flex-1 py-2.5 rounded-lg bg-bg-card border border-bg-hover text-base disabled:opacity-30 disabled:cursor-not-allowed hover:bg-bg-hover transition-all btn-press flex items-center justify-center gap-2">
                   Next <kbd>&rarr;</kbd>
                 </button>
               </div>
