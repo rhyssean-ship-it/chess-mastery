@@ -56,41 +56,41 @@ body::before {
 }
 
 [data-theme="light"] .board-frame {
-  border-color: #e0e0e0;
+  border-color: #ddd8d0;
 }
 
 [data-theme="light"] .board-frame--interactive {
-  border-color: rgba(74, 74, 74, 0.25);
+  border-color: rgba(77, 69, 56, 0.25);
 }
 
 [data-theme="light"] .card-base {
-  border-color: #e8e8e8;
+  border-color: #e4e0da;
 }
 
 [data-theme="light"] ::-webkit-scrollbar-track {
-  background: #f8f9fa;
+  background: #f6f4f1;
 }
 
 [data-theme="light"] ::-webkit-scrollbar-thumb {
-  background: #d0d0d0;
+  background: #cdc8bf;
 }
 
 [data-theme="light"] kbd {
-  background: #f0f0f0;
-  border-color: #d8d8d8;
-  color: #666;
+  background: #edeae5;
+  border-color: #d8d4cc;
+  color: #6b6358;
 }
 
 [data-theme="light"] .section-divider {
-  background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+  background: linear-gradient(90deg, transparent, #ddd8d0, transparent);
 }
 
 [data-theme="light"] .callout {
-  background: rgba(74, 74, 74, 0.04);
+  background: rgba(77, 69, 56, 0.04);
 }
 
 [data-theme="light"] .accent-border-left {
-  border-left-color: #4a4a4a;
+  border-left-color: #4d4538;
 }
 
 #root {
