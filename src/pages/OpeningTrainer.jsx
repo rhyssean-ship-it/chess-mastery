@@ -144,7 +144,7 @@ export default function OpeningTrainer() {
               </div>
               {testFeedback && (
                 <div className={`rounded-xl p-4 border text-sm ${testFeedback.correct ? 'bg-correct/10 border-correct/30' : 'bg-incorrect/10 border-incorrect/30'}`}>
-                  <span className="mr-2">{testFeedback.correct ? '&#10003;' : '&#10007;'}</span>
+                  <span className="mr-2">{testFeedback.correct ? '\u2713' : '\u2717'}</span>
                   {testFeedback.message}
                 </div>
               )}
@@ -176,7 +176,7 @@ export default function OpeningTrainer() {
                   <ul className="text-base text-text space-y-2">
                     {opening.keyIdeas.map((idea, i) => (
                       <li key={i} className="flex gap-2">
-                        <span className="text-gold/50 mt-0.5">&#9670;</span>
+                        <span className="text-gold/50 mt-0.5">◆</span>
                         <span>{idea}</span>
                       </li>
                     ))}

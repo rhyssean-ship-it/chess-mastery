@@ -32,7 +32,7 @@ export default function ConceptFlashcards() {
   if (filtered.length === 0) {
     return (
       <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center">
-        <div className="text-5xl mb-4">&#9813;</div>
+        <div className="text-5xl mb-4">♕</div>
         <h1 className="text-3xl font-display text-gold mb-4">Concept Flashcards</h1>
         <p className="text-text-dim mb-4">{showMastered ? 'No cards in this category.' : 'You\'ve mastered all cards in this category!'}</p>
         <button onClick={() => setShowMastered(true)} className="bg-gold text-bg px-4 sm:px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">Show Mastered Cards</button>
@@ -75,7 +75,7 @@ export default function ConceptFlashcards() {
         )}
         <div className="absolute top-4 right-4 flex items-center gap-2">
           <span className="text-xs px-2 py-0.5 rounded-full bg-bg-hover text-text-dim">{card.category}</span>
-          {mastered.includes(card.id) && <span className="text-correct text-xs">&#10003;</span>}
+          {mastered.includes(card.id) && <span className="text-correct text-xs">✓</span>}
         </div>
       </div>
 
@@ -83,7 +83,7 @@ export default function ConceptFlashcards() {
       <div className="flex items-center justify-between mt-6">
         <button onClick={prev} className="px-4 py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press flex items-center gap-1"><kbd>&larr;</kbd> Prev</button>
         <button onClick={toggleMastered} className={`px-4 py-2 rounded-lg text-base transition-all btn-press ${mastered.includes(card.id) ? 'bg-correct/15 text-correct border border-correct/20' : 'bg-bg-card border border-bg-hover text-text-dim hover:text-text'}`}>
-          {mastered.includes(card.id) ? '&#10003; Mastered' : 'Mark as Mastered'}
+          {mastered.includes(card.id) ? '✓ Mastered' : 'Mark as Mastered'}
         </button>
         <button onClick={next} className="px-4 py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press flex items-center gap-1">Next <kbd>&rarr;</kbd></button>
       </div>

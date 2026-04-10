@@ -317,7 +317,7 @@ export default function PracticePlay() {
           coachMessage.type === 'warning' ? 'bg-amber/10 border-amber/30 text-amber' :
           'bg-gold/10 border-gold/30 text-gold'
         }`}>
-          <span className="mr-2">{coachMessage.type === 'tip' ? '&#10003;' : coachMessage.type === 'warning' ? '&#9888;' : '&#9670;'}</span>
+          <span className="mr-2">{coachMessage.type === 'tip' ? '\u2713' : coachMessage.type === 'warning' ? '\u26A0' : '\u25C6'}</span>
           {coachMessage.text}
         </div>
       )}

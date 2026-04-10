@@ -6,7 +6,7 @@ export default function RatingButtons({ onRate }) {
         aria-label="Rate puzzle as hard"
         className="flex-1 py-2.5 px-4 rounded-lg bg-incorrect/15 text-incorrect hover:bg-incorrect/25 transition-all btn-press font-semibold text-base border border-incorrect/20"
       >
-        &#10007; Hard
+        ✗ Hard
       </button>
       <button
         onClick={() => onRate('medium')}
@@ -20,7 +20,7 @@ export default function RatingButtons({ onRate }) {
         aria-label="Rate puzzle as easy"
         className="flex-1 py-2.5 px-4 rounded-lg bg-correct/15 text-correct hover:bg-correct/25 transition-all btn-press font-semibold text-base border border-correct/20"
       >
-        &#10003; Easy
+        ✓ Easy
       </button>
     </div>
   );

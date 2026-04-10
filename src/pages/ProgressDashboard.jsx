@@ -112,7 +112,7 @@ export default function ProgressDashboard() {
                 return (
                   <tr key={op.id} className="border-b border-bg-hover/40 hover:bg-bg-hover/30 transition-colors">
                     <td className="px-5 py-2.5 font-medium">{op.name}</td>
-                    <td className="px-4 py-2.5 text-center">{studied ? <span className="text-correct">&#10003;</span> : <span className="text-text-dim/30">—</span>}</td>
+                    <td className="px-4 py-2.5 text-center">{studied ? <span className="text-correct">✓</span> : <span className="text-text-dim/30">—</span>}</td>
                     <td className="px-4 py-2.5 text-center tabular-nums">{drills || <span className="text-text-dim/30">—</span>}</td>
                     <td className="px-4 py-2.5 text-center tabular-nums">
                       {lastAcc !== null
@@ -173,7 +173,7 @@ export default function ProgressDashboard() {
         <h2 className="text-xl font-display mb-4">Recent Activity</h2>
         {recentActivity.length === 0 ? (
           <div className="card-base p-8 text-center">
-            <div className="text-3xl mb-3 opacity-20">&#9813;</div>
+            <div className="text-3xl mb-3 opacity-20">♕</div>
             <p className="text-text-dim text-base">No activity yet. Start learning!</p>
           </div>
         ) : (

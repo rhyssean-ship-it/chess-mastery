@@ -69,14 +69,14 @@ function PlanDetail() {
         <h3 className="text-sm text-gold mb-3">Key Plans</h3>
         <ul className="text-base text-text space-y-2">
           {plan.keyPlans.map((p, i) => (
-            <li key={i} className="flex gap-2"><span className="text-gold/50 mt-0.5">&#9670;</span><span>{p}</span></li>
+            <li key={i} className="flex gap-2"><span className="text-gold/50 mt-0.5">◆</span><span>{p}</span></li>
           ))}
         </ul>
       </div>
 
       <div className="mt-10 pt-6 border-t border-bg-hover/50">
         {isComplete ? (
-          <span className="text-correct text-sm">&#10003; Completed</span>
+          <span className="text-correct text-sm">✓ Completed</span>
         ) : (
           <button onClick={() => { progressService.markLessonComplete('middlegame', id); window.location.reload(); }} className="bg-gold text-bg px-4 sm:px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
             Mark as Complete

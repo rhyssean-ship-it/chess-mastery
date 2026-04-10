@@ -61,7 +61,7 @@ export default function StrategyLesson() {
 
       <div className="mt-10 pt-6 border-t border-bg-hover">
         {isComplete ? (
-          <p className="text-correct text-sm">&#10003; Lesson completed</p>
+          <p className="text-correct text-sm">✓ Lesson completed</p>
         ) : (
           <button onClick={markComplete} className="bg-gold text-bg px-4 sm:px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
             Mark as Complete

@@ -27,11 +27,11 @@ export default function PawnStructures() {
         {/* Plans for both sides */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div className="card-base p-5">
-            <h3 className="text-sm text-gold mb-2">&#9812; White's Plans</h3>
+            <h3 className="text-sm text-gold mb-2">♔ White's Plans</h3>
             <p className="text-base text-text leading-relaxed">{structure.forWhite}</p>
           </div>
           <div className="card-base p-5">
-            <h3 className="text-sm mb-2">&#9818; Black's Plans</h3>
+            <h3 className="text-sm mb-2">♚ Black's Plans</h3>
             <p className="text-base text-text leading-relaxed">{structure.forBlack}</p>
           </div>
         </div>

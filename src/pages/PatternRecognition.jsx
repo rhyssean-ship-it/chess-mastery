@@ -92,9 +92,9 @@ export default function PatternRecognition() {
               <p className="font-semibold text-sm">Who has the better position?</p>
               <div className="space-y-2">
                 {[
-                  { value: 'white', label: 'White is better', icon: '&#9812;' },
+                  { value: 'white', label: 'White is better', icon: '\u2654' },
                   { value: 'equal', label: 'Roughly equal', icon: '=' },
-                  { value: 'black', label: 'Black is better', icon: '&#9818;' },
+                  { value: 'black', label: 'Black is better', icon: '\u265A' },
                 ].map(opt => (
                   <button key={opt.value} onClick={() => submitAnswer(opt.value)} className="card-base p-4 w-full text-left text-sm hover:border-gold/30 transition-all btn-press">
                     <span className="mr-2" dangerouslySetInnerHTML={{ __html: opt.icon }} /> {opt.label}
@@ -107,7 +107,7 @@ export default function PatternRecognition() {
           {phase === 'feedback' && (
             <>
               <div className={`rounded-xl p-4 border text-sm ${answer === pos.better ? 'bg-correct/10 border-correct/30' : 'bg-incorrect/10 border-incorrect/30'}`}>
-                <p className="font-semibold mb-1">{answer === pos.better ? '&#10003; Correct!' : '&#10007; Not quite'}</p>
+                <p className="font-semibold mb-1">{answer === pos.better ? '✓ Correct!' : '✗ Not quite'}</p>
                 <p className="text-text text-base">{pos.reason}</p>
               </div>
               <button onClick={next} className="w-full bg-gold text-bg py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">

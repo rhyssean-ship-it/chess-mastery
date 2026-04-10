@@ -37,7 +37,7 @@ export default function WeaknessAnalyzer() {
   if (categories.length === 0) {
     return (
       <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center">
-        <div className="text-5xl mb-4 opacity-20">&#9813;</div>
+        <div className="text-5xl mb-4 opacity-20">♕</div>
         <h1 className="text-3xl font-display text-gold mb-4">Weakness Analyzer</h1>
         <p className="text-text-dim mb-6">Solve some puzzles first! The analyzer needs data from your puzzle attempts to identify your strengths and weaknesses.</p>
         <Link to="/tactics" className="bg-gold text-bg px-4 sm:px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press no-underline inline-block">Start Solving Puzzles</Link>
@@ -90,7 +90,7 @@ export default function WeaknessAnalyzer() {
 
       {weakest.length === 0 && (
         <div className="card-base p-8 text-center mb-8">
-          <div className="text-3xl mb-3">&#9813;</div>
+          <div className="text-3xl mb-3">♕</div>
           <p className="text-correct font-semibold mb-1">No major weaknesses detected!</p>
           <p className="text-text text-base leading-relaxed">Your accuracy is above 70% in all categories. Keep it up!</p>
         </div>

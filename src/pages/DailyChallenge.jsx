@@ -67,7 +67,7 @@ export default function DailyChallenge() {
     const streak = progressService.getStreak();
     return (
       <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center">
-        <div className="text-5xl mb-4">&#9813;</div>
+        <div className="text-5xl mb-4">♕</div>
         <h1 className="text-3xl font-display text-gold mb-2">Daily Challenge Complete!</h1>
         <p className="text-text-dim mb-2">You've completed today's challenge.</p>
         <p className="text-gold text-lg font-bold mb-6">{streak} day streak</p>
@@ -128,7 +128,7 @@ export default function DailyChallenge() {
           {puzzleState === 'correct' && (
             <div className="space-y-3">
               <div className="bg-correct/10 border border-correct/30 rounded-xl p-4 text-sm">
-                <p className="font-semibold text-correct mb-1">&#10003; Correct!</p>
+                <p className="font-semibold text-correct mb-1">✓ Correct!</p>
                 <p className="text-text">{dailyPuzzle.explanation}</p>
               </div>
               <button onClick={() => setPhase('critical')} className="w-full bg-gold text-bg py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">Next: Positional Quiz</button>
@@ -137,7 +137,7 @@ export default function DailyChallenge() {
           {puzzleState === 'wrong' && (
             <div className="space-y-3">
               <div className="bg-incorrect/10 border border-incorrect/30 rounded-xl p-4 text-sm">
-                <p className="font-semibold text-incorrect mb-1">&#10007; Not quite</p>
+                <p className="font-semibold text-incorrect mb-1">✗ Not quite</p>
               </div>
               <button onClick={() => { setGame(new Chess(dailyPuzzle.fen)); setFen(dailyPuzzle.fen); setPuzzleState('playing'); }} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press w-full">Try Again</button>
             </div>

@@ -110,10 +110,10 @@ export default function CalculationTrainer() {
               <p className="text-sm text-text-dim text-center">Did you calculate correctly?</p>
               <div className="flex gap-3">
                 <button onClick={() => rate(false)} className="flex-1 py-2.5 rounded-lg bg-incorrect/15 text-incorrect border border-incorrect/20 font-semibold text-base transition-all btn-press">
-                  &#10007; No
+                  ✗ No
                 </button>
                 <button onClick={() => rate(true)} className="flex-1 py-2.5 rounded-lg bg-correct/15 text-correct border border-correct/20 font-semibold text-base transition-all btn-press">
-                  &#10003; Yes
+                  ✓ Yes
                 </button>
               </div>
             </>

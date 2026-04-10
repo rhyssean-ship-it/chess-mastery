@@ -41,7 +41,7 @@ export default function TheoreticalEndgames() {
                   ))}
                 </div>
                 <ul className="text-base text-text space-y-1">
-                  {eg.keyPoints.map((p, i) => <li key={i} className="flex gap-2"><span className="text-gold/50">&#9670;</span>{p}</li>)}
+                  {eg.keyPoints.map((p, i) => <li key={i} className="flex gap-2"><span className="text-gold/50">◆</span>{p}</li>)}
                 </ul>
               </div>
             )}

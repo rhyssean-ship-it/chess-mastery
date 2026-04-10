@@ -31,7 +31,7 @@ export default function Settings() {
               <div className="w-8 h-1 rounded bg-[#C9A84C]" />
             </div>
             <span className="text-base font-medium">Dark</span>
-            {theme === 'dark' && <div className="text-gold text-xs mt-1">&#10003; Active</div>}
+            {theme === 'dark' && <div className="text-gold text-xs mt-1">✓ Active</div>}
           </button>
           <button
             onClick={() => setTheme('light')}
@@ -41,7 +41,7 @@ export default function Settings() {
               <div className="w-8 h-1 rounded bg-[#9e7e2a]" />
             </div>
             <span className="text-base font-medium">Light</span>
-            {theme === 'light' && <div className="text-gold text-xs mt-1">&#10003; Active</div>}
+            {theme === 'light' && <div className="text-gold text-xs mt-1">✓ Active</div>}
           </button>
         </div>
       </section>

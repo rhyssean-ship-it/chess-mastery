@@ -151,7 +151,7 @@ function BoardVisionDrill() {
 
       {feedback && (
         <div className={`rounded p-3 text-sm ${feedback.correct ? 'bg-correct/10 text-correct' : 'bg-incorrect/10 text-incorrect'}`}>
-          {feedback.correct ? '&#10003; Correct!' : `&#10007; Answer: ${feedback.answer}`}
+          {feedback.correct ? '✓ Correct!' : `✗ Answer: ${feedback.answer}`}
         </div>
       )}
 
@@ -242,7 +242,7 @@ function BlindfoldDrill() {
     return (
       <div className="text-center space-y-4">
         <p className={`text-lg font-semibold ${feedback?.correct ? 'text-correct' : 'text-incorrect'}`}>
-          {feedback?.correct ? '&#10003; Correct!' : `&#10007; The ${pieceNames[targetPiece.piece.type]} was on ${targetPiece.square}`}
+          {feedback?.correct ? '✓ Correct!' : `✗ The ${pieceNames[targetPiece.piece.type]} was on ${targetPiece.square}`}
         </p>
         <div className="max-w-[400px] mx-auto"><ChessBoard fen={game.game.fen()} movable={false} highlights={[targetPiece.square]} /></div>
       </div>
@@ -273,7 +273,7 @@ function BlindfoldDrill() {
       </div>
       {feedback && (
         <p className={`text-center text-sm ${feedback.correct ? 'text-correct' : 'text-incorrect'}`}>
-          {feedback.correct ? '&#10003; Correct!' : `&#10007; It was on ${feedback.answer}`}
+          {feedback.correct ? '✓ Correct!' : `✗ It was on ${feedback.answer}`}
         </p>
       )}
     </div>
@@ -357,7 +357,7 @@ function PieceCountingDrill() {
       <p className="font-semibold">{q.text}</p>
       {feedback && (
         <div className={`rounded p-3 text-sm ${feedback.correct ? 'bg-correct/10 text-correct' : 'bg-incorrect/10 text-incorrect'}`}>
-          {feedback.correct ? '&#10003; Correct!' : `&#10007; Answer: ${feedback.answer}`}
+          {feedback.correct ? '✓ Correct!' : `✗ Answer: ${feedback.answer}`}
         </div>
       )}
       {!feedback && q.type === 'choice' ? (

@@ -183,7 +183,7 @@ export default function RepertoireBuilder() {
 
             {feedback && (
               <div className={`rounded-xl p-4 border text-sm ${feedback.correct ? 'bg-correct/10 border-correct/30' : 'bg-amber/10 border-amber/30'}`}>
-                <span className="mr-2">{feedback.correct ? '&#10003;' : '&#9888;'}</span>
+                <span className="mr-2">{feedback.correct ? '\u2713' : '\u26A0'}</span>
                 {feedback.message}
               </div>
             )}

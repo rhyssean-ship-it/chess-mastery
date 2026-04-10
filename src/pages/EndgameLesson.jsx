@@ -110,13 +110,13 @@ export default function EndgameLesson() {
           </div>
           {drillFeedback && (
             <div className={`rounded-xl p-4 border max-w-[480px] mx-auto ${drillFeedback.correct ? 'bg-correct/10 border-correct/30' : 'bg-incorrect/10 border-incorrect/30'}`}>
-              <span className="mr-2">{drillFeedback.correct ? '&#10003;' : '&#10007;'}</span>
+              <span className="mr-2">{drillFeedback.correct ? '\u2713' : '\u2717'}</span>
               {drillFeedback.message}
             </div>
           )}
           {drillDone && (
             <div className="text-center">
-              <p className="text-correct font-semibold mb-3">&#10003; Drill complete!</p>
+              <p className="text-correct font-semibold mb-3">✓ Drill complete!</p>
               <p className="text-text text-base leading-relaxed mb-4">{lesson.drillPosition.explanation}</p>
               <button onClick={() => setDrillMode(false)} className="bg-gold text-bg px-5 py-2 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">Back to Lesson</button>
             </div>
@@ -144,7 +144,7 @@ export default function EndgameLesson() {
               Drill This Position
             </button>
             {isComplete ? (
-              <span className="text-correct text-sm">&#10003; Completed</span>
+              <span className="text-correct text-sm">✓ Completed</span>
             ) : (
               <button onClick={markComplete} className="card-base !rounded-lg px-5 py-2.5 text-base hover:bg-bg-hover transition-all btn-press">
                 Mark as Complete
