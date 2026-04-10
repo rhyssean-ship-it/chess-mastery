@@ -18,7 +18,13 @@ export default function ChessBoard({
 }) {
   const boardRef = useRef(null);
   const cgRef = useRef(null);
+  const onMoveRef = useRef(onMove);
   const [loaded, setLoaded] = useState(false);
+
+  // Always keep the latest onMove callback
+  useEffect(() => {
+    onMoveRef.current = onMove;
+  }, [onMove]);
 
   useEffect(() => {
     if (boardRef.current && !cgRef.current) {
@@ -33,11 +39,12 @@ export default function ChessBoard({
     };
   }, []);
 
+  // Update board on every render when props change
   useEffect(() => {
     if (cgRef.current) {
       cgRef.current.set(buildConfig());
     }
-  }, [fen, orientation, movable, dests, turnColor, lastMove, check, arrows, highlights]);
+  });
 
   function buildConfig() {
     const config = {
@@ -52,7 +59,9 @@ export default function ChessBoard({
         dests: movable && dests ? dests : new Map(),
         showDests: true,
         events: {
-          after: (orig, dest) => { if (onMove) onMove(orig, dest); },
+          after: (orig, dest) => {
+            if (onMoveRef.current) onMoveRef.current(orig, dest);
+          },
         },
       },
       draggable: { enabled: movable },
