@@ -23,17 +23,26 @@ class StockfishService {
   }
 
   init() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (this.worker) {
         if (this.ready) resolve();
         return;
       }
 
+      // Create a wrapper worker via Blob URL that loads stockfish.js via importScripts
+      const workerCode = `
+        importScripts('/stockfish/stockfish.js');
+      `;
+      const blob = new Blob([workerCode], { type: 'application/javascript' });
+      const url = URL.createObjectURL(blob);
+
       try {
-        this.worker = new Worker('/stockfish/stockfish.js');
+        this.worker = new Worker(url);
+        URL.revokeObjectURL(url);
       } catch (err) {
         console.error('Failed to create Stockfish worker:', err);
-        reject(err);
+        URL.revokeObjectURL(url);
+        resolve(); // resolve anyway so the UI doesn't hang
         return;
       }
 
@@ -44,7 +53,7 @@ class StockfishService {
       let initialized = false;
 
       this.worker.onmessage = (e) => {
-        const msg = typeof e.data === 'string' ? e.data : (e.data?.data || '');
+        const msg = typeof e.data === 'string' ? e.data : '';
         if (!msg) return;
 
         if (msg.includes('uciok') && !initialized) {
@@ -79,16 +88,17 @@ class StockfishService {
         }
       };
 
+      // Send UCI init - the engine queues this until postRun
       this.send('uci');
 
-      // Timeout fallback — if engine doesn't respond in 5s, resolve anyway
+      // Timeout fallback
       setTimeout(() => {
         if (!this.ready) {
-          console.warn('Stockfish init timeout — proceeding without engine');
+          console.warn('Stockfish init timeout');
           this.ready = true;
           resolve();
         }
-      }, 5000);
+      }, 15000);
     });
   }
 
@@ -114,12 +124,6 @@ class StockfishService {
     this.send('stop');
     this.send(`position fen ${fen}`);
     this.send(`go depth ${this.currentPreset.depth} movetime ${this.currentPreset.moveTime}`);
-  }
-
-  evaluate(fen) {
-    if (!this.ready || !this.worker) return;
-    this.send(`position fen ${fen}`);
-    this.send('go depth 12 movetime 500');
   }
 
   stop() {
