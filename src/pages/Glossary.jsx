@@ -63,7 +63,7 @@ export default function Glossary() {
                 {term.example && (
                   <div className="bg-bg-hover/30 rounded-lg p-4 mb-3">
                     <p className="text-xs text-text-dim uppercase tracking-wider mb-1 font-medium">Example</p>
-                    <p className="text-base text-text-dim">{term.example}</p>
+                    <p className="text-base text-text-dim leading-relaxed">{term.example}</p>
                   </div>
                 )}
 

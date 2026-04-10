@@ -41,7 +41,7 @@ export default function OpeningTraps() {
                 </div>
                 <div className="card-base p-5">
                   <p className="text-xs text-text-dim uppercase tracking-wider mb-2 font-medium">How to Avoid</p>
-                  <p className="text-base text-text-dim">{trap.howToAvoid}</p>
+                  <p className="text-base text-text-dim leading-relaxed">{trap.howToAvoid}</p>
                 </div>
               </>
             )}

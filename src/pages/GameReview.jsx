@@ -150,10 +150,10 @@ export default function GameReview() {
 
           {/* Navigation */}
           <div className="flex gap-2 mt-3">
-            <button onClick={() => setCurrentIndex(-1)} className="flex-1 py-1.5 rounded-lg card-base text-sm hover:bg-bg-hover transition-all btn-press">&#x23EE;</button>
-            <button onClick={() => setCurrentIndex(Math.max(-1, currentIndex - 1))} className="flex-1 py-1.5 rounded-lg card-base text-sm hover:bg-bg-hover transition-all btn-press">&larr;</button>
-            <button onClick={() => setCurrentIndex(Math.min(moves.length - 1, currentIndex + 1))} className="flex-1 py-1.5 rounded-lg card-base text-sm hover:bg-bg-hover transition-all btn-press">&rarr;</button>
-            <button onClick={() => setCurrentIndex(moves.length - 1)} className="flex-1 py-1.5 rounded-lg card-base text-sm hover:bg-bg-hover transition-all btn-press">&#x23ED;</button>
+            <button onClick={() => setCurrentIndex(-1)} className="flex-1 py-1.5 rounded-lg card-base text-base hover:bg-bg-hover transition-all btn-press">&#x23EE;</button>
+            <button onClick={() => setCurrentIndex(Math.max(-1, currentIndex - 1))} className="flex-1 py-1.5 rounded-lg card-base text-base hover:bg-bg-hover transition-all btn-press">&larr;</button>
+            <button onClick={() => setCurrentIndex(Math.min(moves.length - 1, currentIndex + 1))} className="flex-1 py-1.5 rounded-lg card-base text-base hover:bg-bg-hover transition-all btn-press">&rarr;</button>
+            <button onClick={() => setCurrentIndex(moves.length - 1)} className="flex-1 py-1.5 rounded-lg card-base text-base hover:bg-bg-hover transition-all btn-press">&#x23ED;</button>
           </div>
         </div>
 

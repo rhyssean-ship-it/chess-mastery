@@ -195,7 +195,7 @@ export default function TacticsQueue() {
             <div className="space-y-3">
               <div className="bg-correct/10 border border-correct/30 rounded-xl p-4">
                 <p className="text-sm font-semibold text-correct mb-1">&#10003; Correct!</p>
-                <p className="text-base text-text-dim">{puzzle.explanation}</p>
+                <p className="text-base text-text-dim leading-relaxed">{puzzle.explanation}</p>
               </div>
               <RatingButtons onRate={handleRate} />
             </div>

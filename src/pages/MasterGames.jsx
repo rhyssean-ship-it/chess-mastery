@@ -74,10 +74,10 @@ function GameViewer() {
           <ChessBoard fen={currentFen} movable={false} lastMove={lastMove} />
 
           <div className="flex gap-2 mt-3">
-            <button onClick={() => setMoveIndex(-1)} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press flex items-center justify-center gap-1"><kbd>Home</kbd></button>
-            <button onClick={() => setMoveIndex(Math.max(-1, moveIndex - 1))} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press flex items-center justify-center gap-1"><kbd>&larr;</kbd> Prev</button>
-            <button onClick={() => setMoveIndex(Math.min(game.moves.length - 1, moveIndex + 1))} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press flex items-center justify-center gap-1">Next <kbd>&rarr;</kbd></button>
-            <button onClick={() => setMoveIndex(game.moves.length - 1)} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press flex items-center justify-center gap-1"><kbd>End</kbd></button>
+            <button onClick={() => setMoveIndex(-1)} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press flex items-center justify-center gap-1"><kbd>Home</kbd></button>
+            <button onClick={() => setMoveIndex(Math.max(-1, moveIndex - 1))} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press flex items-center justify-center gap-1"><kbd>&larr;</kbd> Prev</button>
+            <button onClick={() => setMoveIndex(Math.min(game.moves.length - 1, moveIndex + 1))} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press flex items-center justify-center gap-1">Next <kbd>&rarr;</kbd></button>
+            <button onClick={() => setMoveIndex(game.moves.length - 1)} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press flex items-center justify-center gap-1"><kbd>End</kbd></button>
           </div>
         </div>
 

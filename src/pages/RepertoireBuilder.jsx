@@ -147,13 +147,13 @@ export default function RepertoireBuilder() {
             <div className="flex gap-3">
               <button
                 onClick={() => setSelectedSide('white')}
-                className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all btn-press ${selectedSide === 'white' ? 'bg-gold text-bg' : 'bg-bg-hover text-text-dim'}`}
+                className={`flex-1 py-2 rounded-lg text-base font-semibold transition-all btn-press ${selectedSide === 'white' ? 'bg-gold text-bg' : 'bg-bg-hover text-text-dim'}`}
               >
                 White
               </button>
               <button
                 onClick={() => setSelectedSide('black')}
-                className={`flex-1 py-2 rounded text-sm font-semibold transition-colors ${selectedSide === 'black' ? 'bg-gold text-bg' : 'bg-bg-hover text-text-dim'}`}
+                className={`flex-1 py-2 rounded text-base font-semibold transition-colors ${selectedSide === 'black' ? 'bg-gold text-bg' : 'bg-bg-hover text-text-dim'}`}
               >
                 Black
               </button>
@@ -191,14 +191,14 @@ export default function RepertoireBuilder() {
             {finished && (
               <div className="bg-bg-card border border-gold/20 rounded-xl p-4 text-center">
                 <p className="text-lg font-semibold mb-1">Score: {correct}/{total}</p>
-                <p className="text-text-dim text-base mb-3">Accuracy: {accuracy}%</p>
+                <p className="text-text-dim text-base leading-relaxed mb-3">Accuracy: {accuracy}%</p>
                 <button onClick={() => {
                   progressService.recordOpeningDrill(selectedOpening, selectedSide, accuracy);
                   start();
-                }} className="bg-gold text-bg px-5 py-2 rounded-lg font-semibold text-sm hover:bg-gold-dim transition-all btn-press mr-2">
+                }} className="bg-gold text-bg px-5 py-2 rounded-lg font-semibold text-base hover:bg-gold-dim transition-all btn-press mr-2">
                   Try Again
                 </button>
-                <button onClick={() => setStarted(false)} className="bg-bg-hover px-5 py-2 rounded-lg text-sm transition-all btn-press">
+                <button onClick={() => setStarted(false)} className="bg-bg-hover px-5 py-2 rounded-lg text-base transition-all btn-press">
                   Change Opening
                 </button>
               </div>

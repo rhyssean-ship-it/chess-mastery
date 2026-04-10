@@ -17,7 +17,7 @@ export default function EndgameIndex() {
         if (lessons.length === 0) return null;
         return (
           <div key={cat} className="mb-8">
-            <h2 className="text-lg font-display text-text mb-4">{cat}</h2>
+            <h2 className="text-xl font-display text-text mb-4">{cat}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {lessons.map(lesson => (
                 <LessonCard

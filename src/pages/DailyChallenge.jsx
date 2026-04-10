@@ -139,7 +139,7 @@ export default function DailyChallenge() {
               <div className="bg-incorrect/10 border border-incorrect/30 rounded-xl p-4 text-sm">
                 <p className="font-semibold text-incorrect mb-1">&#10007; Not quite</p>
               </div>
-              <button onClick={() => { setGame(new Chess(dailyPuzzle.fen)); setFen(dailyPuzzle.fen); setPuzzleState('playing'); }} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press w-full">Try Again</button>
+              <button onClick={() => { setGame(new Chess(dailyPuzzle.fen)); setFen(dailyPuzzle.fen); setPuzzleState('playing'); }} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press w-full">Try Again</button>
             </div>
           )}
         </div>

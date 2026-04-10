@@ -81,11 +81,11 @@ export default function ConceptFlashcards() {
 
       {/* Controls */}
       <div className="flex items-center justify-between mt-6">
-        <button onClick={prev} className="px-4 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press flex items-center gap-1"><kbd>&larr;</kbd> Prev</button>
-        <button onClick={toggleMastered} className={`px-4 py-2 rounded-lg text-sm transition-all btn-press ${mastered.includes(card.id) ? 'bg-correct/15 text-correct border border-correct/20' : 'bg-bg-card border border-bg-hover text-text-dim hover:text-text'}`}>
+        <button onClick={prev} className="px-4 py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press flex items-center gap-1"><kbd>&larr;</kbd> Prev</button>
+        <button onClick={toggleMastered} className={`px-4 py-2 rounded-lg text-base transition-all btn-press ${mastered.includes(card.id) ? 'bg-correct/15 text-correct border border-correct/20' : 'bg-bg-card border border-bg-hover text-text-dim hover:text-text'}`}>
           {mastered.includes(card.id) ? '&#10003; Mastered' : 'Mark as Mastered'}
         </button>
-        <button onClick={next} className="px-4 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press flex items-center gap-1">Next <kbd>&rarr;</kbd></button>
+        <button onClick={next} className="px-4 py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press flex items-center gap-1">Next <kbd>&rarr;</kbd></button>
       </div>
     </div>
   );

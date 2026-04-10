@@ -60,7 +60,7 @@ export default function WeaknessAnalyzer() {
       {/* Weaknesses */}
       {weakest.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-lg font-display mb-4 text-incorrect">Areas to Improve</h2>
+          <h2 className="text-xl font-display mb-4 text-incorrect">Areas to Improve</h2>
           <div className="space-y-3">
             {weakest.map(c => {
               const rec = studyRecommendations[c.cat];
@@ -92,14 +92,14 @@ export default function WeaknessAnalyzer() {
         <div className="card-base p-8 text-center mb-8">
           <div className="text-3xl mb-3">&#9813;</div>
           <p className="text-correct font-semibold mb-1">No major weaknesses detected!</p>
-          <p className="text-text-dim text-base">Your accuracy is above 70% in all categories. Keep it up!</p>
+          <p className="text-text-dim text-base leading-relaxed">Your accuracy is above 70% in all categories. Keep it up!</p>
         </div>
       )}
 
       {/* Strengths */}
       {strongest.length > 0 && (
         <section>
-          <h2 className="text-lg font-display mb-4 text-correct">Your Strengths</h2>
+          <h2 className="text-xl font-display mb-4 text-correct">Your Strengths</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {strongest.map(c => (
               <div key={c.cat} className="card-base p-4 flex items-center justify-between">
@@ -117,7 +117,7 @@ export default function WeaknessAnalyzer() {
       <hr className="section-divider" />
 
       <div className="text-center">
-        <p className="text-text-dim text-base mb-4">Want to improve? The best way is focused practice on your weakest areas.</p>
+        <p className="text-text-dim text-base leading-relaxed mb-4">Want to improve? The best way is focused practice on your weakest areas.</p>
         <Link to="/tactics" className="bg-gold text-bg px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press no-underline inline-block">Practice Puzzles</Link>
       </div>
     </div>

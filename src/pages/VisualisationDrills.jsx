@@ -164,7 +164,7 @@ function BoardVisionDrill() {
       {!feedback && q.type === 'choice' && (
         <div className="grid grid-cols-2 gap-2">
           {q.options.map(o => (
-            <button key={o} onClick={() => submitAnswer(o)} className="py-2 rounded-lg bg-bg-card border border-bg-hover hover:bg-bg-hover text-sm transition-all btn-press">{o}</button>
+            <button key={o} onClick={() => submitAnswer(o)} className="py-2 rounded-lg bg-bg-card border border-bg-hover hover:bg-bg-hover text-base transition-all btn-press">{o}</button>
           ))}
         </div>
       )}
@@ -362,7 +362,7 @@ function PieceCountingDrill() {
       )}
       {!feedback && q.type === 'choice' ? (
         <div className="flex gap-2">
-          {q.options.map(o => <button key={o} onClick={() => submitAnswer(o)} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover hover:bg-bg-hover text-sm transition-all btn-press">{o}</button>)}
+          {q.options.map(o => <button key={o} onClick={() => submitAnswer(o)} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover hover:bg-bg-hover text-base transition-all btn-press">{o}</button>)}
         </div>
       ) : !feedback && (
         <form onSubmit={e => { e.preventDefault(); submitAnswer(answer); }} className="flex gap-2">
