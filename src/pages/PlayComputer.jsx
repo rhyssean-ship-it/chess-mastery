@@ -9,7 +9,7 @@ export default function PlayComputer() {
   const [phase, setPhase] = useState('setup'); // setup | playing | ended
   const [playerColor, setPlayerColor] = useState('white');
   const [levelIndex, setLevelIndex] = useState(4);
-  const [game, setGame] = useState(null);
+  const gameRef = useRef(null);
   const [fen, setFen] = useState('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
   const [history, setHistory] = useState([]);
   const [moveIndex, setMoveIndex] = useState(-1);
@@ -34,7 +34,7 @@ export default function PlayComputer() {
 
   function startGame() {
     const g = new Chess();
-    setGame(g);
+    gameRef.current = g;
     setFen(g.fen());
     setHistory([]);
     setMoveIndex(-1);
@@ -50,24 +50,24 @@ export default function PlayComputer() {
 
     engine.onMove = (uci) => {
       setThinking(false);
-      setGame(prev => {
-        const g2 = new Chess(prev.fen());
-        const from = uci.slice(0, 2);
-        const to = uci.slice(2, 4);
-        const promotion = uci[4] || undefined;
-        const m = g2.move({ from, to, promotion });
-        if (m) {
-          const newFen = g2.fen();
-          setFen(newFen);
-          setHistory(h => {
-            const newH = [...h, { move: m, fen: newFen, san: m.san }];
-            setMoveIndex(newH.length - 1);
-            return newH;
-          });
-          checkGameEnd(g2);
-        }
-        return g2;
-      });
+      const cur = gameRef.current;
+      if (!cur) return;
+      const g2 = new Chess(cur.fen());
+      const from = uci.slice(0, 2);
+      const to = uci.slice(2, 4);
+      const promotion = uci[4] || undefined;
+      const m = g2.move({ from, to, promotion });
+      if (m) {
+        gameRef.current = g2;
+        const newFen = g2.fen();
+        setFen(newFen);
+        setHistory(h => {
+          const newH = [...h, { move: m, fen: newFen, san: m.san }];
+          setMoveIndex(newH.length - 1);
+          return newH;
+        });
+        checkGameEnd(g2);
+      }
     };
 
     engine.onEval = (score) => {
@@ -99,26 +99,26 @@ export default function PlayComputer() {
   }
 
   const getLegalDests = useCallback(() => {
-    if (!game) return new Map();
+    if (!gameRef.current) return new Map();
     const dests = new Map();
-    for (const m of game.moves({ verbose: true })) {
+    for (const m of gameRef.current.moves({ verbose: true })) {
       if (!dests.has(m.from)) dests.set(m.from, []);
       dests.get(m.from).push(m.to);
     }
     return dests;
-  }, [game]);
+  }, [fen]);
 
   const handleMove = useCallback((from, to) => {
-    if (!game || thinking || phase !== 'playing') return;
-    const turn = game.turn() === 'w' ? 'white' : 'black';
+    if (!gameRef.current || thinking || phase !== 'playing') return;
+    const turn = gameRef.current.turn() === 'w' ? 'white' : 'black';
     if (turn !== playerColor) return;
 
-    const g = new Chess(game.fen());
+    const g = new Chess(gameRef.current.fen());
     const m = g.move({ from, to, promotion: 'q' });
     if (!m) return;
 
     const newFen = g.fen();
-    setGame(g);
+    gameRef.current = g;
     setFen(newFen);
     setHistory(h => {
       const newH = [...h, { move: m, fen: newFen, san: m.san }];
@@ -136,15 +136,15 @@ export default function PlayComputer() {
       engineRef.current?.getBestMove(newFen);
       engineRef.current?.evaluate(newFen);
     }, 200);
-  }, [game, thinking, phase, playerColor]);
+  }, [fen, thinking, phase, playerColor]);
 
   function takeBack() {
-    if (!game || history.length < 2) return;
+    if (!gameRef.current || history.length < 2) return;
     // Undo two moves (player + engine)
     const newHistory = history.slice(0, -2);
     const newFen = newHistory.length > 0 ? newHistory[newHistory.length - 1].fen : 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
     const g = new Chess(newFen);
-    setGame(g);
+    gameRef.current = g;
     setFen(newFen);
     setHistory(newHistory);
     setMoveIndex(newHistory.length - 1);
@@ -160,7 +160,7 @@ export default function PlayComputer() {
   }
 
   function requestHint() {
-    if (!game || thinking) return;
+    if (!gameRef.current || thinking) return;
     setShowHint(true);
     const hint = new StockfishService();
     hintEngineRef.current = hint;
@@ -170,11 +170,11 @@ export default function PlayComputer() {
       hint.destroy();
     };
     hint.init().then(() => {
-      hint.getBestMove(game.fen());
+      hint.getBestMove(gameRef.current.fen());
     });
   }
 
-  const turnColor = game ? (game.turn() === 'w' ? 'white' : 'black') : 'white';
+  const turnColor = game ? (gameRef.current.turn() === 'w' ? 'white' : 'black') : 'white';
   const isPlayerTurn = turnColor === playerColor;
   const evalBar = Math.max(-5, Math.min(5, evaluation));
   const evalPct = ((evalBar + 5) / 10) * 100;
@@ -257,7 +257,7 @@ export default function PlayComputer() {
           </h1>
           <p className="text-text-dim text-sm">vs Stockfish ({preset.label} — {preset.elo} ELO)</p>
         </div>
-        {game?.isCheck() && phase === 'playing' && (
+        {gameRef.current?.isCheck() && phase === 'playing' && (
           <span className="bg-incorrect/15 text-incorrect border border-incorrect/20 px-3 py-1 rounded-lg text-sm font-semibold">Check!</span>
         )}
       </div>

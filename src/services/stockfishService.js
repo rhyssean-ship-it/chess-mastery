@@ -19,41 +19,52 @@ class StockfishService {
     this.ready = false;
     this.onMove = null;
     this.onEval = null;
-    this.currentPreset = ELO_PRESETS[4]; // default 1200
+    this.currentPreset = ELO_PRESETS[4];
   }
 
   init() {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       if (this.worker) {
-        resolve();
+        if (this.ready) resolve();
         return;
       }
 
-      this.worker = new Worker('/stockfish/stockfish.js');
+      try {
+        this.worker = new Worker('/stockfish/stockfish.js');
+      } catch (err) {
+        console.error('Failed to create Stockfish worker:', err);
+        reject(err);
+        return;
+      }
+
+      this.worker.onerror = (err) => {
+        console.error('Stockfish worker error:', err);
+      };
+
+      let initialized = false;
 
       this.worker.onmessage = (e) => {
-        const msg = typeof e.data === 'string' ? e.data : '';
+        const msg = typeof e.data === 'string' ? e.data : (e.data?.data || '');
+        if (!msg) return;
 
-        if (msg === 'uciok') {
+        if (msg.includes('uciok') && !initialized) {
+          initialized = true;
           this.send('isready');
         }
 
-        if (msg === 'readyok') {
+        if (msg.includes('readyok') && !this.ready) {
           this.ready = true;
           this.applySettings();
           resolve();
         }
 
-        // Parse best move
         if (msg.startsWith('bestmove')) {
-          const parts = msg.split(' ');
-          const move = parts[1];
-          if (move && this.onMove) {
+          const move = msg.split(' ')[1];
+          if (move && move !== '(none)' && this.onMove) {
             this.onMove(move);
           }
         }
 
-        // Parse evaluation
         if (msg.includes('score cp') && this.onEval) {
           const cpMatch = msg.match(/score cp (-?\d+)/);
           if (cpMatch) {
@@ -63,13 +74,21 @@ class StockfishService {
         if (msg.includes('score mate') && this.onEval) {
           const mateMatch = msg.match(/score mate (-?\d+)/);
           if (mateMatch) {
-            const mateIn = parseInt(mateMatch[1]);
-            this.onEval(mateIn > 0 ? 100 : -100);
+            this.onEval(parseInt(mateMatch[1]) > 0 ? 100 : -100);
           }
         }
       };
 
       this.send('uci');
+
+      // Timeout fallback — if engine doesn't respond in 5s, resolve anyway
+      setTimeout(() => {
+        if (!this.ready) {
+          console.warn('Stockfish init timeout — proceeding without engine');
+          this.ready = true;
+          resolve();
+        }
+      }, 5000);
     });
   }
 
@@ -91,13 +110,14 @@ class StockfishService {
   }
 
   getBestMove(fen) {
-    if (!this.ready) return;
+    if (!this.ready || !this.worker) return;
+    this.send('stop');
     this.send(`position fen ${fen}`);
     this.send(`go depth ${this.currentPreset.depth} movetime ${this.currentPreset.moveTime}`);
   }
 
   evaluate(fen) {
-    if (!this.ready) return;
+    if (!this.ready || !this.worker) return;
     this.send(`position fen ${fen}`);
     this.send('go depth 12 movetime 500');
   }
@@ -108,6 +128,8 @@ class StockfishService {
 
   destroy() {
     if (this.worker) {
+      this.send('stop');
+      this.send('quit');
       this.worker.terminate();
       this.worker = null;
       this.ready = false;

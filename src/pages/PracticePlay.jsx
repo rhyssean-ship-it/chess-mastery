@@ -11,7 +11,7 @@ export default function PracticePlay() {
   const [playerColor, setPlayerColor] = useState('white');
   const [levelIndex, setLevelIndex] = useState(4);
   const [selectedOpening, setSelectedOpening] = useState(openings[0]?.id || '');
-  const [game, setGame] = useState(null);
+  const gameRef = useRef(null);
   const [fen, setFen] = useState('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
   const [history, setHistory] = useState([]);
   const [moveIndex, setMoveIndex] = useState(-1);
@@ -44,7 +44,7 @@ export default function PracticePlay() {
 
   function startGame() {
     const g = new Chess();
-    setGame(g);
+    gameRef.current = g;
     setFen(g.fen());
     setHistory([]);
     setMoveIndex(-1);
@@ -62,26 +62,25 @@ export default function PracticePlay() {
 
     engine.onMove = (uci) => {
       setThinking(false);
-      setGame(prev => {
-        const g2 = new Chess(prev.fen());
-        const from = uci.slice(0, 2);
-        const to = uci.slice(2, 4);
-        const promotion = uci[4] || undefined;
-        const m = g2.move({ from, to, promotion });
-        if (m) {
-          const newFen = g2.fen();
-          setFen(newFen);
-          setHistory(h => {
-            const newH = [...h, { move: m, fen: newFen, san: m.san }];
-            setMoveIndex(newH.length - 1);
-            return newH;
-          });
-          checkGameEnd(g2);
-          // Update opening tracking
-          setOpeningMoveIdx(prev => prev + 1);
-        }
-        return g2;
-      });
+      const cur = gameRef.current;
+      if (!cur) return;
+      const g2 = new Chess(cur.fen());
+      const from = uci.slice(0, 2);
+      const to = uci.slice(2, 4);
+      const promotion = uci[4] || undefined;
+      const m = g2.move({ from, to, promotion });
+      if (m) {
+        gameRef.current = g2;
+        const newFen = g2.fen();
+        setFen(newFen);
+        setHistory(h => {
+          const newH = [...h, { move: m, fen: newFen, san: m.san }];
+          setMoveIndex(newH.length - 1);
+          return newH;
+        });
+        checkGameEnd(g2);
+        setOpeningMoveIdx(prev => prev + 1);
+      }
     };
 
     engine.onEval = (score) => {
@@ -149,21 +148,21 @@ export default function PracticePlay() {
   }
 
   const getLegalDests = useCallback(() => {
-    if (!game) return new Map();
+    if (!gameRef.current) return new Map();
     const dests = new Map();
-    for (const m of game.moves({ verbose: true })) {
+    for (const m of gameRef.current.moves({ verbose: true })) {
       if (!dests.has(m.from)) dests.set(m.from, []);
       dests.get(m.from).push(m.to);
     }
     return dests;
-  }, [game]);
+  }, [fen]);
 
   const handleMove = useCallback((from, to) => {
-    if (!game || thinking || phase !== 'playing') return;
-    const turn = game.turn() === 'w' ? 'white' : 'black';
+    if (!gameRef.current || thinking || phase !== 'playing') return;
+    const turn = gameRef.current.turn() === 'w' ? 'white' : 'black';
     if (turn !== playerColor) return;
 
-    const g = new Chess(game.fen());
+    const g = new Chess(gameRef.current.fen());
     const m = g.move({ from, to, promotion: 'q' });
     if (!m) return;
 
@@ -179,7 +178,7 @@ export default function PracticePlay() {
     }
 
     const newFen = g.fen();
-    setGame(g);
+    gameRef.current = g;
     setFen(newFen);
     setHistory(h => {
       const newH = [...h, { move: m, fen: newFen, san: m.san }];
@@ -196,12 +195,12 @@ export default function PracticePlay() {
       engineRef.current?.getBestMove(newFen);
       engineRef.current?.evaluate(newFen);
     }, 200);
-  }, [game, thinking, phase, playerColor, openingPhase, opening, openingMoveIdx]);
+  }, [fen, thinking, phase, playerColor, openingPhase, opening, openingMoveIdx]);
 
   // After engine moves, show next opening hint
   useEffect(() => {
-    if (!thinking && openingPhase && opening && phase === 'playing' && game) {
-      const turn = game.turn() === 'w' ? 'white' : 'black';
+    if (!thinking && openingPhase && opening && phase === 'playing' && gameRef.current) {
+      const turn = gameRef.current.turn() === 'w' ? 'white' : 'black';
       if (turn === playerColor) {
         showOpeningHint(openingMoveIdx);
       }
@@ -209,7 +208,7 @@ export default function PracticePlay() {
   }, [thinking, openingMoveIdx, openingPhase]);
 
   function requestHint() {
-    if (!game || thinking) return;
+    if (!gameRef.current || thinking) return;
     const hint = new StockfishService();
     hintEngineRef.current = hint;
     hint.setLevel(11);
@@ -218,10 +217,10 @@ export default function PracticePlay() {
       setCoachMessage({ type: 'info', text: 'The engine suggests this move.' });
       hint.destroy();
     };
-    hint.init().then(() => hint.getBestMove(game.fen()));
+    hint.init().then(() => hint.getBestMove(gameRef.current.fen()));
   }
 
-  const turnColor = game ? (game.turn() === 'w' ? 'white' : 'black') : 'white';
+  const turnColor = gameRef.current ? (gameRef.current.turn() === 'w' ? 'white' : 'black') : 'white';
   const isPlayerTurn = turnColor === playerColor;
   const evalBar = Math.max(-5, Math.min(5, evaluation));
   const evalPct = ((evalBar + 5) / 10) * 100;
