@@ -18,6 +18,7 @@ export default function PracticePlay() {
   const [evaluation, setEvaluation] = useState(0);
   const [thinking, setThinking] = useState(false);
   const [result, setResult] = useState(null);
+  const [lastMove, setLastMove] = useState(null);
 
   // Coach features
   const [showHints, setShowHints] = useState(true);
@@ -54,6 +55,7 @@ export default function PracticePlay() {
     setOpeningMoveIdx(0);
     setCoachMessage({ type: 'info', text: `Playing the ${opening?.name || 'selected opening'}. Follow the opening moves to build a strong position.` });
     setHintArrows([]);
+    setLastMove(null);
     setPhase('playing');
 
     const engine = new StockfishService();
@@ -61,26 +63,25 @@ export default function PracticePlay() {
     engine.setLevel(levelIndex);
 
     engine.onMove = (uci) => {
-      setThinking(false);
-      const cur = gameRef.current;
-      if (!cur) return;
-      const g2 = new Chess(cur.fen());
-      const from = uci.slice(0, 2);
-      const to = uci.slice(2, 4);
-      const promotion = uci[4] || undefined;
-      const m = g2.move({ from, to, promotion });
-      if (m) {
-        gameRef.current = g2;
-        const newFen = g2.fen();
-        setFen(newFen);
-        setHistory(h => {
-          const newH = [...h, { move: m, fen: newFen, san: m.san }];
-          setMoveIndex(newH.length - 1);
-          return newH;
-        });
-        checkGameEnd(g2);
-        setOpeningMoveIdx(prev => prev + 1);
-      }
+      // Delay engine response for more natural feel
+      setTimeout(() => {
+        const cur = gameRef.current;
+        if (!cur) return;
+        const from = uci.slice(0, 2);
+        const to = uci.slice(2, 4);
+        const g2 = new Chess(cur.fen());
+        const m = g2.move({ from, to, promotion: uci[4] || undefined });
+        if (m) {
+          gameRef.current = g2;
+          setFen(g2.fen());
+          setLastMove([from, to]);
+          setHistory(h => [...h, { move: m, fen: g2.fen(), san: m.san }]);
+          setMoveIndex(i => i + 1);
+          checkGameEnd(g2);
+          setOpeningMoveIdx(prev => prev + 1);
+        }
+        setThinking(false);
+      }, 400);
     };
 
     engine.onEval = (score) => {
@@ -178,6 +179,7 @@ export default function PracticePlay() {
 
     gameRef.current = g2;
     setFen(g2.fen());
+    setLastMove([from, to]);
     setHistory(h => [...h, { move: m, fen: g2.fen(), san: m.san }]);
     setMoveIndex(i => i + 1);
     setHintArrows([]);
@@ -328,6 +330,7 @@ export default function PracticePlay() {
                 dests={isPlayerTurn && phase === 'playing' && !thinking ? getLegalDests() : new Map()}
                 turnColor={turnColor}
                 onMove={handleMove}
+                lastMove={lastMove}
                 arrows={hintArrows}
               />
             </div>

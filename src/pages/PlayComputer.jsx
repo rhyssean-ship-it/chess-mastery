@@ -17,6 +17,7 @@ export default function PlayComputer() {
   const [result, setResult] = useState(null);
   const [showHint, setShowHint] = useState(false);
   const [hintMove, setHintMove] = useState(null);
+  const [lastMove, setLastMove] = useState(null);
   const gameRef = useRef(null);
   const engineRef = useRef(null);
 
@@ -40,6 +41,7 @@ export default function PlayComputer() {
     setEvaluation(0);
     setShowHint(false);
     setHintMove(null);
+    setLastMove(null);
     setThinking(false);
     setPhase('playing');
 
@@ -48,18 +50,24 @@ export default function PlayComputer() {
     engine.setLevel(levelIndex);
 
     engine.onMove = (uci) => {
-      const cur = gameRef.current;
-      if (!cur) return;
-      const g2 = new Chess(cur.fen());
-      const m = g2.move({ from: uci.slice(0, 2), to: uci.slice(2, 4), promotion: uci[4] || undefined });
-      if (m) {
-        gameRef.current = g2;
-        setFen(g2.fen());
-        setHistory(h => [...h, { move: m, fen: g2.fen(), san: m.san }]);
-        setMoveIndex(i => i + 1);
-        checkEnd(g2);
-      }
-      setThinking(false);
+      // Delay engine response for more natural feel
+      setTimeout(() => {
+        const cur = gameRef.current;
+        if (!cur) return;
+        const from = uci.slice(0, 2);
+        const to = uci.slice(2, 4);
+        const g2 = new Chess(cur.fen());
+        const m = g2.move({ from, to, promotion: uci[4] || undefined });
+        if (m) {
+          gameRef.current = g2;
+          setFen(g2.fen());
+          setLastMove([from, to]);
+          setHistory(h => [...h, { move: m, fen: g2.fen(), san: m.san }]);
+          setMoveIndex(i => i + 1);
+          checkEnd(g2);
+        }
+        setThinking(false);
+      }, 400);
     };
 
     engine.onEval = (score) => {
@@ -98,6 +106,7 @@ export default function PlayComputer() {
 
     gameRef.current = g2;
     setFen(g2.fen());
+    setLastMove([from, to]);
     setHistory(h => [...h, { move: m, fen: g2.fen(), san: m.san }]);
     setMoveIndex(i => i + 1);
     setShowHint(false);
@@ -222,6 +231,7 @@ export default function PlayComputer() {
                 dests={isPlayerTurn && phase === 'playing' ? getLegalDests() : new Map()}
                 turnColor={turnColor}
                 onMove={handleMove}
+                lastMove={lastMove}
                 arrows={hintMove ? [[hintMove.from, hintMove.to]] : []}
               />
             </div>

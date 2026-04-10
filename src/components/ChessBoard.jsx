@@ -74,7 +74,7 @@ export default function ChessBoard({
         cgRef.current = null;
       }
     };
-  }, [fen, orientation, movable, turnColor, coordinates]);
+  }, [fen, orientation, movable, turnColor, coordinates, lastMove]);
 
   const frameClass = framed
     ? `board-frame ${movable ? 'board-frame--interactive' : ''}`
