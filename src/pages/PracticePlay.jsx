@@ -104,7 +104,7 @@ export default function PracticePlay() {
       // Also init a hint engine
       const hintEng = new StockfishService();
       hintEngineRef.current = hintEng;
-      hintEng.setLevel(11);
+      hintEng.setLevel(7);
       hintEng.onMove = (uci) => {
         setHintArrows([[uci.slice(0, 2), uci.slice(2, 4)]]);
         setCoachMessage({ type: 'info', text: 'The engine suggests this move.' });
@@ -211,7 +211,7 @@ export default function PracticePlay() {
 
   function requestHint() {
     if (!gameRef.current || thinking || !hintEngineRef.current) return;
-    hintEngineRef.current.getBestMove(gameRef.current.fen());
+    hintEngineRef.current.getQuickHint(gameRef.current.fen());
   }
 
   const turnColor = gameRef.current ? (gameRef.current.turn() === 'w' ? 'white' : 'black') : 'white';

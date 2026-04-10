@@ -79,7 +79,7 @@ export default function PlayComputer() {
       // Also init a separate hint engine
       const hintEng = new StockfishService();
       hintEngineRef.current = hintEng;
-      hintEng.setLevel(11); // Full strength for hints
+      hintEng.setLevel(7); // Strong enough for good hints
       hintEng.onMove = (uci) => {
         if (waitingForHint.current) {
           setHintArrow([[uci.slice(0, 2), uci.slice(2, 4)]]);
@@ -164,7 +164,7 @@ export default function PlayComputer() {
   function requestHint() {
     if (!gameRef.current || thinking || !hintEngineRef.current) return;
     waitingForHint.current = true;
-    hintEngineRef.current.getBestMove(gameRef.current.fen());
+    hintEngineRef.current.getQuickHint(gameRef.current.fen());
   }
 
   const turnColor = gameRef.current ? (gameRef.current.turn() === 'w' ? 'white' : 'black') : 'white';

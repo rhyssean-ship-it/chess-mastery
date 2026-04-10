@@ -125,6 +125,13 @@ class StockfishService {
     this.send(`go depth ${this.currentPreset.depth} movetime ${this.currentPreset.moveTime}`);
   }
 
+  getQuickHint(fen) {
+    if (!this.ready || !this.worker) return;
+    this.send('stop');
+    this.send(`position fen ${fen}`);
+    this.send('go depth 8 movetime 300');
+  }
+
   stop() {
     this.send('stop');
   }
