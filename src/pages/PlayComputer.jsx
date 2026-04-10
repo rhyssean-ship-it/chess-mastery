@@ -174,7 +174,7 @@ export default function PlayComputer() {
     });
   }
 
-  const turnColor = game ? (gameRef.current.turn() === 'w' ? 'white' : 'black') : 'white';
+  const turnColor = gameRef.current ? (gameRef.current.turn() === 'w' ? 'white' : 'black') : 'white';
   const isPlayerTurn = turnColor === playerColor;
   const evalBar = Math.max(-5, Math.min(5, evaluation));
   const evalPct = ((evalBar + 5) / 10) * 100;
