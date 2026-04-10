@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Chess } from 'chess.js';
 import ChessBoard from '../components/ChessBoard';
 import MoveList from '../components/MoveList';
@@ -147,7 +147,7 @@ export default function PracticePlay() {
     }
   }
 
-  const getLegalDests = useCallback(() => {
+  function getLegalDests() {
     if (!gameRef.current) return new Map();
     const dests = new Map();
     for (const m of gameRef.current.moves({ verbose: true })) {
@@ -155,18 +155,17 @@ export default function PracticePlay() {
       dests.get(m.from).push(m.to);
     }
     return dests;
-  }, [fen]);
+  }
 
-  const handleMove = useCallback((from, to) => {
-    if (!gameRef.current || thinking || phase !== 'playing') return;
-    const turn = gameRef.current.turn() === 'w' ? 'white' : 'black';
-    if (turn !== playerColor) return;
+  function handleMove(from, to) {
+    const g = gameRef.current;
+    if (!g || thinking || phase !== 'playing') return;
+    if ((g.turn() === 'w' ? 'white' : 'black') !== playerColor) return;
 
-    const g = new Chess(gameRef.current.fen());
-    const m = g.move({ from, to, promotion: 'q' });
+    const g2 = new Chess(g.fen());
+    const m = g2.move({ from, to, promotion: 'q' });
     if (!m) return;
 
-    // Check if move matches opening
     if (openingPhase && opening && openingMoveIdx < opening.moves.length) {
       const expected = opening.moves[openingMoveIdx];
       if (m.san !== expected.move) {
@@ -177,24 +176,17 @@ export default function PracticePlay() {
       setOpeningMoveIdx(prev => prev + 1);
     }
 
-    const newFen = g.fen();
-    gameRef.current = g;
-    setFen(newFen);
-    setHistory(h => {
-      const newH = [...h, { move: m, fen: newFen, san: m.san }];
-      setMoveIndex(newH.length - 1);
-      return newH;
-    });
+    gameRef.current = g2;
+    setFen(g2.fen());
+    setHistory(h => [...h, { move: m, fen: g2.fen(), san: m.san }]);
+    setMoveIndex(i => i + 1);
     setHintArrows([]);
 
-    checkGameEnd(g);
+    if (g2.isGameOver()) { checkGameEnd(g2); return; }
 
-    // Engine responds
     setThinking(true);
-    setTimeout(() => {
-      engineRef.current?.getBestMove(newFen);
-    }, 200);
-  }, [fen, thinking, phase, playerColor, openingPhase, opening, openingMoveIdx]);
+    setTimeout(() => engineRef.current?.getBestMove(g2.fen()), 300);
+  }
 
   // After engine moves, show next opening hint
   useEffect(() => {
