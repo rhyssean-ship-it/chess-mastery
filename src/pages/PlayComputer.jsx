@@ -15,22 +15,25 @@ export default function PlayComputer() {
   const [evaluation, setEvaluation] = useState(0);
   const [thinking, setThinking] = useState(false);
   const [result, setResult] = useState(null);
-  const [showHint, setShowHint] = useState(false);
-  const [hintMove, setHintMove] = useState(null);
   const [lastMove, setLastMove] = useState(null);
+  const [hintArrow, setHintArrow] = useState(null);
   const gameRef = useRef(null);
   const engineRef = useRef(null);
+  const hintEngineRef = useRef(null);
+  const waitingForHint = useRef(false);
 
   const preset = ELO_PRESETS[levelIndex];
 
   useEffect(() => {
     return () => {
       if (engineRef.current) engineRef.current.destroy();
+      if (hintEngineRef.current) hintEngineRef.current.destroy();
     };
   }, []);
 
   function startGame() {
     if (engineRef.current) engineRef.current.destroy();
+    if (hintEngineRef.current) hintEngineRef.current.destroy();
 
     const g = new Chess();
     gameRef.current = g;
@@ -39,9 +42,8 @@ export default function PlayComputer() {
     setMoveIndex(-1);
     setResult(null);
     setEvaluation(0);
-    setShowHint(false);
-    setHintMove(null);
     setLastMove(null);
+    setHintArrow(null);
     setThinking(false);
     setPhase('playing');
 
@@ -50,7 +52,6 @@ export default function PlayComputer() {
     engine.setLevel(levelIndex);
 
     engine.onMove = (uci) => {
-      // Delay engine response for more natural feel
       setTimeout(() => {
         const cur = gameRef.current;
         if (!cur) return;
@@ -75,6 +76,18 @@ export default function PlayComputer() {
     };
 
     engine.init().then(() => {
+      // Also init a separate hint engine
+      const hintEng = new StockfishService();
+      hintEngineRef.current = hintEng;
+      hintEng.setLevel(11); // Full strength for hints
+      hintEng.onMove = (uci) => {
+        if (waitingForHint.current) {
+          setHintArrow([[uci.slice(0, 2), uci.slice(2, 4)]]);
+          waitingForHint.current = false;
+        }
+      };
+      hintEng.init();
+
       if (playerColor === 'black') {
         setThinking(true);
         engine.getBestMove(g.fen());
@@ -107,10 +120,9 @@ export default function PlayComputer() {
     gameRef.current = g2;
     setFen(g2.fen());
     setLastMove([from, to]);
+    setHintArrow(null);
     setHistory(h => [...h, { move: m, fen: g2.fen(), san: m.san }]);
     setMoveIndex(i => i + 1);
-    setShowHint(false);
-    setHintMove(null);
 
     if (g2.isGameOver()) { checkEnd(g2); return; }
 
@@ -137,8 +149,8 @@ export default function PlayComputer() {
     setFen(newFen);
     setHistory(newHistory);
     setMoveIndex(newHistory.length - 1);
-    setShowHint(false);
-    setHintMove(null);
+    setLastMove(null);
+    setHintArrow(null);
     setThinking(false);
   }
 
@@ -150,15 +162,9 @@ export default function PlayComputer() {
   }
 
   function requestHint() {
-    if (!gameRef.current || thinking) return;
-    setShowHint(true);
-    const hint = new StockfishService();
-    hint.setLevel(11);
-    hint.onMove = (uci) => {
-      setHintMove({ from: uci.slice(0, 2), to: uci.slice(2, 4) });
-      hint.destroy();
-    };
-    hint.init().then(() => hint.getBestMove(gameRef.current.fen()));
+    if (!gameRef.current || thinking || !hintEngineRef.current) return;
+    waitingForHint.current = true;
+    hintEngineRef.current.getBestMove(gameRef.current.fen());
   }
 
   const turnColor = gameRef.current ? (gameRef.current.turn() === 'w' ? 'white' : 'black') : 'white';
@@ -232,7 +238,7 @@ export default function PlayComputer() {
                 turnColor={turnColor}
                 onMove={handleMove}
                 lastMove={lastMove}
-                arrows={hintMove ? [[hintMove.from, hintMove.to]] : []}
+                arrows={hintArrow || []}
               />
             </div>
           </div>
@@ -240,7 +246,7 @@ export default function PlayComputer() {
             {phase === 'playing' && (
               <>
                 <button onClick={takeBack} disabled={history.length < 2 || thinking} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press disabled:opacity-30 disabled:cursor-not-allowed">Takeback</button>
-                <button onClick={requestHint} disabled={thinking || !isPlayerTurn} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press disabled:opacity-30 disabled:cursor-not-allowed">{showHint && hintMove ? 'Hint shown' : 'Hint'}</button>
+                <button onClick={requestHint} disabled={thinking || !isPlayerTurn} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press disabled:opacity-30 disabled:cursor-not-allowed">{hintArrow ? 'Hint shown' : 'Hint'}</button>
                 <button onClick={resign} className="flex-1 py-2 rounded-lg bg-incorrect/10 border border-incorrect/20 text-incorrect text-base hover:bg-incorrect/20 transition-all btn-press">Resign</button>
               </>
             )}

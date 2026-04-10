@@ -101,11 +101,20 @@ export default function PracticePlay() {
     };
 
     engine.init().then(() => {
+      // Also init a hint engine
+      const hintEng = new StockfishService();
+      hintEngineRef.current = hintEng;
+      hintEng.setLevel(11);
+      hintEng.onMove = (uci) => {
+        setHintArrows([[uci.slice(0, 2), uci.slice(2, 4)]]);
+        setCoachMessage({ type: 'info', text: 'The engine suggests this move.' });
+      };
+      hintEng.init();
+
       if (playerColor === 'black') {
         setThinking(true);
         engine.getBestMove(g.fen());
       } else if (showHints && opening) {
-        // Show first opening move hint
         showOpeningHint(0);
       }
     });
@@ -201,16 +210,8 @@ export default function PracticePlay() {
   }, [thinking, openingMoveIdx, openingPhase]);
 
   function requestHint() {
-    if (!gameRef.current || thinking) return;
-    const hint = new StockfishService();
-    hintEngineRef.current = hint;
-    hint.setLevel(11);
-    hint.onMove = (uci) => {
-      setHintArrows([[uci.slice(0, 2), uci.slice(2, 4)]]);
-      setCoachMessage({ type: 'info', text: 'The engine suggests this move.' });
-      hint.destroy();
-    };
-    hint.init().then(() => hint.getBestMove(gameRef.current.fen()));
+    if (!gameRef.current || thinking || !hintEngineRef.current) return;
+    hintEngineRef.current.getBestMove(gameRef.current.fen());
   }
 
   const turnColor = gameRef.current ? (gameRef.current.turn() === 'w' ? 'white' : 'black') : 'white';
