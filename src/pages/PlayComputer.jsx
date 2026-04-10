@@ -134,7 +134,6 @@ export default function PlayComputer() {
     setThinking(true);
     setTimeout(() => {
       engineRef.current?.getBestMove(newFen);
-      engineRef.current?.evaluate(newFen);
     }, 200);
   }, [fen, thinking, phase, playerColor]);
 

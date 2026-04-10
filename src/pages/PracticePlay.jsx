@@ -193,7 +193,6 @@ export default function PracticePlay() {
     setThinking(true);
     setTimeout(() => {
       engineRef.current?.getBestMove(newFen);
-      engineRef.current?.evaluate(newFen);
     }, 200);
   }, [fen, thinking, phase, playerColor, openingPhase, opening, openingMoveIdx]);
 
