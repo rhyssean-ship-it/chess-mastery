@@ -85,16 +85,18 @@ export default function PracticePlay() {
     };
 
     engine.onEval = (score) => {
-      const adjScore = playerColor === 'white' ? score : -score;
-      setEvaluation(adjScore);
+      // Score is from engine's (opponent's) perspective. Convert to White's perspective.
+      const whiteScore = playerColor === 'white' ? -score : score;
+      setEvaluation(whiteScore);
 
-      // Tactical alerts
+      // Tactical alerts need player's perspective (positive = good for player)
+      const playerScore = -score; // always negate since engine is opponent
       if (showTactics) {
-        if (adjScore > 2 && adjScore < 100) {
+        if (playerScore > 2 && playerScore < 100) {
           setCoachMessage({ type: 'tip', text: 'You have a significant advantage! Look for tactical opportunities to convert it.' });
-        } else if (adjScore < -2 && adjScore > -100) {
+        } else if (playerScore < -2 && playerScore > -100) {
           setCoachMessage({ type: 'warning', text: 'You\'re in trouble. Play carefully and look for defensive resources.' });
-        } else if (adjScore > 100) {
+        } else if (playerScore > 100) {
           setCoachMessage({ type: 'tip', text: 'Checkmate is near! Find the winning combination.' });
         }
       }
@@ -216,8 +218,7 @@ export default function PracticePlay() {
 
   const turnColor = gameRef.current ? (gameRef.current.turn() === 'w' ? 'white' : 'black') : 'white';
   const isPlayerTurn = turnColor === playerColor;
-  const whiteEval = playerColor === 'white' ? evaluation : -evaluation;
-  const evalClamped = Math.max(-5, Math.min(5, whiteEval));
+  const evalClamped = Math.max(-5, Math.min(5, evaluation));
   const evalPct = ((evalClamped + 5) / 10) * 100;
 
   if (phase === 'setup') {

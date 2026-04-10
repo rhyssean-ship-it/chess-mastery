@@ -72,7 +72,11 @@ export default function PlayComputer() {
     };
 
     engine.onEval = (score) => {
-      setEvaluation(playerColor === 'white' ? score : -score);
+      // Engine searches on its own turn. Score is from engine's (opponent's) perspective.
+      // Negate to get player's perspective, then store as White's perspective for the eval bar.
+      // Player is White → engine is Black → negate to get White's view
+      // Player is Black → engine is White → score is already White's view
+      setEvaluation(playerColor === 'white' ? -score : score);
     };
 
     engine.init().then(() => {
@@ -169,11 +173,8 @@ export default function PlayComputer() {
 
   const turnColor = gameRef.current ? (gameRef.current.turn() === 'w' ? 'white' : 'black') : 'white';
   const isPlayerTurn = turnColor === playerColor && !thinking;
-  // Eval bar: white portion grows when White is winning
-  // evaluation is already from player's perspective (positive = player winning)
-  // Convert to White's perspective for the bar display
-  const whiteEval = playerColor === 'white' ? evaluation : -evaluation;
-  const evalClamped = Math.max(-5, Math.min(5, whiteEval));
+  // evaluation is stored from White's perspective
+  const evalClamped = Math.max(-5, Math.min(5, evaluation));
   const evalPct = ((evalClamped + 5) / 10) * 100;
 
   if (phase === 'setup') {
