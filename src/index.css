@@ -56,25 +56,41 @@ body::before {
 }
 
 [data-theme="light"] .board-frame {
-  border-color: #d4d0c8;
+  border-color: #e0e0e0;
 }
 
 [data-theme="light"] .board-frame--interactive {
-  border-color: rgba(158, 126, 42, 0.3);
+  border-color: rgba(139, 105, 20, 0.25);
+}
+
+[data-theme="light"] .card-base {
+  border-color: #e8e8e8;
 }
 
 [data-theme="light"] ::-webkit-scrollbar-track {
-  background: #f5f3f0;
+  background: #f8f9fa;
 }
 
 [data-theme="light"] ::-webkit-scrollbar-thumb {
-  background: #d4d0c8;
+  background: #d0d0d0;
 }
 
 [data-theme="light"] kbd {
-  background: #eae7e2;
-  border-color: #d4d0c8;
-  color: #6b6560;
+  background: #f0f0f0;
+  border-color: #d8d8d8;
+  color: #666;
+}
+
+[data-theme="light"] .section-divider {
+  background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+}
+
+[data-theme="light"] .callout {
+  background: rgba(139, 105, 20, 0.04);
+}
+
+[data-theme="light"] .accent-border-left {
+  border-left-color: #8B6914;
 }
 
 #root {
