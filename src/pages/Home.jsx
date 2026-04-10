@@ -57,7 +57,7 @@ export default function Home() {
             <Link key={s.label} to={s.to} className="no-underline card-stagger" style={{ animationDelay: `${i * 80}ms` }}>
               <div className={`card-base p-5 text-left card-hover hover:border-gold/20 bg-gradient-to-br ${s.color}`}>
                 <span className="text-2xl block mb-2">{s.icon}</span>
-                <h3 className="font-display text-sm font-semibold">{s.label}</h3>
+                <h3 className="text-sm font-semibold">{s.label}</h3>
                 <p className="text-sm text-text-dim mt-0.5">{s.desc}</p>
               </div>
             </Link>
@@ -92,7 +92,7 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center text-gold text-lg">&#9813;</div>
             <div>
-              <h3 className="font-display text-sm font-semibold">{dailyDone ? 'Daily Challenge Complete' : 'Today\'s Daily Challenge'}</h3>
+              <h3 className="text-sm font-semibold">{dailyDone ? 'Daily Challenge Complete' : 'Today\'s Daily Challenge'}</h3>
               <p className="text-text-dim text-xs">{dailyDone ? 'Come back tomorrow for a fresh challenge.' : 'A tactical puzzle and a positional quiz await.'}</p>
             </div>
           </div>
@@ -124,7 +124,7 @@ export default function Home() {
         <div className="lg:col-span-2 space-y-5">
           {/* Continue Learning */}
           <div>
-            <h2 className="text-sm font-display text-text-dim mb-3 uppercase tracking-wider">Continue Learning</h2>
+            <h2 className="text-sm text-text-dim mb-3 uppercase tracking-wider">Continue Learning</h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
                 { label: 'Openings', count: `${openingsDone}/${openings.length}`, to: '/openings', icon: '\u2654' },
@@ -145,7 +145,7 @@ export default function Home() {
 
           {/* Practice & Train */}
           <div>
-            <h2 className="text-sm font-display text-text-dim mb-3 uppercase tracking-wider">Practice & Train</h2>
+            <h2 className="text-sm text-text-dim mb-3 uppercase tracking-wider">Practice & Train</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {[
                 { label: 'Tactics Queue', desc: `${dueCount} due`, to: '/tactics' },
@@ -167,7 +167,7 @@ export default function Home() {
 
           {/* Reference */}
           <div>
-            <h2 className="text-sm font-display text-text-dim mb-3 uppercase tracking-wider">Reference & Tools</h2>
+            <h2 className="text-sm text-text-dim mb-3 uppercase tracking-wider">Reference & Tools</h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
                 { label: 'Opening Traps', to: '/opening-traps' },
@@ -193,7 +193,7 @@ export default function Home() {
         <div className="space-y-5">
           {/* Recent Activity */}
           <div>
-            <h2 className="text-sm font-display text-text-dim mb-3 uppercase tracking-wider">Recent Activity</h2>
+            <h2 className="text-sm text-text-dim mb-3 uppercase tracking-wider">Recent Activity</h2>
             {recentActivity.length === 0 ? (
               <div className="card-base p-6 text-center">
                 <div className="text-2xl mb-2 opacity-20">&#9813;</div>
@@ -213,7 +213,7 @@ export default function Home() {
 
           {/* Quote */}
           <div className="card-base p-5">
-            <div className="text-gold/20 text-3xl font-display leading-none mb-1">"</div>
+            <div className="text-gold/20 text-3xl leading-none mb-1">"</div>
             <p className="italic text-text-dim text-base leading-relaxed mb-2">{quote.text}</p>
             <p className="text-gold text-xs not-italic font-medium">— {quote.author}</p>
           </div>

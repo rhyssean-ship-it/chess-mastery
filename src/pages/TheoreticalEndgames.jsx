@@ -59,7 +59,7 @@ export default function TheoreticalEndgames() {
         {theoreticalEndgames.map((eg, i) => (
           <button key={eg.id} onClick={() => setSelected(i)} className="card-base p-5 text-left card-hover card-stagger hover:border-gold/20 btn-press">
             <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${eg.goal === 'win' ? 'bg-correct/20 text-correct' : 'bg-amber/20 text-amber'}`}>{eg.goal === 'win' ? 'Win' : 'Draw'}</span>
-            <h3 className="font-display text-base font-semibold mt-2 mb-1">{eg.name}</h3>
+            <h3 className="text-base font-semibold mt-2 mb-1">{eg.name}</h3>
             <p className="text-xs text-text-dim">{eg.difficulty}</p>
           </button>
         ))}

@@ -62,7 +62,7 @@ export default function OpeningTraps() {
               <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${diffColors[trap.difficulty]}`}>{trap.difficulty}</span>
               <span className="text-xs text-text-dim">{trap.opening}</span>
             </div>
-            <h3 className="font-display text-base font-semibold mb-1">{trap.name}</h3>
+            <h3 className="text-base font-semibold mb-1">{trap.name}</h3>
             <p className="text-base text-text-dim line-clamp-2">{trap.description}</p>
           </button>
         ))}

@@ -177,7 +177,7 @@ export default function RepertoireBuilder() {
           </div>
           <div className="space-y-4">
             <div className="bg-bg-card border border-bg-hover rounded-xl p-4">
-              <h3 className="font-display text-sm mb-1">{opening?.name}</h3>
+              <h3 className="text-sm mb-1">{opening?.name}</h3>
               <p className="text-text-dim text-xs">Playing as {selectedSide}</p>
             </div>
 

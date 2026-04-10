@@ -64,7 +64,7 @@ export default function ConceptFlashcards() {
         {!flipped ? (
           <div className="text-center">
             <p className="text-xs text-text-dim uppercase tracking-wider mb-4">Question</p>
-            <p className="text-lg font-display font-semibold leading-relaxed">{card.front}</p>
+            <p className="text-lg font-semibold leading-relaxed">{card.front}</p>
             <p className="text-xs text-text-dim/50 mt-6">Click to reveal answer</p>
           </div>
         ) : (

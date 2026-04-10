@@ -137,7 +137,7 @@ function BoardVisionDrill() {
   if (phase === 'done') {
     return (
       <div className="text-center space-y-4">
-        <p className="text-2xl font-display text-gold">Score: {score}/{questions.length}</p>
+        <p className="text-2xl text-gold">Score: {score}/{questions.length}</p>
         <p className="text-text-dim">{score === questions.length ? 'Perfect memory!' : 'Keep practicing to improve.'}</p>
       </div>
     );
@@ -345,7 +345,7 @@ function PieceCountingDrill() {
   if (phase === 'done') {
     return (
       <div className="text-center space-y-4">
-        <p className="text-2xl font-display text-gold">Score: {score}/{questions.length}</p>
+        <p className="text-2xl text-gold">Score: {score}/{questions.length}</p>
       </div>
     );
   }
@@ -411,7 +411,7 @@ export default function VisualisationDrills() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {drills.map(d => (
           <button key={d.id} onClick={() => setActiveDrill(d.id)} className="text-left bg-bg-card border border-bg-hover rounded-xl p-5 hover:border-gold/30 transition-all card-hover card-stagger btn-press">
-            <h3 className="font-display text-base font-semibold mb-1">{d.name}</h3>
+            <h3 className="text-base font-semibold mb-1">{d.name}</h3>
             <p className="text-base text-text-dim mb-3">{d.desc}</p>
             {stats[d.id] && (
               <p className="text-xs text-text-dim">Best: {stats[d.id].best} &middot; Attempts: {stats[d.id].attempts}</p>

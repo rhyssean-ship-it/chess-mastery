@@ -22,7 +22,7 @@ export default function LessonCard({ to, title, description, difficulty, readTim
           {readTime && <span className="text-xs text-text-dim">{readTime}</span>}
           {completed && <span className="text-xs text-correct ml-auto font-medium">&#10003; Done</span>}
         </div>
-        <h3 className="font-display text-base font-semibold mb-1.5 group-hover:text-gold transition-colors duration-200">{title}</h3>
+        <h3 className="text-base font-semibold mb-1.5 group-hover:text-gold transition-colors duration-200">{title}</h3>
         {description && <p className="text-base text-text-dim leading-relaxed line-clamp-2">{description}</p>}
       </div>
     </Link>

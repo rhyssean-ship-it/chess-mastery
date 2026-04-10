@@ -27,18 +27,18 @@ export default function PawnStructures() {
         {/* Plans for both sides */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div className="card-base p-5">
-            <h3 className="font-display text-sm text-gold mb-2">&#9812; White's Plans</h3>
+            <h3 className="text-sm text-gold mb-2">&#9812; White's Plans</h3>
             <p className="text-base text-text leading-relaxed">{structure.forWhite}</p>
           </div>
           <div className="card-base p-5">
-            <h3 className="font-display text-sm mb-2">&#9818; Black's Plans</h3>
+            <h3 className="text-sm mb-2">&#9818; Black's Plans</h3>
             <p className="text-base text-text leading-relaxed">{structure.forBlack}</p>
           </div>
         </div>
 
         {/* Key squares */}
         <div className="card-base p-5 mb-8">
-          <h3 className="font-display text-sm text-gold mb-2">Key Squares</h3>
+          <h3 className="text-sm text-gold mb-2">Key Squares</h3>
           <div className="flex flex-wrap gap-2">
             {structure.keySquares.map(sq => (
               <span key={sq} className="bg-gold/10 text-gold text-sm px-3 py-1 rounded-lg font-mono border border-gold/20">{sq}</span>
@@ -48,7 +48,7 @@ export default function PawnStructures() {
 
         {/* Arises from */}
         <div className="card-base p-5 mb-8">
-          <h3 className="font-display text-sm text-text-dim mb-2">Common Openings</h3>
+          <h3 className="text-sm text-text-dim mb-2">Common Openings</h3>
           <div className="flex flex-wrap gap-2">
             {structure.openings.map(op => (
               <span key={op} className="bg-bg-hover text-text-dim text-xs px-3 py-1 rounded-lg">{op}</span>
@@ -59,7 +59,7 @@ export default function PawnStructures() {
         {/* Additional positions */}
         {structure.positions && structure.positions.length > 0 && (
           <div className="space-y-6">
-            <h3 className="font-display text-sm text-gold">Example Positions</h3>
+            <h3 className="text-sm text-gold">Example Positions</h3>
             {structure.positions.map((pos, i) => (
               <div key={i}>
                 <div className="max-w-[360px] mx-auto">
@@ -82,7 +82,7 @@ export default function PawnStructures() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {pawnStructures.map(s => (
           <button key={s.id} onClick={() => setSelected(s.id)} className="card-base p-5 text-left card-hover card-stagger hover:border-gold/20 btn-press">
-            <h3 className="font-display text-base font-semibold mb-1">{s.name}</h3>
+            <h3 className="text-base font-semibold mb-1">{s.name}</h3>
             <p className="text-base text-text-dim mb-3 line-clamp-2">{s.description}</p>
             <div className="flex flex-wrap gap-1">
               {s.keySquares.slice(0, 4).map(sq => (

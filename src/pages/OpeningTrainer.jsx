@@ -127,7 +127,7 @@ export default function OpeningTrainer() {
           {testMode ? (
             <>
               <div className="card-base p-5">
-                <h3 className="font-display text-sm mb-2">Test Mode</h3>
+                <h3 className="text-sm mb-2">Test Mode</h3>
                 {testFinished ? (
                   <div>
                     <p className="text-xl font-bold mb-2 tabular-nums">{testCorrect}/{testTotal}</p>
@@ -172,7 +172,7 @@ export default function OpeningTrainer() {
               {/* Key ideas (shown at end) */}
               {currentMove === moves.length - 1 && (
                 <div className="card-base p-5 border-gold/20">
-                  <h3 className="font-display text-sm text-gold mb-3">Key Ideas</h3>
+                  <h3 className="text-sm text-gold mb-3">Key Ideas</h3>
                   <ul className="text-base text-text space-y-2">
                     {opening.keyIdeas.map((idea, i) => (
                       <li key={i} className="flex gap-2">

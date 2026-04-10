@@ -48,7 +48,7 @@ export default function Glossary() {
               className="w-full px-5 py-4 text-left flex items-center justify-between hover:bg-bg-hover/30 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <h3 className="font-display text-base font-semibold">{term.term}</h3>
+                <h3 className="text-base font-semibold">{term.term}</h3>
                 <span className="text-xs px-2 py-0.5 rounded-full bg-bg-hover text-text-dim">{term.category}</span>
               </div>
               <svg className={`w-4 h-4 text-text-dim transition-transform ${expanded === term.id ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
