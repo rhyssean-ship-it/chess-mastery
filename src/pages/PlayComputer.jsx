@@ -72,10 +72,8 @@ export default function PlayComputer() {
     };
 
     engine.onEval = (score) => {
-      // Engine searches on its own turn. Score is from engine's (opponent's) perspective.
-      // Negate to get player's perspective, then store as White's perspective for the eval bar.
-      // Player is White → engine is Black → negate to get White's view
-      // Player is Black → engine is White → score is already White's view
+      // Stockfish score is from the side to move (engine's turn).
+      // Convert to White's perspective for objective display.
       setEvaluation(playerColor === 'white' ? -score : score);
     };
 
