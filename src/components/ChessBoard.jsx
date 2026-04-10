@@ -22,31 +22,20 @@ export default function ChessBoard({
   const [loaded, setLoaded] = useState(false);
 
   // Always keep the latest onMove callback
-  useEffect(() => {
-    onMoveRef.current = onMove;
-  }, [onMove]);
+  onMoveRef.current = onMove;
 
+  // Destroy and recreate on key prop changes
   useEffect(() => {
-    if (boardRef.current && !cgRef.current) {
-      cgRef.current = Chessground(boardRef.current, buildConfig());
-      setLoaded(true);
-    }
-    return () => {
-      if (cgRef.current) {
-        cgRef.current.destroy();
-        cgRef.current = null;
-      }
-    };
-  }, []);
+    if (!boardRef.current) return;
 
-  // Update board on every render when props change
-  useEffect(() => {
+    // Destroy previous instance
     if (cgRef.current) {
-      cgRef.current.set(buildConfig());
+      cgRef.current.destroy();
+      cgRef.current = null;
     }
-  });
 
-  function buildConfig() {
+    const destsMap = movable && dests ? dests : new Map();
+
     const config = {
       fen,
       orientation,
@@ -56,7 +45,7 @@ export default function ChessBoard({
       movable: {
         free: false,
         color: movable ? turnColor : undefined,
-        dests: movable && dests ? dests : new Map(),
+        dests: destsMap,
         showDests: true,
         events: {
           after: (orig, dest) => {
@@ -76,8 +65,16 @@ export default function ChessBoard({
     if (highlights.length > 0) shapes.push(...highlights.map(sq => ({ orig: sq, brush: 'yellow' })));
     if (shapes.length > 0) config.drawable = { autoShapes: shapes };
 
-    return config;
-  }
+    cgRef.current = Chessground(boardRef.current, config);
+    setLoaded(true);
+
+    return () => {
+      if (cgRef.current) {
+        cgRef.current.destroy();
+        cgRef.current = null;
+      }
+    };
+  }, [fen, orientation, movable, turnColor, coordinates]);
 
   const frameClass = framed
     ? `board-frame ${movable ? 'board-frame--interactive' : ''}`
