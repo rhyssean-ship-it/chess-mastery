@@ -117,7 +117,7 @@ export default function GameReview() {
     return (
       <div className="page-enter max-w-3xl mx-auto px-6 py-10">
         <h1 className="text-3xl font-display text-gold mb-1">Game Review</h1>
-        <p className="text-text-dim text-sm mb-8">Paste a PGN string to load and annotate your game.</p>
+        <p className="text-text-dim text-base mb-8">Paste a PGN string to load and annotate your game.</p>
         <textarea
           value={pgnInput}
           onChange={e => setPgnInput(e.target.value)}
@@ -142,7 +142,7 @@ export default function GameReview() {
     <div className="page-enter max-w-6xl mx-auto px-6 py-10">
       <button onClick={() => setLoaded(false)} className="inline-flex items-center gap-1.5 text-text-dim hover:text-gold text-sm mb-5 group transition-colors"><svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform"><path fillRule="evenodd" d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" clipRule="evenodd" /></svg><span>Load Another Game</span></button>
       <h1 className="text-2xl font-display text-gold mb-1">Game Review</h1>
-      <p className="text-text-dim text-sm mb-8">Annotate and study your games move by move.</p>
+      <p className="text-text-dim text-base mb-8">Annotate and study your games move by move.</p>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
         <div className="w-full max-w-[560px]">
@@ -190,7 +190,7 @@ export default function GameReview() {
           {/* Opening match */}
           {matchedOpening && (
             <div className="card-base !border-gold/20 p-4">
-              <p className="text-sm text-text-dim">
+              <p className="text-base text-text-dim">
                 This position matches the opening: <span className="text-gold font-semibold">{matchedOpening.name}</span> — <a href={`/openings/${matchedOpening.id}`} className="text-gold underline">see the Openings section</a> for tips.
               </p>
             </div>

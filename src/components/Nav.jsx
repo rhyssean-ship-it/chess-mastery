@@ -5,7 +5,7 @@ const I = (d) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 
 const sections = [
   { id: 'daily', label: 'Daily', icon: I('M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5'),
-    link: '/daily' },
+    link: '/' },
   { id: 'openings', label: 'Openings', icon: I('M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25'),
     children: [
       { to: '/openings', label: 'Library' },
@@ -96,17 +96,6 @@ export default function Nav() {
         </Link>
       </div>
 
-      {/* Home link */}
-      <div className="px-3 mb-1">
-        <Link to="/" onClick={() => setMobileOpen(false)}
-          className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] no-underline transition-all duration-150 ${
-            location.pathname === '/' ? 'bg-gold/10 text-gold border border-gold/20' : 'text-text-dim hover:text-text hover:bg-bg-hover border border-transparent'
-          }`}>
-          {I('M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25')}
-          <span className="font-medium">Home</span>
-        </Link>
-      </div>
-
       {/* Accordion nav */}
       <nav className="flex-1 px-3 py-1 space-y-0.5" role="navigation">
         {sections.map(section => {
@@ -117,7 +106,7 @@ export default function Nav() {
           if (section.link) {
             return (
               <Link key={section.id} to={section.link} onClick={() => setMobileOpen(false)}
-                className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] no-underline transition-all duration-150 ${
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm no-underline transition-all duration-150 ${
                   sectionActive ? 'bg-gold/10 text-gold border border-gold/20' : 'text-text-dim hover:text-text hover:bg-bg-hover border border-transparent'
                 }`}>
                 <span className={sectionActive ? 'text-gold' : 'text-text-dim'}>{section.icon}</span>
@@ -132,7 +121,7 @@ export default function Nav() {
             <div key={section.id}>
               <button
                 onClick={() => toggleSection(section.id)}
-                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition-all duration-150 ${
+                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all duration-150 ${
                   sectionActive ? 'text-gold' : 'text-text-dim hover:text-text hover:bg-bg-hover'
                 }`}
               >
@@ -146,7 +135,7 @@ export default function Nav() {
                 <div className="ml-[26px] pl-3 border-l border-bg-hover/60 mt-0.5 mb-1 space-y-0.5" style={{ animation: 'expandIn 150ms ease-out' }}>
                   {section.children.map(child => (
                     <Link key={child.to} to={child.to} onClick={() => setMobileOpen(false)}
-                      className={`block px-3 py-1.5 rounded-md text-[12px] no-underline transition-all duration-150 ${
+                      className={`block px-3 py-1.5 rounded-md text-xs no-underline transition-all duration-150 ${
                         isActive(child.to)
                           ? 'text-gold bg-gold/8 font-medium'
                           : 'text-text-dim hover:text-text hover:bg-bg-hover/50'

@@ -66,7 +66,7 @@ export default function PatternRecognition() {
   return (
     <div className="page-enter max-w-5xl mx-auto px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Pattern Recognition</h1>
-      <p className="text-text-dim text-sm mb-8">Evaluate the position quickly — who stands better?</p>
+      <p className="text-text-dim text-base mb-8">Evaluate the position quickly — who stands better?</p>
 
       <div className="flex items-center gap-3 mb-6 text-sm text-text-dim">
         <span>Position {currentIdx + 1}/{shuffled.length}</span>
@@ -108,7 +108,7 @@ export default function PatternRecognition() {
             <>
               <div className={`rounded-xl p-4 border text-sm ${answer === pos.better ? 'bg-correct/10 border-correct/30' : 'bg-incorrect/10 border-incorrect/30'}`}>
                 <p className="font-semibold mb-1">{answer === pos.better ? '&#10003; Correct!' : '&#10007; Not quite'}</p>
-                <p className="text-text-dim">{pos.reason}</p>
+                <p className="text-text-dim text-base">{pos.reason}</p>
               </div>
               <button onClick={next} className="w-full bg-gold text-bg py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
                 {currentIdx + 1 >= shuffled.length ? 'See Results' : 'Next Position'}

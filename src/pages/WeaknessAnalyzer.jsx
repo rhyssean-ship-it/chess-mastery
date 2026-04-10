@@ -55,7 +55,7 @@ export default function WeaknessAnalyzer() {
   return (
     <div className="page-enter max-w-4xl mx-auto px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Weakness Analyzer</h1>
-      <p className="text-text-dim text-sm mb-8">Based on your puzzle performance, here's where to focus.</p>
+      <p className="text-text-dim text-base mb-8">Based on your puzzle performance, here's where to focus.</p>
 
       {/* Weaknesses */}
       {weakest.length > 0 && (
@@ -92,7 +92,7 @@ export default function WeaknessAnalyzer() {
         <div className="card-base p-8 text-center mb-8">
           <div className="text-3xl mb-3">&#9813;</div>
           <p className="text-correct font-semibold mb-1">No major weaknesses detected!</p>
-          <p className="text-text-dim text-sm">Your accuracy is above 70% in all categories. Keep it up!</p>
+          <p className="text-text-dim text-base">Your accuracy is above 70% in all categories. Keep it up!</p>
         </div>
       )}
 
@@ -117,7 +117,7 @@ export default function WeaknessAnalyzer() {
       <hr className="section-divider" />
 
       <div className="text-center">
-        <p className="text-text-dim text-sm mb-4">Want to improve? The best way is focused practice on your weakest areas.</p>
+        <p className="text-text-dim text-base mb-4">Want to improve? The best way is focused practice on your weakest areas.</p>
         <Link to="/tactics" className="bg-gold text-bg px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press no-underline inline-block">Practice Puzzles</Link>
       </div>
     </div>

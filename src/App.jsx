@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import Nav from './components/Nav'
-import Home from './pages/Home'
+// Home removed — landing on Daily Challenge
 import OpeningsIndex from './pages/OpeningsIndex'
 import OpeningTrainer from './pages/OpeningTrainer'
 import TacticsQueue from './pages/TacticsQueue'
@@ -33,8 +33,7 @@ function App() {
       <Nav />
       <main className="lg:ml-56 pt-14 lg:pt-0 min-h-screen">
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/daily" element={<DailyChallenge />} />
+          <Route path="/" element={<DailyChallenge />} />
           <Route path="/openings" element={<OpeningsIndex />} />
           <Route path="/openings/:id" element={<OpeningTrainer />} />
           <Route path="/opening-traps" element={<OpeningTraps />} />

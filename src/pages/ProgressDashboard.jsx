@@ -61,7 +61,7 @@ export default function ProgressDashboard() {
   return (
     <div className="page-enter max-w-4xl mx-auto px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Progress Dashboard</h1>
-      <p className="text-text-dim text-sm mb-8">Track your chess improvement over time.</p>
+      <p className="text-text-dim text-base mb-8">Track your chess improvement over time.</p>
 
       {/* Tactics */}
       <section className="mb-6">
@@ -75,7 +75,7 @@ export default function ProgressDashboard() {
           ].map((s, i) => (
             <div key={i} className={`card-base p-5 text-center card-stagger ${s.accent ? 'accent-border-left' : ''}`}>
               <div className={`text-2xl font-bold stat-animate tabular-nums ${s.accent ? 'text-gold' : ''}`}>{s.value}</div>
-              <div className="text-[11px] text-text-dim mt-1.5 uppercase tracking-wider">{s.label}</div>
+              <div className="text-xs text-text-dim mt-1.5 uppercase tracking-wider">{s.label}</div>
             </div>
           ))}
         </div>
@@ -95,7 +95,7 @@ export default function ProgressDashboard() {
         <div className="card-base overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-bg-hover text-text-dim text-[11px] uppercase tracking-wider">
+              <tr className="border-b border-bg-hover text-text-dim text-xs uppercase tracking-wider">
                 <th className="text-left px-5 py-3">Opening</th>
                 <th className="text-center px-4 py-3">Studied</th>
                 <th className="text-center px-4 py-3">Drills</th>
@@ -174,7 +174,7 @@ export default function ProgressDashboard() {
         {recentActivity.length === 0 ? (
           <div className="card-base p-8 text-center">
             <div className="text-3xl mb-3 opacity-20">&#9813;</div>
-            <p className="text-text-dim text-sm">No activity yet. Start learning!</p>
+            <p className="text-text-dim text-base">No activity yet. Start learning!</p>
           </div>
         ) : (
           <div className="space-y-2">

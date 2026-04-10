@@ -17,7 +17,7 @@ export default function PawnStructures() {
         </button>
 
         <h1 className="text-2xl font-display text-gold mb-1">{structure.name}</h1>
-        <p className="text-text-dim text-sm mb-8">{structure.description}</p>
+        <p className="text-text-dim text-base mb-8">{structure.description}</p>
 
         {/* Typical position */}
         <div className="max-w-[400px] mx-auto mb-8">
@@ -28,11 +28,11 @@ export default function PawnStructures() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div className="card-base p-5">
             <h3 className="font-display text-sm text-gold mb-2">&#9812; White's Plans</h3>
-            <p className="text-sm text-text-dim leading-relaxed">{structure.forWhite}</p>
+            <p className="text-base text-text-dim leading-relaxed">{structure.forWhite}</p>
           </div>
           <div className="card-base p-5">
             <h3 className="font-display text-sm mb-2">&#9818; Black's Plans</h3>
-            <p className="text-sm text-text-dim leading-relaxed">{structure.forBlack}</p>
+            <p className="text-base text-text-dim leading-relaxed">{structure.forBlack}</p>
           </div>
         </div>
 
@@ -65,7 +65,7 @@ export default function PawnStructures() {
                 <div className="max-w-[360px] mx-auto">
                   <ChessBoard fen={pos.fen} movable={false} arrows={pos.arrows || []} highlights={pos.highlights || []} />
                 </div>
-                {pos.caption && <p className="text-sm text-text-dim text-center mt-2 italic">{pos.caption}</p>}
+                {pos.caption && <p className="text-base text-text-dim text-center mt-2 italic">{pos.caption}</p>}
               </div>
             ))}
           </div>
@@ -77,16 +77,16 @@ export default function PawnStructures() {
   return (
     <div className="page-enter max-w-6xl mx-auto px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Pawn Structure Dictionary</h1>
-      <p className="text-text-dim text-sm mb-8">Understand the typical plans for every pawn structure.</p>
+      <p className="text-text-dim text-base mb-8">Understand the typical plans for every pawn structure.</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {pawnStructures.map(s => (
           <button key={s.id} onClick={() => setSelected(s.id)} className="card-base p-5 text-left card-hover card-stagger hover:border-gold/20 btn-press">
-            <h3 className="font-display text-[15px] font-semibold mb-1">{s.name}</h3>
-            <p className="text-sm text-text-dim mb-3 line-clamp-2">{s.description}</p>
+            <h3 className="font-display text-base font-semibold mb-1">{s.name}</h3>
+            <p className="text-base text-text-dim mb-3 line-clamp-2">{s.description}</p>
             <div className="flex flex-wrap gap-1">
               {s.keySquares.slice(0, 4).map(sq => (
-                <span key={sq} className="text-[10px] bg-gold/10 text-gold/70 px-1.5 py-0.5 rounded font-mono">{sq}</span>
+                <span key={sq} className="text-xs bg-gold/10 text-gold/70 px-1.5 py-0.5 rounded font-mono">{sq}</span>
               ))}
             </div>
           </button>

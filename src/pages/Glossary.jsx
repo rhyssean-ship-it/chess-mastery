@@ -19,7 +19,7 @@ export default function Glossary() {
   return (
     <div className="page-enter max-w-4xl mx-auto px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Chess Glossary</h1>
-      <p className="text-text-dim text-sm mb-6">Every chess term explained with examples.</p>
+      <p className="text-text-dim text-base mb-6">Every chess term explained with examples.</p>
 
       {/* Search & filter */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
@@ -48,8 +48,8 @@ export default function Glossary() {
               className="w-full px-5 py-4 text-left flex items-center justify-between hover:bg-bg-hover/30 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <h3 className="font-display text-[15px] font-semibold">{term.term}</h3>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-bg-hover text-text-dim">{term.category}</span>
+                <h3 className="font-display text-base font-semibold">{term.term}</h3>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-bg-hover text-text-dim">{term.category}</span>
               </div>
               <svg className={`w-4 h-4 text-text-dim transition-transform ${expanded === term.id ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
@@ -58,12 +58,12 @@ export default function Glossary() {
 
             {expanded === term.id && (
               <div className="px-5 pb-5 border-t border-bg-hover/50" style={{ animation: 'cardFadeUp 200ms ease-out' }}>
-                <p className="text-sm text-text-dim leading-relaxed mt-4 mb-3">{term.definition}</p>
+                <p className="text-base text-text-dim leading-relaxed mt-4 mb-3">{term.definition}</p>
 
                 {term.example && (
                   <div className="bg-bg-hover/30 rounded-lg p-4 mb-3">
                     <p className="text-xs text-text-dim uppercase tracking-wider mb-1 font-medium">Example</p>
-                    <p className="text-sm text-text-dim">{term.example}</p>
+                    <p className="text-base text-text-dim">{term.example}</p>
                   </div>
                 )}
 

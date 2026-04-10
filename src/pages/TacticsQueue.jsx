@@ -128,7 +128,7 @@ export default function TacticsQueue() {
     return (
       <div className="page-enter max-w-3xl mx-auto px-6 py-16 text-center">
         <h1 className="text-3xl font-display text-gold mb-1">Tactics</h1>
-        <p className="text-text-dim text-sm mb-8">Sharpen your tactical eye with daily puzzles.</p>
+        <p className="text-text-dim text-base mb-8">Sharpen your tactical eye with daily puzzles.</p>
         <p className="text-text-dim text-lg">♟️ You're all caught up! No puzzles due right now — take a well-earned rest and come back tomorrow for a fresh set of challenges.</p>
       </div>
     );
@@ -151,7 +151,7 @@ export default function TacticsQueue() {
   return (
     <div className="page-enter max-w-5xl mx-auto px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Tactics</h1>
-      <p className="text-text-dim text-sm mb-8">Sharpen your tactical eye with daily puzzles.</p>
+      <p className="text-text-dim text-base mb-8">Sharpen your tactical eye with daily puzzles.</p>
 
       <ProgressBar value={queueIndex} max={queue.length} label="Today's Queue" className="mb-6" />
 
@@ -179,7 +179,7 @@ export default function TacticsQueue() {
 
           <div className="bg-bg-card border border-bg-hover rounded-xl p-4">
             <p className="text-sm font-semibold mb-1">{turnColor === 'white' ? 'White' : 'Black'} to move</p>
-            <p className="text-text-dim text-sm">Find the best continuation.</p>
+            <p className="text-text-dim text-base">Find the best continuation.</p>
           </div>
 
           {solveState === 'playing' && (
@@ -195,7 +195,7 @@ export default function TacticsQueue() {
             <div className="space-y-3">
               <div className="bg-correct/10 border border-correct/30 rounded-xl p-4">
                 <p className="text-sm font-semibold text-correct mb-1">&#10003; Correct!</p>
-                <p className="text-sm text-text-dim">{puzzle.explanation}</p>
+                <p className="text-base text-text-dim">{puzzle.explanation}</p>
               </div>
               <RatingButtons onRate={handleRate} />
             </div>
@@ -205,7 +205,7 @@ export default function TacticsQueue() {
             <div className="space-y-3">
               <div className="bg-incorrect/10 border border-incorrect/30 rounded-xl p-4">
                 <p className="text-sm font-semibold text-incorrect mb-1">&#10007; Incorrect</p>
-                <p className="text-sm text-text-dim">That's not the best move.</p>
+                <p className="text-base text-text-dim">That's not the best move.</p>
               </div>
               <div className="flex gap-3">
                 <button onClick={tryAgain} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press">

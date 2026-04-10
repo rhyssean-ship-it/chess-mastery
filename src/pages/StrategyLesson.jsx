@@ -24,7 +24,7 @@ export default function StrategyLesson() {
     <div className="page-enter max-w-3xl mx-auto px-6 py-10">
       <Breadcrumb to="/strategy" label="Back to Strategy" />
       <h1 className="text-2xl font-display text-gold mb-1">{lesson.title}</h1>
-      <p className="text-text-dim text-sm mb-8">{lesson.difficulty} &middot; {lesson.readTime}</p>
+      <p className="text-text-dim text-base mb-8">{lesson.difficulty} &middot; {lesson.readTime}</p>
 
       <div className="space-y-6 leading-relaxed">
         {lesson.content.map((section, i) => {
@@ -42,7 +42,7 @@ export default function StrategyLesson() {
                     highlights={section.highlights || []}
                   />
                 </div>
-                {section.caption && <p className="text-sm text-text-dim text-center mt-2 italic">{section.caption}</p>}
+                {section.caption && <p className="text-base text-text-dim text-center mt-2 italic">{section.caption}</p>}
               </div>
             );
           }

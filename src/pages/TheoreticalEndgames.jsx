@@ -15,7 +15,7 @@ export default function TheoreticalEndgames() {
           <span>Back to Endgames</span>
         </button>
         <h1 className="text-2xl font-display text-gold mb-1">{eg.name}</h1>
-        <p className="text-text-dim text-sm mb-8">{eg.difficulty} &middot; Goal: {eg.goal === 'win' ? 'Win the position' : 'Hold the draw'}</p>
+        <p className="text-text-dim text-base mb-8">{eg.difficulty} &middot; Goal: {eg.goal === 'win' ? 'Win the position' : 'Hold the draw'}</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
           <div className="w-full max-w-[480px]">
@@ -23,11 +23,11 @@ export default function TheoreticalEndgames() {
           </div>
           <div className="space-y-4">
             <div className="card-base p-5">
-              <p className="text-sm text-text-dim leading-relaxed">{eg.description}</p>
+              <p className="text-base text-text-dim leading-relaxed">{eg.description}</p>
             </div>
             <div className="card-base p-5">
               <p className="text-xs text-text-dim uppercase tracking-wider mb-2 font-medium">Technique</p>
-              <p className="text-sm text-text-dim leading-relaxed">{eg.technique}</p>
+              <p className="text-base text-text-dim leading-relaxed">{eg.technique}</p>
             </div>
 
             {!showSolution ? (
@@ -40,7 +40,7 @@ export default function TheoreticalEndgames() {
                     <span key={i} className="px-2.5 py-1 rounded bg-gold/10 text-gold text-sm font-mono border border-gold/20">{m}</span>
                   ))}
                 </div>
-                <ul className="text-sm text-text-dim space-y-1">
+                <ul className="text-base text-text-dim space-y-1">
                   {eg.keyPoints.map((p, i) => <li key={i} className="flex gap-2"><span className="text-gold/50">&#9670;</span>{p}</li>)}
                 </ul>
               </div>
@@ -54,12 +54,12 @@ export default function TheoreticalEndgames() {
   return (
     <div className="page-enter max-w-6xl mx-auto px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Theoretical Endgames</h1>
-      <p className="text-text-dim text-sm mb-8">Must-know endgame positions every player should master.</p>
+      <p className="text-text-dim text-base mb-8">Must-know endgame positions every player should master.</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {theoreticalEndgames.map((eg, i) => (
           <button key={eg.id} onClick={() => setSelected(i)} className="card-base p-5 text-left card-hover card-stagger hover:border-gold/20 btn-press">
-            <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${eg.goal === 'win' ? 'bg-correct/20 text-correct' : 'bg-amber/20 text-amber'}`}>{eg.goal === 'win' ? 'Win' : 'Draw'}</span>
-            <h3 className="font-display text-[15px] font-semibold mt-2 mb-1">{eg.name}</h3>
+            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${eg.goal === 'win' ? 'bg-correct/20 text-correct' : 'bg-amber/20 text-amber'}`}>{eg.goal === 'win' ? 'Win' : 'Draw'}</span>
+            <h3 className="font-display text-base font-semibold mt-2 mb-1">{eg.name}</h3>
             <p className="text-xs text-text-dim">{eg.difficulty}</p>
           </button>
         ))}

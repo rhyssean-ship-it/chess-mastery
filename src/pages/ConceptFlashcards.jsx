@@ -43,7 +43,7 @@ export default function ConceptFlashcards() {
   return (
     <div className="page-enter max-w-3xl mx-auto px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Concept Flashcards</h1>
-      <p className="text-text-dim text-sm mb-6">Review key chess concepts with spaced repetition.</p>
+      <p className="text-text-dim text-base mb-6">Review key chess concepts with spaced repetition.</p>
 
       {/* Filters */}
       <div className="flex flex-wrap gap-2 mb-6">
@@ -70,11 +70,11 @@ export default function ConceptFlashcards() {
         ) : (
           <div className="text-center" style={{ animation: 'cardFadeUp 200ms ease-out' }}>
             <p className="text-xs text-gold uppercase tracking-wider mb-4">Answer</p>
-            <p className="text-sm text-text-dim leading-relaxed">{card.back}</p>
+            <p className="text-base text-text-dim leading-relaxed">{card.back}</p>
           </div>
         )}
         <div className="absolute top-4 right-4 flex items-center gap-2">
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-bg-hover text-text-dim">{card.category}</span>
+          <span className="text-xs px-2 py-0.5 rounded-full bg-bg-hover text-text-dim">{card.category}</span>
           {mastered.includes(card.id) && <span className="text-correct text-xs">&#10003;</span>}
         </div>
       </div>

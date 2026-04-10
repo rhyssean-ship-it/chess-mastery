@@ -58,7 +58,7 @@ export default function Home() {
               <div className={`card-base p-5 text-left card-hover hover:border-gold/20 bg-gradient-to-br ${s.color}`}>
                 <span className="text-2xl block mb-2">{s.icon}</span>
                 <h3 className="font-display text-sm font-semibold">{s.label}</h3>
-                <p className="text-xs text-text-dim mt-0.5">{s.desc}</p>
+                <p className="text-sm text-text-dim mt-0.5">{s.desc}</p>
               </div>
             </Link>
           ))}
@@ -76,12 +76,12 @@ export default function Home() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-display text-gold mb-0.5">Dashboard</h1>
-          <p className="text-text-dim text-sm">Your chess training hub.</p>
+          <p className="text-text-dim text-base">Your chess training hub.</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="text-right">
             <div className="text-xl font-bold text-gold tabular-nums">{streak}</div>
-            <div className="text-[10px] text-text-dim uppercase tracking-wider">day streak</div>
+            <div className="text-xs text-text-dim uppercase tracking-wider">day streak</div>
           </div>
         </div>
       </div>
@@ -112,7 +112,7 @@ export default function Home() {
           <Link key={i} to={s.to} className="no-underline card-stagger" style={{ animationDelay: `${i * 50}ms` }}>
             <div className={`card-base p-4 text-center card-hover ${s.accent ? 'accent-border-left' : ''}`}>
               <div className={`text-xl font-bold stat-animate tabular-nums ${s.accent ? 'text-gold' : ''}`}>{s.value}</div>
-              <div className="text-[10px] text-text-dim mt-1 uppercase tracking-wider">{s.label}</div>
+              <div className="text-xs text-text-dim mt-1 uppercase tracking-wider">{s.label}</div>
             </div>
           </Link>
         ))}
@@ -136,7 +136,7 @@ export default function Home() {
                   <div className="card-base p-4 card-hover hover:border-gold/20 text-center">
                     <div className="text-lg mb-1">{s.icon}</div>
                     <div className="text-xs font-semibold mb-0.5">{s.label}</div>
-                    <div className="text-[10px] text-text-dim tabular-nums">{s.count}</div>
+                    <div className="text-xs text-text-dim tabular-nums">{s.count}</div>
                   </div>
                 </Link>
               ))}
@@ -158,7 +158,7 @@ export default function Home() {
                 <Link key={i} to={s.to} className="no-underline card-stagger" style={{ animationDelay: `${i * 30}ms` }}>
                   <div className="card-base p-4 card-hover hover:border-gold/20">
                     <div className="text-xs font-semibold mb-0.5">{s.label}</div>
-                    <div className="text-[10px] text-text-dim">{s.desc}</div>
+                    <div className="text-xs text-text-dim">{s.desc}</div>
                   </div>
                 </Link>
               ))}
@@ -181,7 +181,7 @@ export default function Home() {
               ].map((s, i) => (
                 <Link key={i} to={s.to} className="no-underline">
                   <div className="card-base px-3 py-2.5 card-hover hover:border-gold/20 text-center">
-                    <div className="text-[11px] font-medium">{s.label}</div>
+                    <div className="text-xs font-medium">{s.label}</div>
                   </div>
                 </Link>
               ))}
@@ -202,7 +202,7 @@ export default function Home() {
             ) : (
               <div className="space-y-1.5">
                 {recentActivity.map((a, i) => (
-                  <div key={i} className="card-base !rounded-lg px-3 py-2 flex justify-between text-[11px] card-stagger" style={{ animationDelay: `${i * 30}ms` }}>
+                  <div key={i} className="card-base !rounded-lg px-3 py-2 flex justify-between text-xs card-stagger" style={{ animationDelay: `${i * 30}ms` }}>
                     <span className="truncate mr-2 text-text-dim">{a.action}</span>
                     <span className="text-text-dim/50 whitespace-nowrap tabular-nums">{new Date(a.date).toLocaleDateString()}</span>
                   </div>
@@ -214,7 +214,7 @@ export default function Home() {
           {/* Quote */}
           <div className="card-base p-5">
             <div className="text-gold/20 text-3xl font-display leading-none mb-1">"</div>
-            <p className="italic text-text-dim text-sm leading-relaxed mb-2">{quote.text}</p>
+            <p className="italic text-text-dim text-base leading-relaxed mb-2">{quote.text}</p>
             <p className="text-gold text-xs not-italic font-medium">— {quote.author}</p>
           </div>
 
@@ -227,7 +227,7 @@ export default function Home() {
               </svg>
               <div>
                 <div className="text-xs font-semibold">Full Progress Dashboard</div>
-                <div className="text-[10px] text-text-dim">Detailed stats and analytics</div>
+                <div className="text-xs text-text-dim">Detailed stats and analytics</div>
               </div>
             </div>
           </Link>

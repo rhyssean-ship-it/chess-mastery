@@ -18,7 +18,7 @@ export default function OpeningTraps() {
           <span>Back to Traps</span>
         </button>
         <h1 className="text-2xl font-display text-gold mb-1">{trap.name}</h1>
-        <p className="text-text-dim text-sm mb-8">{trap.opening} &middot; {trap.difficulty}</p>
+        <p className="text-text-dim text-base mb-8">{trap.opening} &middot; {trap.difficulty}</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
           <div className="w-full max-w-[480px]">
@@ -26,7 +26,7 @@ export default function OpeningTraps() {
           </div>
           <div className="space-y-4">
             <div className="card-base p-5">
-              <p className="text-sm text-text-dim leading-relaxed">{trap.description}</p>
+              <p className="text-base text-text-dim leading-relaxed">{trap.description}</p>
             </div>
 
             {!showTrap ? (
@@ -37,11 +37,11 @@ export default function OpeningTraps() {
               <>
                 <div className="card-base p-5 border-gold/20">
                   <p className="text-gold font-semibold text-sm mb-2">The Trap: {trap.trapMove}</p>
-                  <p className="text-sm text-text-dim leading-relaxed">{trap.explanation}</p>
+                  <p className="text-base text-text-dim leading-relaxed">{trap.explanation}</p>
                 </div>
                 <div className="card-base p-5">
                   <p className="text-xs text-text-dim uppercase tracking-wider mb-2 font-medium">How to Avoid</p>
-                  <p className="text-sm text-text-dim">{trap.howToAvoid}</p>
+                  <p className="text-base text-text-dim">{trap.howToAvoid}</p>
                 </div>
               </>
             )}
@@ -54,16 +54,16 @@ export default function OpeningTraps() {
   return (
     <div className="page-enter max-w-6xl mx-auto px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Opening Traps</h1>
-      <p className="text-text-dim text-sm mb-8">Learn common traps — and how to avoid falling into them.</p>
+      <p className="text-text-dim text-base mb-8">Learn common traps — and how to avoid falling into them.</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {openingTraps.map((trap, i) => (
           <button key={trap.id} onClick={() => setSelected(i)} className="card-base p-5 text-left card-hover card-stagger hover:border-gold/20 btn-press">
             <div className="flex items-center gap-2 mb-2">
-              <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${diffColors[trap.difficulty]}`}>{trap.difficulty}</span>
-              <span className="text-[11px] text-text-dim">{trap.opening}</span>
+              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${diffColors[trap.difficulty]}`}>{trap.difficulty}</span>
+              <span className="text-xs text-text-dim">{trap.opening}</span>
             </div>
-            <h3 className="font-display text-[15px] font-semibold mb-1">{trap.name}</h3>
-            <p className="text-sm text-text-dim line-clamp-2">{trap.description}</p>
+            <h3 className="font-display text-base font-semibold mb-1">{trap.name}</h3>
+            <p className="text-base text-text-dim line-clamp-2">{trap.description}</p>
           </button>
         ))}
       </div>

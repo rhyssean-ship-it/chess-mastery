@@ -62,7 +62,7 @@ export default function PracticalEndgames() {
   return (
     <div className="page-enter max-w-5xl mx-auto px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Practical Endgames</h1>
-      <p className="text-text-dim text-sm mb-8">Find the winning or drawing move from real endgame positions.</p>
+      <p className="text-text-dim text-base mb-8">Find the winning or drawing move from real endgame positions.</p>
 
       <div className="text-sm text-text-dim mb-6">Puzzle {idx + 1}/{shuffled.length} &middot; Score: {score}</div>
 
@@ -72,12 +72,12 @@ export default function PracticalEndgames() {
         </div>
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <span className="text-[11px] px-2 py-0.5 rounded-full bg-bg-hover text-text-dim">{puzzle.theme}</span>
-            <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber/20 text-amber">{puzzle.difficulty}</span>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-bg-hover text-text-dim">{puzzle.theme}</span>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-amber/20 text-amber">{puzzle.difficulty}</span>
           </div>
           <div className="card-base p-5">
             <p className="text-sm font-semibold mb-1">{turnColor === 'white' ? 'White' : 'Black'} to move</p>
-            <p className="text-text-dim text-sm">Find the best move.</p>
+            <p className="text-text-dim text-base">Find the best move.</p>
           </div>
 
           {state === 'playing' && (
@@ -90,7 +90,7 @@ export default function PracticalEndgames() {
             <div className="space-y-3">
               <div className="bg-correct/10 border border-correct/30 rounded-xl p-4">
                 <p className="text-sm font-semibold text-correct mb-1">&#10003; Correct!</p>
-                <p className="text-sm text-text-dim">{puzzle.explanation}</p>
+                <p className="text-base text-text-dim">{puzzle.explanation}</p>
               </div>
               {idx + 1 < shuffled.length && (
                 <button onClick={next} className="w-full bg-gold text-bg py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">Next Puzzle</button>
@@ -102,7 +102,7 @@ export default function PracticalEndgames() {
             <div className="space-y-3">
               <div className="bg-incorrect/10 border border-incorrect/30 rounded-xl p-4">
                 <p className="text-sm font-semibold text-incorrect mb-1">&#10007; Incorrect</p>
-                <p className="text-sm text-text-dim">{puzzle.explanation}</p>
+                <p className="text-base text-text-dim">{puzzle.explanation}</p>
               </div>
               <button onClick={retry} className="w-full py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press">Try Again</button>
             </div>

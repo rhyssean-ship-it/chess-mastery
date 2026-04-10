@@ -55,7 +55,7 @@ export default function CalculationTrainer() {
   return (
     <div className="page-enter max-w-5xl mx-auto px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Calculation Trainer</h1>
-      <p className="text-text-dim text-sm mb-8">Calculate sequences without moving pieces on the board.</p>
+      <p className="text-text-dim text-base mb-8">Calculate sequences without moving pieces on the board.</p>
 
       <div className="flex items-center gap-3 mb-6 text-sm text-text-dim">
         <span>Exercise {currentIdx + 1}/{shuffled.length}</span>
@@ -70,8 +70,8 @@ export default function CalculationTrainer() {
 
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${diffColors[drill.difficulty]}`}>{drill.difficulty}</span>
-            <span className="text-[11px] text-text-dim">Depth: {drill.depth} move{drill.depth > 1 ? 's' : ''}</span>
+            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${diffColors[drill.difficulty]}`}>{drill.difficulty}</span>
+            <span className="text-xs text-text-dim">Depth: {drill.depth} move{drill.depth > 1 ? 's' : ''}</span>
           </div>
 
           <div className="card-base p-5">
@@ -103,7 +103,7 @@ export default function CalculationTrainer() {
             <>
               <div className="card-base p-5 border-gold/20">
                 <p className="text-gold font-semibold text-xs uppercase tracking-wider mb-2">Answer</p>
-                <p className="text-sm text-text-dim leading-relaxed mb-3">{drill.answer}</p>
+                <p className="text-base text-text-dim leading-relaxed mb-3">{drill.answer}</p>
                 <p className="text-xs text-text-dim/70 italic">{drill.sequenceExplanation}</p>
               </div>
 

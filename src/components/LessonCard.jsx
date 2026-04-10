@@ -16,14 +16,14 @@ export default function LessonCard({ to, title, description, difficulty, readTim
           </div>
         )}
         <div className="flex items-center gap-2 mb-2.5">
-          <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${difficultyColors[difficulty] || 'bg-bg-hover text-text-dim'}`}>
+          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${difficultyColors[difficulty] || 'bg-bg-hover text-text-dim'}`}>
             {difficulty}
           </span>
-          {readTime && <span className="text-[11px] text-text-dim">{readTime}</span>}
-          {completed && <span className="text-[11px] text-correct ml-auto font-medium">&#10003; Done</span>}
+          {readTime && <span className="text-xs text-text-dim">{readTime}</span>}
+          {completed && <span className="text-xs text-correct ml-auto font-medium">&#10003; Done</span>}
         </div>
-        <h3 className="font-display text-[15px] font-semibold mb-1.5 group-hover:text-gold transition-colors duration-200">{title}</h3>
-        {description && <p className="text-sm text-text-dim leading-relaxed line-clamp-2">{description}</p>}
+        <h3 className="font-display text-base font-semibold mb-1.5 group-hover:text-gold transition-colors duration-200">{title}</h3>
+        {description && <p className="text-base text-text-dim leading-relaxed line-clamp-2">{description}</p>}
       </div>
     </Link>
   );

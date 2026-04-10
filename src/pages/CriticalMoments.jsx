@@ -57,7 +57,7 @@ export default function CriticalMoments() {
   return (
     <div className="page-enter max-w-5xl mx-auto px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Critical Moments</h1>
-      <p className="text-text-dim text-sm mb-8">What's the best plan? Test your positional evaluation.</p>
+      <p className="text-text-dim text-base mb-8">What's the best plan? Test your positional evaluation.</p>
 
       <div className="flex items-center gap-3 mb-6 text-sm text-text-dim">
         <span>Question {currentIndex + 1}/{shuffled.length}</span>
@@ -72,8 +72,8 @@ export default function CriticalMoments() {
 
         <div className="space-y-4">
           <div className="flex items-center gap-2 mb-1">
-            <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${diffColors[puzzle.difficulty] || ''}`}>{puzzle.difficulty}</span>
-            <span className="text-[11px] px-2 py-0.5 rounded-full bg-bg-hover text-text-dim">{puzzle.theme}</span>
+            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${diffColors[puzzle.difficulty] || ''}`}>{puzzle.difficulty}</span>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-bg-hover text-text-dim">{puzzle.theme}</span>
           </div>
 
           <p className="font-semibold text-sm">{puzzle.question}</p>

@@ -42,7 +42,7 @@ export default function MoveOrderQuiz() {
   return (
     <div className="page-enter max-w-5xl mx-auto px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Move Order Quiz</h1>
-      <p className="text-text-dim text-sm mb-8">Test your knowledge of opening move orders.</p>
+      <p className="text-text-dim text-base mb-8">Test your knowledge of opening move orders.</p>
 
       <div className="text-sm text-text-dim mb-6">Question {idx + 1}/{shuffled.length} &middot; Score: {score}</div>
 
