@@ -126,7 +126,7 @@ export default function TacticsQueue() {
 
   if (queue.length === 0) {
     return (
-      <div className="page-enter max-w-3xl mx-auto px-6 py-16 text-center">
+      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center">
         <h1 className="text-3xl font-display text-gold mb-1">Tactics</h1>
         <p className="text-text-dim text-base mb-8">Sharpen your tactical eye with daily puzzles.</p>
         <p className="text-text-dim text-lg">♟️ You're all caught up! No puzzles due right now — take a well-earned rest and come back tomorrow for a fresh set of challenges.</p>
@@ -136,10 +136,10 @@ export default function TacticsQueue() {
 
   if (queueIndex >= queue.length) {
     return (
-      <div className="page-enter max-w-3xl mx-auto px-6 py-16 text-center">
+      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center">
         <h1 className="text-3xl font-display text-gold mb-1">Session Complete</h1>
         <p className="text-text-dim text-base mb-8">You've finished all due puzzles for today. Great work!</p>
-        <button onClick={() => { setQueueIndex(0); resetToPuzzle(queue[0]); }} className="bg-gold text-bg px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
+        <button onClick={() => { setQueueIndex(0); resetToPuzzle(queue[0]); }} className="bg-gold text-bg px-4 sm:px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
           Restart Session
         </button>
       </div>
@@ -149,13 +149,13 @@ export default function TacticsQueue() {
   const turnColor = puzzle.sideToMove === 'white' ? 'white' : 'black';
 
   return (
-    <div className="page-enter max-w-5xl mx-auto px-6 py-10">
+    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Tactics</h1>
       <p className="text-text-dim text-base mb-8">Sharpen your tactical eye with daily puzzles.</p>
 
       <ProgressBar value={queueIndex} max={queue.length} label="Today's Queue" className="mb-6" />
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_280px] lg:grid-cols-[1fr_320px] gap-6">
         {/* Board */}
         <div className="w-full max-w-[560px]">
           <div className={`rounded-xl transition-shadow duration-300 ${flash === 'correct' ? 'shadow-[0_0_30px_rgba(76,175,80,0.4)]' : flash === 'incorrect' ? 'shadow-[0_0_30px_rgba(229,115,115,0.4)]' : ''}`}>

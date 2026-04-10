@@ -59,14 +59,14 @@ export default function ProgressDashboard() {
   }
 
   return (
-    <div className="page-enter max-w-4xl mx-auto px-6 py-10">
+    <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Progress Dashboard</h1>
       <p className="text-text-dim text-base mb-8">Track your chess improvement over time.</p>
 
       {/* Tactics */}
       <section className="mb-6">
         <h2 className="text-xl font-display mb-4">Tactics Stats</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-5">
           {[
             { value: puzzleStats.total, label: 'Puzzles Solved', accent: false },
             { value: `${overallAccuracy}%`, label: 'Accuracy', accent: false },
@@ -92,7 +92,7 @@ export default function ProgressDashboard() {
       {/* Openings */}
       <section className="mb-6">
         <h2 className="text-xl font-display mb-4">Openings Progress</h2>
-        <div className="card-base overflow-hidden">
+        <div className="card-base overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-bg-hover text-text-dim text-xs uppercase tracking-wider">

@@ -12,7 +12,7 @@ export default function OpeningTraps() {
 
   if (trap) {
     return (
-      <div className="page-enter max-w-5xl mx-auto px-6 py-10">
+      <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-10">
         <button onClick={() => { setSelected(null); setShowTrap(false); }} className="inline-flex items-center gap-1.5 text-text-dim hover:text-gold text-sm mb-5 group transition-colors">
           <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform"><path fillRule="evenodd" d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" clipRule="evenodd" /></svg>
           <span>Back to Traps</span>
@@ -20,7 +20,7 @@ export default function OpeningTraps() {
         <h1 className="text-2xl font-display text-gold mb-1">{trap.name}</h1>
         <p className="text-text-dim text-base mb-8">{trap.opening} &middot; {trap.difficulty}</p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] lg:grid-cols-[1fr_360px] gap-8">
           <div className="w-full max-w-[480px]">
             <ChessBoard fen={showTrap ? trap.fenAfterTrap : trap.fen} movable={false} />
           </div>
@@ -52,7 +52,7 @@ export default function OpeningTraps() {
   }
 
   return (
-    <div className="page-enter max-w-6xl mx-auto px-6 py-10">
+    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Opening Traps</h1>
       <p className="text-text-dim text-base mb-8">Learn common traps — and how to avoid falling into them.</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">

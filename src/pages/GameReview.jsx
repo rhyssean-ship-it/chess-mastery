@@ -115,17 +115,17 @@ export default function GameReview() {
 
   if (!loaded) {
     return (
-      <div className="page-enter max-w-3xl mx-auto px-6 py-10">
+      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-10">
         <h1 className="text-3xl font-display text-gold mb-1">Game Review</h1>
         <p className="text-text-dim text-base mb-8">Paste a PGN string to load and annotate your game.</p>
         <textarea
           value={pgnInput}
           onChange={e => setPgnInput(e.target.value)}
           placeholder="Paste PGN here..."
-          className="w-full h-48 card-base p-4 text-text text-sm font-mono resize-none focus:outline-none focus:border-gold/50"
+          className="w-full h-32 sm:h-48 card-base p-4 text-text text-sm font-mono resize-none focus:outline-none focus:border-gold/50"
         />
         {error && <p className="text-incorrect text-sm mt-2">{error}</p>}
-        <button onClick={loadGame} className="mt-4 bg-gold text-bg px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
+        <button onClick={loadGame} className="mt-4 bg-gold text-bg px-4 sm:px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
           Load Game
         </button>
       </div>
@@ -139,12 +139,12 @@ export default function GameReview() {
   }));
 
   return (
-    <div className="page-enter max-w-6xl mx-auto px-6 py-10">
+    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-10">
       <button onClick={() => setLoaded(false)} className="inline-flex items-center gap-1.5 text-text-dim hover:text-gold text-sm mb-5 group transition-colors"><svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform"><path fillRule="evenodd" d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" clipRule="evenodd" /></svg><span>Load Another Game</span></button>
       <h1 className="text-2xl font-display text-gold mb-1">Game Review</h1>
       <p className="text-text-dim text-base mb-8">Annotate and study your games move by move.</p>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] lg:grid-cols-[1fr_360px] gap-6">
         <div className="w-full max-w-[560px]">
           <ChessBoard fen={currentFen} movable={false} lastMove={lastMove} />
 

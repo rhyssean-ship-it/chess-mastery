@@ -52,11 +52,11 @@ export default function PatternRecognition() {
 
   if (phase === 'done') {
     return (
-      <div className="page-enter max-w-3xl mx-auto px-6 py-16 text-center">
+      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center">
         <h1 className="text-3xl font-display text-gold mb-4">Results</h1>
         <p className="text-2xl font-bold mb-2 tabular-nums">{score}/{shuffled.length}</p>
         <p className="text-text-dim mb-6">{score >= 5 ? 'Excellent positional intuition!' : score >= 3 ? 'Good eye! Keep practicing.' : 'Study more positions to improve your evaluation.'}</p>
-        <button onClick={() => { setCurrentIdx(0); setAnswer(null); setScore(0); setTimer(8); setPhase('viewing'); }} className="bg-gold text-bg px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
+        <button onClick={() => { setCurrentIdx(0); setAnswer(null); setScore(0); setTimer(8); setPhase('viewing'); }} className="bg-gold text-bg px-4 sm:px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
           Try Again
         </button>
       </div>
@@ -64,7 +64,7 @@ export default function PatternRecognition() {
   }
 
   return (
-    <div className="page-enter max-w-5xl mx-auto px-6 py-10">
+    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Pattern Recognition</h1>
       <p className="text-text-dim text-base mb-8">Evaluate the position quickly — who stands better?</p>
 
@@ -74,7 +74,7 @@ export default function PatternRecognition() {
         <span className="tabular-nums">Score: {score}</span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] lg:grid-cols-[1fr_360px] gap-8">
         <div className="w-full max-w-[480px]">
           <ChessBoard fen={pos.fen} movable={false} />
         </div>

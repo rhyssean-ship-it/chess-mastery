@@ -43,11 +43,11 @@ export default function CriticalMoments() {
 
   if (finished) {
     return (
-      <div className="page-enter max-w-3xl mx-auto px-6 py-16 text-center">
+      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center">
         <h1 className="text-3xl font-display text-gold mb-4">Session Complete</h1>
         <p className="text-2xl font-bold mb-2 tabular-nums">{score}/{total}</p>
         <p className="text-text-dim mb-6">{score === total ? 'Perfect positional judgment!' : 'Keep studying to sharpen your evaluation skills.'}</p>
-        <button onClick={() => { setCurrentIndex(0); setSelected(null); setScore(0); setTotal(0); setFinished(false); }} className="bg-gold text-bg px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
+        <button onClick={() => { setCurrentIndex(0); setSelected(null); setScore(0); setTotal(0); setFinished(false); }} className="bg-gold text-bg px-4 sm:px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
           Try Again
         </button>
       </div>
@@ -55,7 +55,7 @@ export default function CriticalMoments() {
   }
 
   return (
-    <div className="page-enter max-w-5xl mx-auto px-6 py-10">
+    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Critical Moments</h1>
       <p className="text-text-dim text-base mb-8">What's the best plan? Test your positional evaluation.</p>
 
@@ -65,7 +65,7 @@ export default function CriticalMoments() {
         <span className="tabular-nums">Score: {score}/{total}</span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_340px] lg:grid-cols-[1fr_400px] gap-8">
         <div className="w-full max-w-[480px]">
           <ChessBoard fen={puzzle.fen} movable={false} />
         </div>

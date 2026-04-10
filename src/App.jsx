@@ -1,36 +1,55 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Nav from './components/Nav'
-// Home removed — landing on Daily Challenge
-import OpeningsIndex from './pages/OpeningsIndex'
-import OpeningTrainer from './pages/OpeningTrainer'
-import TacticsQueue from './pages/TacticsQueue'
-import StrategyIndex from './pages/StrategyIndex'
-import StrategyLesson from './pages/StrategyLesson'
-import EndgameIndex from './pages/EndgameIndex'
-import EndgameLesson from './pages/EndgameLesson'
-import RepertoireBuilder from './pages/RepertoireBuilder'
-import VisualisationDrills from './pages/VisualisationDrills'
-import GameReview from './pages/GameReview'
-import ProgressDashboard from './pages/ProgressDashboard'
-import { PlanIndex, PlanDetail } from './pages/MiddlegamePlans'
-import CriticalMoments from './pages/CriticalMoments'
-import PatternRecognition from './pages/PatternRecognition'
-import { GamesIndex, GameViewer } from './pages/MasterGames'
-import PawnStructures from './pages/PawnStructures'
-import CalculationTrainer from './pages/CalculationTrainer'
-import OpeningTraps from './pages/OpeningTraps'
-import MoveOrderQuiz from './pages/MoveOrderQuiz'
-import TheoreticalEndgames from './pages/TheoreticalEndgames'
-import PracticalEndgames from './pages/PracticalEndgames'
-import DailyChallenge from './pages/DailyChallenge'
-import WeaknessAnalyzer from './pages/WeaknessAnalyzer'
-import ConceptFlashcards from './pages/ConceptFlashcards'
-import Glossary from './pages/Glossary'
-import Settings from './pages/Settings'
-import PlayComputer from './pages/PlayComputer'
-import PracticePlay from './pages/PracticePlay'
-
 import { useTheme } from './hooks/useTheme'
+
+// Eagerly load the landing page
+import DailyChallenge from './pages/DailyChallenge'
+
+// Lazy load everything else
+const OpeningsIndex = lazy(() => import('./pages/OpeningsIndex'))
+const OpeningTrainer = lazy(() => import('./pages/OpeningTrainer'))
+const TacticsQueue = lazy(() => import('./pages/TacticsQueue'))
+const StrategyIndex = lazy(() => import('./pages/StrategyIndex'))
+const StrategyLesson = lazy(() => import('./pages/StrategyLesson'))
+const EndgameIndex = lazy(() => import('./pages/EndgameIndex'))
+const EndgameLesson = lazy(() => import('./pages/EndgameLesson'))
+const RepertoireBuilder = lazy(() => import('./pages/RepertoireBuilder'))
+const VisualisationDrills = lazy(() => import('./pages/VisualisationDrills'))
+const GameReview = lazy(() => import('./pages/GameReview'))
+const ProgressDashboard = lazy(() => import('./pages/ProgressDashboard'))
+const CriticalMoments = lazy(() => import('./pages/CriticalMoments'))
+const PatternRecognition = lazy(() => import('./pages/PatternRecognition'))
+const PawnStructures = lazy(() => import('./pages/PawnStructures'))
+const CalculationTrainer = lazy(() => import('./pages/CalculationTrainer'))
+const OpeningTraps = lazy(() => import('./pages/OpeningTraps'))
+const MoveOrderQuiz = lazy(() => import('./pages/MoveOrderQuiz'))
+const TheoreticalEndgames = lazy(() => import('./pages/TheoreticalEndgames'))
+const PracticalEndgames = lazy(() => import('./pages/PracticalEndgames'))
+const WeaknessAnalyzer = lazy(() => import('./pages/WeaknessAnalyzer'))
+const ConceptFlashcards = lazy(() => import('./pages/ConceptFlashcards'))
+const Glossary = lazy(() => import('./pages/Glossary'))
+const Settings = lazy(() => import('./pages/Settings'))
+const PlayComputer = lazy(() => import('./pages/PlayComputer'))
+const PracticePlay = lazy(() => import('./pages/PracticePlay'))
+
+// Named exports need wrapper
+const MiddlegamePlans = lazy(() => import('./pages/MiddlegamePlans').then(m => ({ default: m.PlanIndex })))
+const MiddlegamePlanDetail = lazy(() => import('./pages/MiddlegamePlans').then(m => ({ default: m.PlanDetail })))
+const MasterGamesIndex = lazy(() => import('./pages/MasterGames').then(m => ({ default: m.GamesIndex })))
+const MasterGameViewer = lazy(() => import('./pages/MasterGames').then(m => ({ default: m.GameViewer })))
+
+function Loading() {
+  return (
+    <div className="flex items-center justify-center min-h-[50vh]">
+      <div className="flex gap-1.5">
+        <div className="w-2.5 h-2.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '0ms' }} />
+        <div className="w-2.5 h-2.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '150ms' }} />
+        <div className="w-2.5 h-2.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '300ms' }} />
+      </div>
+    </div>
+  )
+}
 
 function App() {
   useTheme();
@@ -38,38 +57,40 @@ function App() {
     <div className="min-h-screen">
       <Nav />
       <main className="lg:ml-56 pt-14 lg:pt-0 min-h-screen">
-        <Routes>
-          <Route path="/" element={<DailyChallenge />} />
-          <Route path="/openings" element={<OpeningsIndex />} />
-          <Route path="/openings/:id" element={<OpeningTrainer />} />
-          <Route path="/opening-traps" element={<OpeningTraps />} />
-          <Route path="/move-order" element={<MoveOrderQuiz />} />
-          <Route path="/tactics" element={<TacticsQueue />} />
-          <Route path="/strategy" element={<StrategyIndex />} />
-          <Route path="/strategy/:id" element={<StrategyLesson />} />
-          <Route path="/endgames" element={<EndgameIndex />} />
-          <Route path="/endgames/:id" element={<EndgameLesson />} />
-          <Route path="/theoretical-endgames" element={<TheoreticalEndgames />} />
-          <Route path="/practical-endgames" element={<PracticalEndgames />} />
-          <Route path="/middlegame" element={<PlanIndex />} />
-          <Route path="/middlegame/:id" element={<PlanDetail />} />
-          <Route path="/critical-moments" element={<CriticalMoments />} />
-          <Route path="/pattern-recognition" element={<PatternRecognition />} />
-          <Route path="/master-games" element={<GamesIndex />} />
-          <Route path="/master-games/:id" element={<GameViewer />} />
-          <Route path="/pawn-structures" element={<PawnStructures />} />
-          <Route path="/calculation" element={<CalculationTrainer />} />
-          <Route path="/repertoire" element={<RepertoireBuilder />} />
-          <Route path="/visualisation" element={<VisualisationDrills />} />
-          <Route path="/game-review" element={<GameReview />} />
-          <Route path="/flashcards" element={<ConceptFlashcards />} />
-          <Route path="/glossary" element={<Glossary />} />
-          <Route path="/weakness" element={<WeaknessAnalyzer />} />
-          <Route path="/play" element={<PlayComputer />} />
-          <Route path="/practice-play" element={<PracticePlay />} />
-          <Route path="/progress" element={<ProgressDashboard />} />
-          <Route path="/settings" element={<Settings />} />
-        </Routes>
+        <Suspense fallback={<Loading />}>
+          <Routes>
+            <Route path="/" element={<DailyChallenge />} />
+            <Route path="/openings" element={<OpeningsIndex />} />
+            <Route path="/openings/:id" element={<OpeningTrainer />} />
+            <Route path="/opening-traps" element={<OpeningTraps />} />
+            <Route path="/move-order" element={<MoveOrderQuiz />} />
+            <Route path="/tactics" element={<TacticsQueue />} />
+            <Route path="/strategy" element={<StrategyIndex />} />
+            <Route path="/strategy/:id" element={<StrategyLesson />} />
+            <Route path="/endgames" element={<EndgameIndex />} />
+            <Route path="/endgames/:id" element={<EndgameLesson />} />
+            <Route path="/theoretical-endgames" element={<TheoreticalEndgames />} />
+            <Route path="/practical-endgames" element={<PracticalEndgames />} />
+            <Route path="/middlegame" element={<MiddlegamePlans />} />
+            <Route path="/middlegame/:id" element={<MiddlegamePlanDetail />} />
+            <Route path="/critical-moments" element={<CriticalMoments />} />
+            <Route path="/pattern-recognition" element={<PatternRecognition />} />
+            <Route path="/master-games" element={<MasterGamesIndex />} />
+            <Route path="/master-games/:id" element={<MasterGameViewer />} />
+            <Route path="/pawn-structures" element={<PawnStructures />} />
+            <Route path="/calculation" element={<CalculationTrainer />} />
+            <Route path="/repertoire" element={<RepertoireBuilder />} />
+            <Route path="/visualisation" element={<VisualisationDrills />} />
+            <Route path="/game-review" element={<GameReview />} />
+            <Route path="/flashcards" element={<ConceptFlashcards />} />
+            <Route path="/glossary" element={<Glossary />} />
+            <Route path="/weakness" element={<WeaknessAnalyzer />} />
+            <Route path="/play" element={<PlayComputer />} />
+            <Route path="/practice-play" element={<PracticePlay />} />
+            <Route path="/progress" element={<ProgressDashboard />} />
+            <Route path="/settings" element={<Settings />} />
+          </Routes>
+        </Suspense>
       </main>
     </div>
   )

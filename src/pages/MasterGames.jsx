@@ -9,7 +9,7 @@ import masterGames from '../data/masterGames';
 
 function GamesIndex() {
   return (
-    <div className="page-enter max-w-6xl mx-auto px-6 py-10">
+    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Annotated Master Games</h1>
       <p className="text-text-dim text-base mb-8">Study how the greatest players navigated complex positions.</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -43,7 +43,7 @@ function GameViewer() {
   }, [game]);
 
   if (!game) return (
-    <div className="page-enter max-w-4xl mx-auto px-6 py-10">
+    <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-10">
       <p className="text-text-dim">Game not found.</p>
     </div>
   );
@@ -63,13 +63,13 @@ function GameViewer() {
   const history = game.moves.map(m => ({ san: m.move, annotation: m.annotation }));
 
   return (
-    <div className="page-enter max-w-6xl mx-auto px-6 py-10">
+    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-10">
       <Breadcrumb to="/master-games" label="Back to Master Games" />
       <h1 className="text-2xl font-display text-gold mb-1">{game.white} vs {game.black}</h1>
       <p className="text-text-dim text-base mb-1">{game.event} &middot; Result: {game.result}</p>
       <p className="text-text text-sm mb-8">{game.description}</p>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_320px] lg:grid-cols-[1fr_380px] gap-8">
         <div className="w-full max-w-[560px]">
           <ChessBoard fen={currentFen} movable={false} lastMove={lastMove} />
 

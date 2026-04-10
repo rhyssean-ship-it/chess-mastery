@@ -17,7 +17,7 @@ export default function Glossary() {
   }, [search, filter]);
 
   return (
-    <div className="page-enter max-w-4xl mx-auto px-6 py-10">
+    <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Chess Glossary</h1>
       <p className="text-text-dim text-base mb-6">Every chess term explained with examples.</p>
 
@@ -47,7 +47,7 @@ export default function Glossary() {
               onClick={() => setExpanded(expanded === term.id ? null : term.id)}
               className="w-full px-5 py-4 text-left flex items-center justify-between hover:bg-bg-hover/30 transition-colors"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                 <h3 className="text-base font-semibold">{term.term}</h3>
                 <span className="text-xs px-2 py-0.5 rounded-full bg-bg-hover text-text-dim">{term.category}</span>
               </div>

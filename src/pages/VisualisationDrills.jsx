@@ -389,7 +389,7 @@ export default function VisualisationDrills() {
     const drill = drills.find(d => d.id === activeDrill);
     const DrillComponent = drill.Component;
     return (
-      <div className="page-enter max-w-4xl mx-auto px-6 py-10">
+      <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-10">
         <button onClick={() => setActiveDrill(null)} className="text-text-dim hover:text-gold text-sm mb-4 inline-block transition-all">&larr; Back to Drills</button>
         <h1 className="text-2xl font-display text-gold mb-1">{drill.name}</h1>
         <p className="text-text-dim text-base mb-8">Test your board visualisation skills.</p>
@@ -404,7 +404,7 @@ export default function VisualisationDrills() {
   }
 
   return (
-    <div className="page-enter max-w-4xl mx-auto px-6 py-10">
+    <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Visualisation Drills</h1>
       <p className="text-text-dim text-base mb-8">Train your ability to read the board.</p>
 

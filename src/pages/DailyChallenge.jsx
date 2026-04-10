@@ -66,7 +66,7 @@ export default function DailyChallenge() {
   if (phase === 'done') {
     const streak = progressService.getStreak();
     return (
-      <div className="page-enter max-w-3xl mx-auto px-6 py-16 text-center">
+      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center">
         <div className="text-5xl mb-4">&#9813;</div>
         <h1 className="text-3xl font-display text-gold mb-2">Daily Challenge Complete!</h1>
         <p className="text-text-dim mb-2">You've completed today's challenge.</p>
@@ -78,10 +78,10 @@ export default function DailyChallenge() {
 
   if (phase === 'critical') {
     return (
-      <div className="page-enter max-w-5xl mx-auto px-6 py-10">
+      <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-10">
         <h1 className="text-2xl font-display text-gold mb-1">Daily Challenge — Part 2</h1>
         <p className="text-text-dim text-base mb-8">Evaluate this position.</p>
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_340px] lg:grid-cols-[1fr_400px] gap-8">
           <div className="w-full max-w-[480px]">
             <ChessBoard fen={dailyCM.fen} movable={false} />
           </div>
@@ -113,10 +113,10 @@ export default function DailyChallenge() {
   }
 
   return (
-    <div className="page-enter max-w-5xl mx-auto px-6 py-10">
+    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-10">
       <h1 className="text-2xl font-display text-gold mb-1">Daily Challenge — Part 1</h1>
       <p className="text-text-dim text-base mb-8">Solve today's tactical puzzle.</p>
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_280px] lg:grid-cols-[1fr_320px] gap-8">
         <div className="w-full max-w-[480px]">
           <ChessBoard fen={fen} orientation={turnColor} movable={puzzleState === 'playing'} dests={puzzleState === 'playing' ? getLegalDests() : new Map()} turnColor={turnColor} onMove={handlePuzzleMove} />
         </div>

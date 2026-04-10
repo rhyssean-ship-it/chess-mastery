@@ -228,7 +228,7 @@ export default function PracticePlay() {
 
   if (phase === 'setup') {
     return (
-      <div className="page-enter max-w-2xl mx-auto px-6 py-10">
+      <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-10">
         <h1 className="text-3xl font-display text-gold mb-1">Practice Play</h1>
         <p className="text-text-dim text-base mb-10">Play a guided game with opening support, hints, and tactical alerts.</p>
 
@@ -300,7 +300,7 @@ export default function PracticePlay() {
   }
 
   return (
-    <div className="page-enter max-w-6xl mx-auto px-6 py-10">
+    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-10">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-2xl font-display text-gold mb-0.5">
@@ -322,7 +322,7 @@ export default function PracticePlay() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_280px] lg:grid-cols-[1fr_320px] gap-8">
         <div className="w-full max-w-[560px]">
           <div className="flex gap-2">
             {showEval && (

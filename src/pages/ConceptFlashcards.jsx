@@ -31,17 +31,17 @@ export default function ConceptFlashcards() {
 
   if (filtered.length === 0) {
     return (
-      <div className="page-enter max-w-3xl mx-auto px-6 py-16 text-center">
+      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center">
         <div className="text-5xl mb-4">&#9813;</div>
         <h1 className="text-3xl font-display text-gold mb-4">Concept Flashcards</h1>
         <p className="text-text-dim mb-4">{showMastered ? 'No cards in this category.' : 'You\'ve mastered all cards in this category!'}</p>
-        <button onClick={() => setShowMastered(true)} className="bg-gold text-bg px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">Show Mastered Cards</button>
+        <button onClick={() => setShowMastered(true)} className="bg-gold text-bg px-4 sm:px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">Show Mastered Cards</button>
       </div>
     );
   }
 
   return (
-    <div className="page-enter max-w-3xl mx-auto px-6 py-10">
+    <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Concept Flashcards</h1>
       <p className="text-text-dim text-base mb-6">Review key chess concepts with spaced repetition.</p>
 
@@ -60,7 +60,7 @@ export default function ConceptFlashcards() {
       </div>
 
       {/* Card */}
-      <div onClick={() => setFlipped(!flipped)} className="card-base p-8 min-h-[240px] flex flex-col justify-center cursor-pointer hover:border-gold/20 transition-all relative" style={{ perspective: '1000px' }}>
+      <div onClick={() => setFlipped(!flipped)} className="card-base p-5 sm:p-8 min-h-[200px] sm:min-h-[240px] flex flex-col justify-center cursor-pointer hover:border-gold/20 transition-all relative" style={{ perspective: '1000px' }}>
         {!flipped ? (
           <div className="text-center">
             <p className="text-xs text-text-dim uppercase tracking-wider mb-4">Question</p>

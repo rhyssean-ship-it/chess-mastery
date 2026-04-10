@@ -9,7 +9,7 @@ export default function TheoreticalEndgames() {
 
   if (eg) {
     return (
-      <div className="page-enter max-w-5xl mx-auto px-6 py-10">
+      <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-10">
         <button onClick={() => { setSelected(null); setShowSolution(false); }} className="inline-flex items-center gap-1.5 text-text-dim hover:text-gold text-sm mb-5 group transition-colors">
           <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform"><path fillRule="evenodd" d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" clipRule="evenodd" /></svg>
           <span>Back to Endgames</span>
@@ -17,7 +17,7 @@ export default function TheoreticalEndgames() {
         <h1 className="text-2xl font-display text-gold mb-1">{eg.name}</h1>
         <p className="text-text-dim text-base mb-8">{eg.difficulty} &middot; Goal: {eg.goal === 'win' ? 'Win the position' : 'Hold the draw'}</p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_320px] lg:grid-cols-[1fr_380px] gap-8">
           <div className="w-full max-w-[480px]">
             <ChessBoard fen={eg.fen} movable={false} />
           </div>
@@ -52,7 +52,7 @@ export default function TheoreticalEndgames() {
   }
 
   return (
-    <div className="page-enter max-w-6xl mx-auto px-6 py-10">
+    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Theoretical Endgames</h1>
       <p className="text-text-dim text-base mb-8">Must-know endgame positions every player should master.</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
