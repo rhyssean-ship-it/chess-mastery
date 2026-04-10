@@ -30,7 +30,10 @@ import Settings from './pages/Settings'
 import PlayComputer from './pages/PlayComputer'
 import PracticePlay from './pages/PracticePlay'
 
+import { useTheme } from './hooks/useTheme'
+
 function App() {
+  useTheme();
   return (
     <div className="min-h-screen">
       <Nav />

@@ -50,6 +50,33 @@ body::before {
   z-index: 0;
 }
 
+/* Light mode: hide noise, adjust shadows */
+[data-theme="light"] body::before {
+  opacity: 0;
+}
+
+[data-theme="light"] .board-frame {
+  border-color: #d4d0c8;
+}
+
+[data-theme="light"] .board-frame--interactive {
+  border-color: rgba(158, 126, 42, 0.3);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: #f5f3f0;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #d4d0c8;
+}
+
+[data-theme="light"] kbd {
+  background: #eae7e2;
+  border-color: #d4d0c8;
+  color: #6b6560;
+}
+
 #root {
   position: relative;
   z-index: 1;

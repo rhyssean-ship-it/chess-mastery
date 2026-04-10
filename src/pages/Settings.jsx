@@ -1,6 +1,8 @@
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useTheme } from '../hooks/useTheme';
 
 export default function Settings() {
+  const [theme, setTheme] = useTheme();
   const [settings, setSettings] = useLocalStorage('settings', {
     soundEnabled: false,
     showCoordinates: true,
@@ -16,6 +18,35 @@ export default function Settings() {
     <div className="page-enter max-w-2xl mx-auto px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Settings</h1>
       <p className="text-text-dim text-base mb-10">Customise your learning experience.</p>
+
+      {/* Appearance */}
+      <section className="mb-10">
+        <h2 className="text-xl font-display mb-4">Appearance</h2>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() => setTheme('dark')}
+            className={`card-base p-5 text-center btn-press transition-all ${theme === 'dark' ? '!border-gold/50 bg-gold/5' : 'hover:border-gold/20'}`}
+          >
+            <div className="w-full aspect-[3/2] rounded-lg overflow-hidden mb-3 mx-auto max-w-[120px] bg-[#0f1117] border border-[#252a35] flex items-center justify-center">
+              <div className="w-8 h-1 rounded bg-[#C9A84C]" />
+            </div>
+            <span className="text-base font-medium">Dark</span>
+            {theme === 'dark' && <div className="text-gold text-xs mt-1">&#10003; Active</div>}
+          </button>
+          <button
+            onClick={() => setTheme('light')}
+            className={`card-base p-5 text-center btn-press transition-all ${theme === 'light' ? '!border-gold/50 bg-gold/5' : 'hover:border-gold/20'}`}
+          >
+            <div className="w-full aspect-[3/2] rounded-lg overflow-hidden mb-3 mx-auto max-w-[120px] bg-[#f5f3f0] border border-[#eae7e2] flex items-center justify-center">
+              <div className="w-8 h-1 rounded bg-[#9e7e2a]" />
+            </div>
+            <span className="text-base font-medium">Light</span>
+            {theme === 'light' && <div className="text-gold text-xs mt-1">&#10003; Active</div>}
+          </button>
+        </div>
+      </section>
+
+      <hr className="section-divider" />
 
       {/* Preferences */}
       <section className="mb-10">
@@ -50,7 +81,7 @@ export default function Settings() {
         <h2 className="text-xl font-display mb-4">Data & Progress</h2>
         <div className="card-base p-5">
           <p className="text-base mb-1">All progress is stored locally in your browser.</p>
-          <p className="text-sm text-text-dim mb-4">Clearing your browser data will reset all progress. Export is coming soon.</p>
+          <p className="text-sm text-text-dim mb-4">Clearing your browser data will reset all progress.</p>
           <div className="flex gap-3">
             <button
               onClick={() => {
@@ -96,7 +127,7 @@ export default function Settings() {
         <h2 className="text-xl font-display mb-4">About</h2>
         <div className="card-base p-5">
           <p className="font-display text-gold text-lg font-bold mb-1">enPassant</p>
-          <p className="text-sm text-text-dim">A comprehensive chess learning platform. 23 interactive features covering openings, tactics, strategy, middlegame, endgames, and more.</p>
+          <p className="text-sm text-text-dim">A comprehensive chess learning platform with interactive features covering openings, tactics, strategy, middlegame, endgames, and more.</p>
           <p className="text-xs text-text-dim mt-3">All content runs locally. No account required. No data leaves your browser.</p>
         </div>
       </section>
