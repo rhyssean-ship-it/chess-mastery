@@ -199,7 +199,7 @@ export default function PlayComputer() {
                     playerColor === color ? 'bg-gold text-bg' : 'bg-bg-hover text-text-dim hover:text-text'
                   }`}
                 >
-                  {color === 'white' ? '&#9812; White' : '&#9818; Black'}
+                  {color === 'white' ? '\u2654 White' : '\u265A Black'}
                 </button>
               ))}
             </div>

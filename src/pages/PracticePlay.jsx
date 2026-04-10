@@ -252,8 +252,8 @@ export default function PracticePlay() {
               {['white', 'black'].map(color => (
                 <button key={color} onClick={() => setPlayerColor(color)}
                   className={`flex-1 py-3 rounded-lg text-base font-semibold transition-all btn-press ${playerColor === color ? 'bg-gold text-bg' : 'bg-bg-hover text-text-dim hover:text-text'}`}
-                  dangerouslySetInnerHTML={{ __html: color === 'white' ? '&#9812; White' : '&#9818; Black' }}
-                />
+>{color === 'white' ? '\u2654 White' : '\u265A Black'}
+                </button>
               ))}
             </div>
           </div>
