@@ -47,15 +47,19 @@ function PlanDetail() {
 
       <div className="space-y-6 leading-relaxed">
         {plan.content.map((section, i) => {
-          if (section.type === 'text') return <p key={i} className="text-text-dim">{section.content}</p>;
+          if (section.type === 'text') return <p key={i} className="text-text">{section.content}</p>;
           if (section.type === 'position') return (
-            <div key={i} className="my-6">
-              <div className="max-w-[400px] mx-auto">
+            <div key={i} className="my-8">
+              <div className="max-w-[440px] mx-auto">
                 <ChessBoard fen={section.fen} movable={false} arrows={section.arrows || []} highlights={section.highlights || []} />
               </div>
-              {section.caption && <p className="text-base text-text-dim text-center mt-2 italic">{section.caption}</p>}
+              {section.caption && <p className="text-sm text-text-dim text-center mt-3 italic">{section.caption}</p>}
             </div>
           );
+          if (section.type === 'callout') {
+            const variant = section.variant === 'warning' ? 'callout-warning' : section.variant === 'tip' ? 'callout-tip' : 'callout';
+            return <div key={i} className={variant}>{section.title && <p className="callout-title">{section.title}</p>}<p className="text-text">{section.content}</p></div>;
+          }
           return null;
         })}
       </div>
@@ -63,7 +67,7 @@ function PlanDetail() {
       {/* Key Plans */}
       <div className="card-base p-5 mt-8 border-gold/20">
         <h3 className="font-display text-sm text-gold mb-3">Key Plans</h3>
-        <ul className="text-base text-text-dim space-y-2">
+        <ul className="text-base text-text space-y-2">
           {plan.keyPlans.map((p, i) => (
             <li key={i} className="flex gap-2"><span className="text-gold/50 mt-0.5">&#9670;</span><span>{p}</span></li>
           ))}

@@ -26,7 +26,7 @@ export default function OpeningTraps() {
           </div>
           <div className="space-y-4">
             <div className="card-base p-5">
-              <p className="text-base text-text-dim leading-relaxed">{trap.description}</p>
+              <p className="text-base text-text leading-relaxed">{trap.description}</p>
             </div>
 
             {!showTrap ? (
@@ -37,11 +37,11 @@ export default function OpeningTraps() {
               <>
                 <div className="card-base p-5 border-gold/20">
                   <p className="text-gold font-semibold text-sm mb-2">The Trap: {trap.trapMove}</p>
-                  <p className="text-base text-text-dim leading-relaxed">{trap.explanation}</p>
+                  <p className="text-base text-text leading-relaxed">{trap.explanation}</p>
                 </div>
                 <div className="card-base p-5">
                   <p className="text-xs text-text-dim uppercase tracking-wider mb-2 font-medium">How to Avoid</p>
-                  <p className="text-base text-text-dim leading-relaxed">{trap.howToAvoid}</p>
+                  <p className="text-base text-text leading-relaxed">{trap.howToAvoid}</p>
                 </div>
               </>
             )}

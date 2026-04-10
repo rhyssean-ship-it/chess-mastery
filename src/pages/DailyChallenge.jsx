@@ -101,7 +101,7 @@ export default function DailyChallenge() {
             {cmSelected !== null && (
               <>
                 <div className={`rounded-xl p-4 border text-sm ${dailyCM.options[cmSelected].correct ? 'bg-correct/10 border-correct/30' : 'bg-incorrect/10 border-incorrect/30'}`}>
-                  <p className="text-text-dim">{dailyCM.options[cmSelected].explanation}</p>
+                  <p className="text-text">{dailyCM.options[cmSelected].explanation}</p>
                 </div>
                 <button onClick={finishDaily} className="w-full bg-gold text-bg py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">Complete Challenge</button>
               </>
@@ -129,7 +129,7 @@ export default function DailyChallenge() {
             <div className="space-y-3">
               <div className="bg-correct/10 border border-correct/30 rounded-xl p-4 text-sm">
                 <p className="font-semibold text-correct mb-1">&#10003; Correct!</p>
-                <p className="text-text-dim">{dailyPuzzle.explanation}</p>
+                <p className="text-text">{dailyPuzzle.explanation}</p>
               </div>
               <button onClick={() => setPhase('critical')} className="w-full bg-gold text-bg py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">Next: Positional Quiz</button>
             </div>

@@ -108,7 +108,7 @@ export default function PatternRecognition() {
             <>
               <div className={`rounded-xl p-4 border text-sm ${answer === pos.better ? 'bg-correct/10 border-correct/30' : 'bg-incorrect/10 border-incorrect/30'}`}>
                 <p className="font-semibold mb-1">{answer === pos.better ? '&#10003; Correct!' : '&#10007; Not quite'}</p>
-                <p className="text-text-dim text-base">{pos.reason}</p>
+                <p className="text-text text-base">{pos.reason}</p>
               </div>
               <button onClick={next} className="w-full bg-gold text-bg py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
                 {currentIdx + 1 >= shuffled.length ? 'See Results' : 'Next Position'}

@@ -58,12 +58,12 @@ export default function Glossary() {
 
             {expanded === term.id && (
               <div className="px-5 pb-5 border-t border-bg-hover/50" style={{ animation: 'cardFadeUp 200ms ease-out' }}>
-                <p className="text-base text-text-dim leading-relaxed mt-4 mb-3">{term.definition}</p>
+                <p className="text-base text-text leading-relaxed mt-4 mb-3">{term.definition}</p>
 
                 {term.example && (
                   <div className="bg-bg-hover/30 rounded-lg p-4 mb-3">
                     <p className="text-xs text-text-dim uppercase tracking-wider mb-1 font-medium">Example</p>
-                    <p className="text-base text-text-dim leading-relaxed">{term.example}</p>
+                    <p className="text-base text-text leading-relaxed">{term.example}</p>
                   </div>
                 )}
 

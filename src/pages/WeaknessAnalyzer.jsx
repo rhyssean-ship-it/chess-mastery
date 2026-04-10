@@ -76,7 +76,7 @@ export default function WeaknessAnalyzer() {
                   <p className="text-xs text-text-dim mb-2">{c.correct}/{c.total} correct</p>
                   {rec && (
                     <div className="flex flex-wrap gap-2 mt-2">
-                      <p className="text-xs text-text-dim">{rec.tip}</p>
+                      <p className="text-xs text-text">{rec.tip}</p>
                       <Link to={rec.lesson} className="text-xs text-gold no-underline hover:underline">Study this &rarr;</Link>
                     </div>
                   )}
@@ -92,7 +92,7 @@ export default function WeaknessAnalyzer() {
         <div className="card-base p-8 text-center mb-8">
           <div className="text-3xl mb-3">&#9813;</div>
           <p className="text-correct font-semibold mb-1">No major weaknesses detected!</p>
-          <p className="text-text-dim text-base leading-relaxed">Your accuracy is above 70% in all categories. Keep it up!</p>
+          <p className="text-text text-base leading-relaxed">Your accuracy is above 70% in all categories. Keep it up!</p>
         </div>
       )}
 
@@ -117,7 +117,7 @@ export default function WeaknessAnalyzer() {
       <hr className="section-divider" />
 
       <div className="text-center">
-        <p className="text-text-dim text-base leading-relaxed mb-4">Want to improve? The best way is focused practice on your weakest areas.</p>
+        <p className="text-text text-base leading-relaxed mb-4">Want to improve? The best way is focused practice on your weakest areas.</p>
         <Link to="/tactics" className="bg-gold text-bg px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press no-underline inline-block">Practice Puzzles</Link>
       </div>
     </div>

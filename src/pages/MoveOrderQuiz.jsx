@@ -71,7 +71,7 @@ export default function MoveOrderQuiz() {
           {selected !== null && (
             <>
               <div className={`rounded-xl p-4 border text-sm ${selected === q.correctIndex ? 'bg-correct/10 border-correct/30' : 'bg-incorrect/10 border-incorrect/30'}`}>
-                <p className="text-text-dim">{q.explanation}</p>
+                <p className="text-text">{q.explanation}</p>
               </div>
               <button onClick={next} className="w-full bg-gold text-bg py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
                 {idx + 1 >= shuffled.length ? 'See Results' : 'Next'}

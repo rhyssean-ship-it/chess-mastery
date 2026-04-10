@@ -17,7 +17,7 @@ export default function PawnStructures() {
         </button>
 
         <h1 className="text-2xl font-display text-gold mb-1">{structure.name}</h1>
-        <p className="text-text-dim text-base mb-8">{structure.description}</p>
+        <p className="text-text text-base mb-8">{structure.description}</p>
 
         {/* Typical position */}
         <div className="max-w-[400px] mx-auto mb-8">
@@ -28,11 +28,11 @@ export default function PawnStructures() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div className="card-base p-5">
             <h3 className="font-display text-sm text-gold mb-2">&#9812; White's Plans</h3>
-            <p className="text-base text-text-dim leading-relaxed">{structure.forWhite}</p>
+            <p className="text-base text-text leading-relaxed">{structure.forWhite}</p>
           </div>
           <div className="card-base p-5">
             <h3 className="font-display text-sm mb-2">&#9818; Black's Plans</h3>
-            <p className="text-base text-text-dim leading-relaxed">{structure.forBlack}</p>
+            <p className="text-base text-text leading-relaxed">{structure.forBlack}</p>
           </div>
         </div>
 

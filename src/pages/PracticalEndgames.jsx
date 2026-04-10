@@ -90,7 +90,7 @@ export default function PracticalEndgames() {
             <div className="space-y-3">
               <div className="bg-correct/10 border border-correct/30 rounded-xl p-4">
                 <p className="text-sm font-semibold text-correct mb-1">&#10003; Correct!</p>
-                <p className="text-base text-text-dim leading-relaxed">{puzzle.explanation}</p>
+                <p className="text-base text-text leading-relaxed">{puzzle.explanation}</p>
               </div>
               {idx + 1 < shuffled.length && (
                 <button onClick={next} className="w-full bg-gold text-bg py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">Next Puzzle</button>
@@ -102,7 +102,7 @@ export default function PracticalEndgames() {
             <div className="space-y-3">
               <div className="bg-incorrect/10 border border-incorrect/30 rounded-xl p-4">
                 <p className="text-sm font-semibold text-incorrect mb-1">&#10007; Incorrect</p>
-                <p className="text-base text-text-dim leading-relaxed">{puzzle.explanation}</p>
+                <p className="text-base text-text leading-relaxed">{puzzle.explanation}</p>
               </div>
               <button onClick={retry} className="w-full py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press">Try Again</button>
             </div>

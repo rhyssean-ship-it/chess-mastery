@@ -67,7 +67,7 @@ function GameViewer() {
       <Breadcrumb to="/master-games" label="Back to Master Games" />
       <h1 className="text-2xl font-display text-gold mb-1">{game.white} vs {game.black}</h1>
       <p className="text-text-dim text-base mb-1">{game.event} &middot; Result: {game.result}</p>
-      <p className="text-text-dim text-sm mb-8">{game.description}</p>
+      <p className="text-text text-sm mb-8">{game.description}</p>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
         <div className="w-full max-w-[560px]">
@@ -88,7 +88,7 @@ function GameViewer() {
           {currentAnnotation ? (
             <div className="card-base p-5 border-gold/20">
               <p className="text-gold font-semibold text-xs uppercase tracking-wider mb-2">Commentary</p>
-              <p className="text-base text-text-dim leading-relaxed">{currentAnnotation}</p>
+              <p className="text-base text-text leading-relaxed">{currentAnnotation}</p>
             </div>
           ) : (
             <div className="card-base p-5 opacity-50">

@@ -62,30 +62,63 @@ h1, h2, h3, h4 {
   line-height: 1.25;
 }
 
-h1 { font-size: 2rem; font-weight: 700; }
-h2 { font-size: 1.5rem; font-weight: 600; }
-h3 { font-size: 1.15rem; font-weight: 600; }
-h4 { font-size: 1rem; font-weight: 600; }
+h1 { font-size: 2.5rem; font-weight: 700; }
+h2 { font-size: 1.875rem; font-weight: 600; }
+h3 { font-size: 1.25rem; font-weight: 600; }
+h4 { font-size: 1.05rem; font-weight: 600; }
 
-p { line-height: 1.7; }
-
-/* Small UI text — labels, badges, metadata */
-.ui-label {
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-/* Slightly smaller but still readable — secondary info */
-small, .text-secondary {
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
+p { line-height: 1.75; }
 
 /* Mono for chess notation and data */
 .font-mono, code, kbd {
   font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+}
+
+/* === CALLOUT BOXES === */
+.callout {
+  border-left: 3px solid var(--color-gold);
+  background: rgba(201, 168, 76, 0.05);
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+}
+
+.callout-warning {
+  border-left-color: var(--color-incorrect);
+  background: rgba(229, 115, 115, 0.05);
+}
+
+.callout-tip {
+  border-left-color: var(--color-correct);
+  background: rgba(76, 175, 80, 0.05);
+}
+
+.callout-title {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.4rem;
+}
+
+.callout .callout-title { color: var(--color-gold); }
+.callout-warning .callout-title { color: var(--color-incorrect); }
+.callout-tip .callout-title { color: var(--color-correct); }
+
+/* === MOBILE TOUCH TARGETS === */
+@media (max-width: 1023px) {
+  button, a[role="button"], .btn-press {
+    min-height: 44px;
+  }
+
+  .cg-wrap {
+    border-radius: 8px;
+  }
+
+  .board-frame {
+    padding: 4px;
+  }
 }
 
 /* === FOCUS RINGS === */
@@ -273,10 +306,51 @@ kbd {
 .cg-wrap piece.knight.black { background-image: url('/pieces/cburnett/bN.svg') !important; }
 .cg-wrap piece.pawn.black { background-image: url('/pieces/cburnett/bP.svg') !important; }
 
-cg-board square.last-move {
-  background-color: rgba(201, 168, 76, 0.4) !important;
+/* Piece drag shadow */
+.cg-wrap piece.dragging {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5)) !important;
+  transform: scale(1.1);
+  z-index: 100 !important;
 }
 
+/* Last move highlight — stronger gradient */
+cg-board square.last-move {
+  background-color: rgba(201, 168, 76, 0.35) !important;
+  box-shadow: inset 0 0 2px rgba(201, 168, 76, 0.3);
+}
+
+/* Check — pulsing glow */
 cg-board square.check {
-  background: radial-gradient(ellipse at center, rgba(255, 0, 0, 0.6) 0%, rgba(255, 0, 0, 0) 70%) !important;
+  background: radial-gradient(ellipse at center, rgba(255, 50, 50, 0.7) 0%, rgba(255, 0, 0, 0) 65%) !important;
+  animation: checkPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes checkPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Hover glow on movable squares */
+cg-board square.move-dest {
+  background: radial-gradient(rgba(201, 168, 76, 0.4) 19%, rgba(0, 0, 0, 0) 20%) !important;
+}
+
+/* Correct move flash */
+.board-flash-correct {
+  animation: boardCorrect 600ms ease-out;
+}
+@keyframes boardCorrect {
+  0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.6); }
+  50% { box-shadow: 0 0 30px 8px rgba(76, 175, 80, 0.3); }
+  100% { box-shadow: none; }
+}
+
+/* Wrong move flash */
+.board-flash-incorrect {
+  animation: boardIncorrect 600ms ease-out;
+}
+@keyframes boardIncorrect {
+  0% { box-shadow: 0 0 0 0 rgba(229, 115, 115, 0.6); }
+  50% { box-shadow: 0 0 30px 8px rgba(229, 115, 115, 0.3); }
+  100% { box-shadow: none; }
 }

@@ -103,7 +103,7 @@ export default function CalculationTrainer() {
             <>
               <div className="card-base p-5 border-gold/20">
                 <p className="text-gold font-semibold text-xs uppercase tracking-wider mb-2">Answer</p>
-                <p className="text-base text-text-dim leading-relaxed mb-3">{drill.answer}</p>
+                <p className="text-base text-text leading-relaxed mb-3">{drill.answer}</p>
                 <p className="text-xs text-text-dim/70 italic">{drill.sequenceExplanation}</p>
               </div>
 

@@ -26,6 +26,7 @@ import DailyChallenge from './pages/DailyChallenge'
 import WeaknessAnalyzer from './pages/WeaknessAnalyzer'
 import ConceptFlashcards from './pages/ConceptFlashcards'
 import Glossary from './pages/Glossary'
+import Settings from './pages/Settings'
 
 function App() {
   return (
@@ -60,6 +61,7 @@ function App() {
           <Route path="/glossary" element={<Glossary />} />
           <Route path="/weakness" element={<WeaknessAnalyzer />} />
           <Route path="/progress" element={<ProgressDashboard />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </main>
     </div>

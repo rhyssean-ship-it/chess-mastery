@@ -44,7 +44,7 @@ export default function ChessBoard({
       fen,
       orientation,
       coordinates,
-      animation: { enabled: true, duration: 200 },
+      animation: { enabled: true, duration: 280 },
       highlight: { lastMove: true, check: true },
       movable: {
         free: false,

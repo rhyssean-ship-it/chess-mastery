@@ -29,12 +29,12 @@ export default function StrategyLesson() {
       <div className="space-y-6 leading-relaxed">
         {lesson.content.map((section, i) => {
           if (section.type === 'text') {
-            return <p key={i} className="text-text-dim">{section.content}</p>;
+            return <p key={i} className="text-text">{section.content}</p>;
           }
           if (section.type === 'position') {
             return (
-              <div key={i} className="my-6">
-                <div className="max-w-[400px] mx-auto">
+              <div key={i} className="my-8">
+                <div className="max-w-[440px] mx-auto">
                   <ChessBoard
                     fen={section.fen}
                     movable={false}
@@ -42,7 +42,16 @@ export default function StrategyLesson() {
                     highlights={section.highlights || []}
                   />
                 </div>
-                {section.caption && <p className="text-base text-text-dim text-center mt-2 italic">{section.caption}</p>}
+                {section.caption && <p className="text-sm text-text-dim text-center mt-3 italic">{section.caption}</p>}
+              </div>
+            );
+          }
+          if (section.type === 'callout') {
+            const variant = section.variant === 'warning' ? 'callout-warning' : section.variant === 'tip' ? 'callout-tip' : 'callout';
+            return (
+              <div key={i} className={variant}>
+                {section.title && <p className="callout-title">{section.title}</p>}
+                <p className="text-text">{section.content}</p>
               </div>
             );
           }

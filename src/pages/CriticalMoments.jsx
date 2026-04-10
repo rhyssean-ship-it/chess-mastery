@@ -100,7 +100,7 @@ export default function CriticalMoments() {
                     </span>
                     <div>
                       <p>{opt.text}</p>
-                      {selected !== null && <p className="text-text-dim text-xs mt-1">{opt.explanation}</p>}
+                      {selected !== null && <p className="text-text text-xs mt-1">{opt.explanation}</p>}
                     </div>
                   </div>
                 </button>

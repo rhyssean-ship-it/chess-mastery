@@ -117,7 +117,7 @@ export default function EndgameLesson() {
           {drillDone && (
             <div className="text-center">
               <p className="text-correct font-semibold mb-3">&#10003; Drill complete!</p>
-              <p className="text-text-dim text-base leading-relaxed mb-4">{lesson.drillPosition.explanation}</p>
+              <p className="text-text text-base leading-relaxed mb-4">{lesson.drillPosition.explanation}</p>
               <button onClick={() => setDrillMode(false)} className="bg-gold text-bg px-5 py-2 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">Back to Lesson</button>
             </div>
           )}
@@ -126,7 +126,7 @@ export default function EndgameLesson() {
         <>
           <div className="space-y-6 leading-relaxed">
             {lesson.content.map((section, i) => {
-              if (section.type === 'text') return <p key={i} className="text-text-dim">{section.content}</p>;
+              if (section.type === 'text') return <p key={i} className="text-text">{section.content}</p>;
               if (section.type === 'position') return (
                 <div key={i} className="my-6">
                   <div className="max-w-[400px] mx-auto">

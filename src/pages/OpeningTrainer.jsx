@@ -166,14 +166,14 @@ export default function OpeningTrainer() {
               {/* Explanation */}
               <div className="card-base p-5">
                 {currentMove >= 0 && <p className="text-gold font-semibold text-sm mb-1.5">{moves[currentMove].move}</p>}
-                <p className="text-base text-text-dim leading-relaxed">{currentExplanation}</p>
+                <p className="text-base text-text leading-relaxed">{currentExplanation}</p>
               </div>
 
               {/* Key ideas (shown at end) */}
               {currentMove === moves.length - 1 && (
                 <div className="card-base p-5 border-gold/20">
                   <h3 className="font-display text-sm text-gold mb-3">Key Ideas</h3>
-                  <ul className="text-base text-text-dim space-y-2">
+                  <ul className="text-base text-text space-y-2">
                     {opening.keyIdeas.map((idea, i) => (
                       <li key={i} className="flex gap-2">
                         <span className="text-gold/50 mt-0.5">&#9670;</span>

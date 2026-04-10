@@ -23,11 +23,11 @@ export default function TheoreticalEndgames() {
           </div>
           <div className="space-y-4">
             <div className="card-base p-5">
-              <p className="text-base text-text-dim leading-relaxed">{eg.description}</p>
+              <p className="text-base text-text leading-relaxed">{eg.description}</p>
             </div>
             <div className="card-base p-5">
               <p className="text-xs text-text-dim uppercase tracking-wider mb-2 font-medium">Technique</p>
-              <p className="text-base text-text-dim leading-relaxed">{eg.technique}</p>
+              <p className="text-base text-text leading-relaxed">{eg.technique}</p>
             </div>
 
             {!showSolution ? (
@@ -40,7 +40,7 @@ export default function TheoreticalEndgames() {
                     <span key={i} className="px-2.5 py-1 rounded bg-gold/10 text-gold text-sm font-mono border border-gold/20">{m}</span>
                   ))}
                 </div>
-                <ul className="text-base text-text-dim space-y-1">
+                <ul className="text-base text-text space-y-1">
                   {eg.keyPoints.map((p, i) => <li key={i} className="flex gap-2"><span className="text-gold/50">&#9670;</span>{p}</li>)}
                 </ul>
               </div>
