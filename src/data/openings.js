@@ -1,432 +1,1070 @@
 const openings = [
   {
-    id: 'italian-game',
-    name: 'Italian Game',
-    eco: 'C50',
-    difficulty: 'Beginner',
-    description: 'A classical opening aiming to control the centre and develop quickly.',
-    moves: [
-      { move: 'e4', fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1', explanation: 'White occupies the centre with a pawn, opening lines for the bishop and queen. This is the most popular first move in chess.', highlights: ['e4'] },
-      { move: 'e5', fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2', explanation: 'Black mirrors White\'s strategy, claiming equal space in the centre. This leads to open, tactical games.', highlights: ['e5'] },
-      { move: 'Nf3', fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2', explanation: 'The knight develops to its most natural square, attacking the e5 pawn and preparing to castle kingside.', arrows: [['f3', 'e5']] },
-      { move: 'Nc6', fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3', explanation: 'Black defends the e5 pawn with the knight while developing a piece. The most natural response.', arrows: [['c6', 'e5']] },
-      { move: 'Bc4', fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3', explanation: 'The Italian move! The bishop targets the f7 pawn, the weakest point in Black\'s position. White prepares to castle and builds pressure on the centre.', arrows: [['c4', 'f7']] },
+    "id": "italian-game",
+    "name": "Italian Game",
+    "eco": "C50",
+    "difficulty": "Beginner",
+    "description": "A classical opening aiming to control the centre and develop quickly.",
+    "moves": [
+      {
+        "move": "e4",
+        "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White occupies the centre with a pawn, opening lines for the bishop and queen. This is the most popular first move in chess.",
+        "highlights": [
+          "e4"
+        ]
+      },
+      {
+        "move": "e5",
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "explanation": "Black mirrors White's strategy, claiming equal space in the centre. This leads to open, tactical games.",
+        "highlights": [
+          "e5"
+        ]
+      },
+      {
+        "move": "Nf3",
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+        "explanation": "The knight develops to its most natural square, attacking the e5 pawn and preparing to castle kingside.",
+        "arrows": [
+          [
+            "f3",
+            "e5"
+          ]
+        ]
+      },
+      {
+        "move": "Nc6",
+        "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+        "explanation": "Black defends the e5 pawn with the knight while developing a piece. The most natural response.",
+        "arrows": [
+          [
+            "c6",
+            "e5"
+          ]
+        ]
+      },
+      {
+        "move": "Bc4",
+        "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
+        "explanation": "The Italian move! The bishop targets the f7 pawn, the weakest point in Black's position. White prepares to castle and builds pressure on the centre.",
+        "arrows": [
+          [
+            "c4",
+            "f7"
+          ]
+        ]
+      }
     ],
-    keyIdeas: [
-      'Rapid development of minor pieces toward the centre',
-      'Pressure on the f7 square through Bc4',
-      'Prepare kingside castling for king safety',
-      'Control of the d5 square',
-      'Plans include d3 followed by c3 and d4 to build a strong centre',
-    ],
+    "keyIdeas": [
+      "Rapid development of minor pieces toward the centre",
+      "Pressure on the f7 square through Bc4",
+      "Prepare kingside castling for king safety",
+      "Control of the d5 square",
+      "Plans include d3 followed by c3 and d4 to build a strong centre"
+    ]
   },
   {
-    id: 'ruy-lopez',
-    name: 'Ruy López',
-    eco: 'C60',
-    difficulty: 'Intermediate',
-    description: 'One of the oldest and most respected openings, applying pressure on Black\'s centre.',
-    moves: [
-      { move: 'e4', fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1', explanation: 'White claims the centre and opens lines for development.' },
-      { move: 'e5', fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2', explanation: 'Black establishes a symmetrical pawn centre.' },
-      { move: 'Nf3', fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2', explanation: 'Develops the knight with tempo by attacking e5.', arrows: [['f3', 'e5']] },
-      { move: 'Nc6', fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3', explanation: 'Defends e5 and develops a piece toward the centre.' },
-      { move: 'Bb5', fen: 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3', explanation: 'The Ruy López! The bishop pins the knight that defends e5, creating long-term strategic pressure. White doesn\'t win a pawn immediately but builds tension.', arrows: [['b5', 'c6']] },
+    "id": "london-system",
+    "name": "London System",
+    "eco": "D02",
+    "difficulty": "Beginner",
+    "description": "A solid, easy-to-learn system that works against almost any Black setup.",
+    "moves": [
+      {
+        "move": "d4",
+        "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White starts with a queen pawn opening, controlling the centre and opening the diagonal for the dark-squared bishop."
+      },
+      {
+        "move": "d5",
+        "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2",
+        "explanation": "Black mirrors the pawn move, creating a symmetrical centre."
+      },
+      {
+        "move": "Nf3",
+        "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R b KQkq - 1 2",
+        "explanation": "White develops the knight naturally before committing the bishop, keeping options flexible."
+      },
+      {
+        "move": "Nf6",
+        "fen": "rnbqkb1r/ppp1pppp/5n2/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R w KQkq - 2 3",
+        "explanation": "Black develops symmetrically."
+      },
+      {
+        "move": "Bf4",
+        "fen": "rnbqkb1r/ppp1pppp/5n2/3p4/3P1B2/5N2/PPP1PPPP/RN1QKB1R b KQkq - 3 3",
+        "explanation": "The London move! The bishop goes to f4 before playing e3, ensuring it stays active outside the pawn chain. This is the hallmark of the London System.",
+        "highlights": [
+          "f4"
+        ]
+      }
     ],
-    keyIdeas: [
-      'Indirect pressure on the e5 pawn through the Nc6 pin',
-      'White maintains flexibility — can exchange on c6 or retreat to a4',
-      'Long-term strategic plans with d3, c3, and eventual d4',
-      'The Morphy Defence (a6) is Black\'s most common response',
-      'One of the richest openings in chess theory',
-    ],
+    "keyIdeas": [
+      "Develop the dark-squared bishop to f4 before playing e3",
+      "Build a solid pawn triangle: d4-e3-c3",
+      "The setup is flexible and works against many different Black responses",
+      "Castle kingside and gradually improve piece placement",
+      "Very popular at all levels due to its simplicity and reliability"
+    ]
   },
   {
-    id: 'sicilian-najdorf',
-    name: 'Sicilian Defence — Najdorf',
-    eco: 'B90',
-    difficulty: 'Advanced',
-    description: 'The sharpest and most popular defence to 1.e4, favoured by world champions.',
-    moves: [
-      { move: 'e4', fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1', explanation: 'White occupies the centre.' },
-      { move: 'c5', fen: 'rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2', explanation: 'The Sicilian Defence! Black fights for the d4 square asymmetrically, avoiding a symmetrical pawn structure. This leads to unbalanced, fighting games.' },
-      { move: 'Nf3', fen: 'rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2', explanation: 'White develops naturally, preparing d4.' },
-      { move: 'd6', fen: 'rnbqkbnr/pp2pppp/3p4/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3', explanation: 'Black supports the c5 pawn and prepares to develop the knight to f6.' },
-      { move: 'd4', fen: 'rnbqkbnr/pp2pppp/3p4/2p5/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq - 0 3', explanation: 'White strikes in the centre, challenging Black\'s c5 pawn. This creates an open position.' },
-      { move: 'cxd4', fen: 'rnbqkbnr/pp2pppp/3p4/8/3pP3/5N2/PPP2PPP/RNBQKB1R w KQkq - 0 4', explanation: 'Black captures, opening the c-file which will become a key asset for Black\'s counterplay.' },
-      { move: 'Nxd4', fen: 'rnbqkbnr/pp2pppp/3p4/8/3NP3/8/PPP2PPP/RNBQKB1R b KQkq - 0 4', explanation: 'White recaptures with the knight, which sits powerfully in the centre.' },
-      { move: 'Nf6', fen: 'rnbqkb1r/pp2pppp/3p1n2/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 1 5', explanation: 'Black attacks the e4 pawn and develops a piece. This is the most natural square for the knight.' },
-      { move: 'Nc3', fen: 'rnbqkb1r/pp2pppp/3p1n2/8/3NP3/2N5/PPP2PPP/R1BQKB1R b KQkq - 2 5', explanation: 'White defends e4 and develops the knight to its ideal square.' },
-      { move: 'a6', fen: 'rnbqkb1r/1p2pppp/p2p1n2/8/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 0 6', explanation: 'The Najdorf move! This modest pawn move is incredibly flexible — it prevents Nb5, prepares b5 expansion, and keeps all options open. Bobby Fischer\'s weapon of choice.', highlights: ['a6'] },
+    "id": "scotch-game",
+    "name": "Scotch Game",
+    "eco": "C45",
+    "difficulty": "Beginner",
+    "description": "An aggressive alternative to the Italian and Ruy López, immediately challenging the centre.",
+    "moves": [
+      {
+        "move": "e4",
+        "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White occupies the centre."
+      },
+      {
+        "move": "e5",
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "explanation": "Black mirrors with a central pawn."
+      },
+      {
+        "move": "Nf3",
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+        "explanation": "Developing the knight and attacking e5.",
+        "arrows": [
+          [
+            "f3",
+            "e5"
+          ]
+        ]
+      },
+      {
+        "move": "Nc6",
+        "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+        "explanation": "Defending e5 with the knight."
+      },
+      {
+        "move": "d4",
+        "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq - 0 3",
+        "explanation": "The Scotch! White immediately strikes in the centre rather than developing the bishop first. This leads to open, tactical positions where both sides must play actively.",
+        "arrows": [
+          [
+            "d4",
+            "e5"
+          ]
+        ],
+        "highlights": [
+          "d4"
+        ]
+      }
     ],
-    keyIdeas: [
-      'Black gets an asymmetric pawn structure with chances on the queenside',
-      'The c-file becomes a crucial avenue for Black\'s rooks',
-      'a6 prepares queenside expansion with b5 and Bb7',
-      'Extremely rich in theory with many sharp variations (Be2, Bg5, Bc4, f3)',
-      'Black accepts a slightly cramped position for long-term dynamic chances',
-    ],
+    "keyIdeas": [
+      "Immediate central confrontation — no slow manoeuvring",
+      "After exd4 Nxd4, White has a strong centralised knight",
+      "Leads to open games with active piece play for both sides",
+      "Kasparov used this opening to great effect in his world championship matches",
+      "White aims for quick development and initiative"
+    ]
   },
   {
-    id: 'french-defence',
-    name: 'French Defence',
-    eco: 'C00',
-    difficulty: 'Intermediate',
-    description: 'A solid, strategic defence that creates a strong pawn chain.',
-    moves: [
-      { move: 'e4', fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1', explanation: 'White claims the centre.' },
-      { move: 'e6', fen: 'rnbqkbnr/pppp1ppp/4p3/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2', explanation: 'The French Defence. Black prepares to challenge the centre with d5 on the next move, building a solid pawn chain. The downside is that the light-squared bishop is blocked behind the pawn chain.' },
-      { move: 'd4', fen: 'rnbqkbnr/pppp1ppp/4p3/8/3PP3/8/PPP2PPP/RNBQKBNR b KQkq - 0 2', explanation: 'White builds a classical pawn centre with pawns on e4 and d4.' },
-      { move: 'd5', fen: 'rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3', explanation: 'Black challenges the centre immediately. This creates tension — White must decide how to handle the d5 pawn. The main lines are e5 (Advance), exd5 (Exchange), and Nc3/Nd2 (Classical/Tarrasch).', arrows: [['d5', 'e4']] },
+    "id": "scandinavian",
+    "name": "Scandinavian Defence",
+    "eco": "B01",
+    "difficulty": "Beginner",
+    "description": "A direct approach — Black immediately challenges e4 with the queen pawn.",
+    "moves": [
+      {
+        "move": "e4",
+        "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White claims the centre."
+      },
+      {
+        "move": "d5",
+        "fen": "rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "explanation": "Black immediately challenges the e4 pawn. The most direct approach possible.",
+        "arrows": [
+          [
+            "d5",
+            "e4"
+          ]
+        ]
+      },
+      {
+        "move": "exd5",
+        "fen": "rnbqkbnr/ppp1pppp/8/3P4/8/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2",
+        "explanation": "White captures. Now Black must decide: recapture with the queen (main line) or play Nf6 (Modern Scandinavian)."
+      },
+      {
+        "move": "Qxd5",
+        "fen": "rnb1kbnr/ppp1pppp/8/3q4/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 3",
+        "explanation": "The classic Scandinavian. The queen recaptures but will be kicked by Nc3. Black must spend a tempo moving the queen again, but gets a clear, simple position with no bad pieces.",
+        "highlights": [
+          "d5"
+        ]
+      }
     ],
-    keyIdeas: [
-      'Black builds a solid pawn chain on e6-d5',
-      'The "French bishop" on c8 is often a problem piece — Black seeks to activate it',
-      'Black often attacks White\'s pawn chain base with c5',
-      'In the Advance variation (e5), play revolves around White\'s space vs Black\'s counterplay',
-      'A favourite of strategic players like Botvinnik and Petrosian',
-    ],
+    "keyIdeas": [
+      "Black gets easy development and no bad bishop",
+      "The queen will typically go to a5 or d6 after Nc3",
+      "Simple to learn — very few theoretical lines to memorize",
+      "Black's position is solid but slightly passive due to the tempo loss",
+      "A practical weapon at all levels, especially in rapid and blitz"
+    ]
   },
   {
-    id: 'london-system',
-    name: 'London System',
-    eco: 'D02',
-    difficulty: 'Beginner',
-    description: 'A solid, easy-to-learn system that works against almost any Black setup.',
-    moves: [
-      { move: 'd4', fen: 'rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1', explanation: 'White starts with a queen pawn opening, controlling the centre and opening the diagonal for the dark-squared bishop.' },
-      { move: 'd5', fen: 'rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2', explanation: 'Black mirrors the pawn move, creating a symmetrical centre.' },
-      { move: 'Nf3', fen: 'rnbqkbnr/ppp1pppp/8/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R b KQkq - 1 2', explanation: 'White develops the knight naturally before committing the bishop, keeping options flexible.' },
-      { move: 'Nf6', fen: 'rnbqkb1r/ppp1pppp/5n2/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R w KQkq - 2 3', explanation: 'Black develops symmetrically.' },
-      { move: 'Bf4', fen: 'rnbqkb1r/ppp1pppp/5n2/3p4/3P1B2/5N2/PPP1PPPP/RN1QKB1R b KQkq - 3 3', explanation: 'The London move! The bishop goes to f4 before playing e3, ensuring it stays active outside the pawn chain. This is the hallmark of the London System.', highlights: ['f4'] },
+    "id": "ruy-lopez",
+    "name": "Ruy López",
+    "eco": "C60",
+    "difficulty": "Intermediate",
+    "description": "One of the oldest and most respected openings, applying pressure on Black's centre.",
+    "moves": [
+      {
+        "move": "e4",
+        "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White claims the centre and opens lines for development."
+      },
+      {
+        "move": "e5",
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "explanation": "Black establishes a symmetrical pawn centre."
+      },
+      {
+        "move": "Nf3",
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+        "explanation": "Develops the knight with tempo by attacking e5.",
+        "arrows": [
+          [
+            "f3",
+            "e5"
+          ]
+        ]
+      },
+      {
+        "move": "Nc6",
+        "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+        "explanation": "Defends e5 and develops a piece toward the centre."
+      },
+      {
+        "move": "Bb5",
+        "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
+        "explanation": "The Ruy López! The bishop pins the knight that defends e5, creating long-term strategic pressure. White doesn't win a pawn immediately but builds tension.",
+        "arrows": [
+          [
+            "b5",
+            "c6"
+          ]
+        ]
+      }
     ],
-    keyIdeas: [
-      'Develop the dark-squared bishop to f4 before playing e3',
-      'Build a solid pawn triangle: d4-e3-c3',
-      'The setup is flexible and works against many different Black responses',
-      'Castle kingside and gradually improve piece placement',
-      'Very popular at all levels due to its simplicity and reliability',
-    ],
+    "keyIdeas": [
+      "Indirect pressure on the e5 pawn through the Nc6 pin",
+      "White maintains flexibility — can exchange on c6 or retreat to a4",
+      "Long-term strategic plans with d3, c3, and eventual d4",
+      "The Morphy Defence (a6) is Black's most common response",
+      "One of the richest openings in chess theory"
+    ]
   },
   {
-    id: 'kings-indian',
-    name: 'King\'s Indian Defence',
-    eco: 'E60',
-    difficulty: 'Advanced',
-    description: 'A hypermodern defence where Black lets White build a centre then attacks it.',
-    moves: [
-      { move: 'd4', fen: 'rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1', explanation: 'White opens with the queen pawn.' },
-      { move: 'Nf6', fen: 'rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2', explanation: 'Black develops the knight and delays committing to a pawn structure, a hypermodern approach.' },
-      { move: 'c4', fen: 'rnbqkb1r/pppppppp/5n2/8/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2', explanation: 'White grabs more space in the centre, establishing the classical d4+c4 pawn duo.' },
-      { move: 'g6', fen: 'rnbqkb1r/pppppp1p/5np1/8/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3', explanation: 'Black prepares to fianchetto the bishop to g7, from where it will exert enormous pressure on the long diagonal.' },
-      { move: 'Nc3', fen: 'rnbqkb1r/pppppp1p/5np1/8/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq - 1 3', explanation: 'White develops naturally, defending the centre.' },
-      { move: 'Bg7', fen: 'rnbqk2r/ppppppbp/5np1/8/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4', explanation: 'The fianchettoed bishop is the pride of the King\'s Indian. It targets the centre and the queenside along the long diagonal.', arrows: [['g7', 'a1']] },
-      { move: 'e4', fen: 'rnbqk2r/ppppppbp/5np1/8/2PPP3/2N5/PP3PPP/R1BQKBNR b KQkq - 0 4', explanation: 'White builds a massive pawn centre. This looks imposing, but Black has plans to undermine it.' },
-      { move: 'd6', fen: 'rnbqk2r/ppp1ppbp/3p1np1/8/2PPP3/2N5/PP3PPP/R1BQKBNR w KQkq - 0 5', explanation: 'Black completes the King\'s Indian setup. The plan is to castle, then counterattack with e5 or c5.', arrows: [['e7', 'e5']] },
+    "id": "french-defence",
+    "name": "French Defence",
+    "eco": "C00",
+    "difficulty": "Intermediate",
+    "description": "A solid, strategic defence that creates a strong pawn chain.",
+    "moves": [
+      {
+        "move": "e4",
+        "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White claims the centre."
+      },
+      {
+        "move": "e6",
+        "fen": "rnbqkbnr/pppp1ppp/4p3/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "explanation": "The French Defence. Black prepares to challenge the centre with d5 on the next move, building a solid pawn chain. The downside is that the light-squared bishop is blocked behind the pawn chain."
+      },
+      {
+        "move": "d4",
+        "fen": "rnbqkbnr/pppp1ppp/4p3/8/3PP3/8/PPP2PPP/RNBQKBNR b KQkq - 0 2",
+        "explanation": "White builds a classical pawn centre with pawns on e4 and d4."
+      },
+      {
+        "move": "d5",
+        "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3",
+        "explanation": "Black challenges the centre immediately. This creates tension — White must decide how to handle the d5 pawn. The main lines are e5 (Advance), exd5 (Exchange), and Nc3/Nd2 (Classical/Tarrasch).",
+        "arrows": [
+          [
+            "d5",
+            "e4"
+          ]
+        ]
+      }
     ],
-    keyIdeas: [
-      'Black concedes the centre initially, then counterattacks with e5 or c5',
-      'The Bg7 is a powerful piece on the long diagonal',
-      'After e5, if White plays d5, Black attacks on the kingside with f5',
-      'If the centre stays open, Black gets dynamic piece play',
-      'Kasparov and Fischer used this opening at the highest level',
-    ],
+    "keyIdeas": [
+      "Black builds a solid pawn chain on e6-d5",
+      "The \"French bishop\" on c8 is often a problem piece — Black seeks to activate it",
+      "Black often attacks White's pawn chain base with c5",
+      "In the Advance variation (e5), play revolves around White's space vs Black's counterplay",
+      "A favourite of strategic players like Botvinnik and Petrosian"
+    ]
   },
   {
-    id: 'queens-gambit',
-    name: "Queen's Gambit",
-    eco: 'D06',
-    difficulty: 'Intermediate',
-    description: 'A classical opening offering a pawn to gain central control.',
-    moves: [
-      { move: 'd4', fen: 'rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1', explanation: 'White opens with the queen pawn, controlling the centre.' },
-      { move: 'd5', fen: 'rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2', explanation: 'Black stakes a claim in the centre, creating a symmetrical pawn structure.' },
-      { move: 'c4', fen: 'rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2', explanation: 'The Queen\'s Gambit! White offers the c4 pawn to lure Black\'s d5 pawn away from the centre. It\'s not a true gambit — White can always regain the pawn. Black can accept (dxc4) or decline (e6 or c6).', arrows: [['c4', 'd5']] },
+    "id": "queens-gambit",
+    "name": "Queen's Gambit",
+    "eco": "D06",
+    "difficulty": "Intermediate",
+    "description": "A classical opening offering a pawn to gain central control.",
+    "moves": [
+      {
+        "move": "d4",
+        "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White opens with the queen pawn, controlling the centre."
+      },
+      {
+        "move": "d5",
+        "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2",
+        "explanation": "Black stakes a claim in the centre, creating a symmetrical pawn structure."
+      },
+      {
+        "move": "c4",
+        "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2",
+        "explanation": "The Queen's Gambit! White offers the c4 pawn to lure Black's d5 pawn away from the centre. It's not a true gambit — White can always regain the pawn. Black can accept (dxc4) or decline (e6 or c6).",
+        "arrows": [
+          [
+            "c4",
+            "d5"
+          ]
+        ]
+      }
     ],
-    keyIdeas: [
-      'White aims for a strong central pawn on d4 without a Black pawn on d5',
-      'Not a true gambit — White can recapture the pawn easily',
-      'Queen\'s Gambit Declined (e6) leads to solid, strategic positions',
-      'Queen\'s Gambit Accepted (dxc4) gives White a central majority but Black develops freely',
-      'The Slav Defence (c6) is a solid alternative for Black',
-    ],
+    "keyIdeas": [
+      "White aims for a strong central pawn on d4 without a Black pawn on d5",
+      "Not a true gambit — White can recapture the pawn easily",
+      "Queen's Gambit Declined (e6) leads to solid, strategic positions",
+      "Queen's Gambit Accepted (dxc4) gives White a central majority but Black develops freely",
+      "The Slav Defence (c6) is a solid alternative for Black"
+    ]
   },
   {
-    id: 'caro-kann',
-    name: 'Caro-Kann Defence',
-    eco: 'B10',
-    difficulty: 'Intermediate',
-    description: 'A solid, reliable defence that avoids the bad bishop problem of the French.',
-    moves: [
-      { move: 'e4', fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1', explanation: 'White claims the centre.' },
-      { move: 'c6', fen: 'rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2', explanation: 'The Caro-Kann! Black prepares d5 while keeping the c8 bishop\'s diagonal open — solving the main problem of the French Defence.', arrows: [['c6', 'd5']] },
-      { move: 'd4', fen: 'rnbqkbnr/pp1ppppp/2p5/8/3PP3/8/PPP2PPP/RNBQKBNR b KQkq - 0 2', explanation: 'White builds the ideal pawn centre.' },
-      { move: 'd5', fen: 'rnbqkbnr/pp2pppp/2p5/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3', explanation: 'Black challenges the centre. Unlike the French, the light-squared bishop is not blocked and can develop to f5 or g4. This is the key advantage of the Caro-Kann.', arrows: [['c8', 'f5']] },
+    "id": "caro-kann",
+    "name": "Caro-Kann Defence",
+    "eco": "B10",
+    "difficulty": "Intermediate",
+    "description": "A solid, reliable defence that avoids the bad bishop problem of the French.",
+    "moves": [
+      {
+        "move": "e4",
+        "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White claims the centre."
+      },
+      {
+        "move": "c6",
+        "fen": "rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "explanation": "The Caro-Kann! Black prepares d5 while keeping the c8 bishop's diagonal open — solving the main problem of the French Defence.",
+        "arrows": [
+          [
+            "c6",
+            "d5"
+          ]
+        ]
+      },
+      {
+        "move": "d4",
+        "fen": "rnbqkbnr/pp1ppppp/2p5/8/3PP3/8/PPP2PPP/RNBQKBNR b KQkq - 0 2",
+        "explanation": "White builds the ideal pawn centre."
+      },
+      {
+        "move": "d5",
+        "fen": "rnbqkbnr/pp2pppp/2p5/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3",
+        "explanation": "Black challenges the centre. Unlike the French, the light-squared bishop is not blocked and can develop to f5 or g4. This is the key advantage of the Caro-Kann.",
+        "arrows": [
+          [
+            "c8",
+            "f5"
+          ]
+        ]
+      }
     ],
-    keyIdeas: [
-      'Black gets a solid pawn structure with easy piece development',
-      'The light-squared bishop can develop actively to f5 or g4',
-      'Black\'s position is solid but slightly passive compared to the Sicilian',
-      'Main lines are the Classical (Nc3), Advance (e5), and Exchange (exd5)',
-      'A favourite of Karpov and other positional players',
-    ],
-  },
-  // === NEW OPENINGS ===
-  {
-    id: 'scotch-game',
-    name: 'Scotch Game',
-    eco: 'C45',
-    difficulty: 'Beginner',
-    description: 'An aggressive alternative to the Italian and Ruy López, immediately challenging the centre.',
-    moves: [
-      { move: 'e4', fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1', explanation: 'White occupies the centre.' },
-      { move: 'e5', fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2', explanation: 'Black mirrors with a central pawn.' },
-      { move: 'Nf3', fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2', explanation: 'Developing the knight and attacking e5.', arrows: [['f3', 'e5']] },
-      { move: 'Nc6', fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3', explanation: 'Defending e5 with the knight.' },
-      { move: 'd4', fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq - 0 3', explanation: 'The Scotch! White immediately strikes in the centre rather than developing the bishop first. This leads to open, tactical positions where both sides must play actively.', arrows: [['d4', 'e5']], highlights: ['d4'] },
-    ],
-    keyIdeas: [
-      'Immediate central confrontation — no slow manoeuvring',
-      'After exd4 Nxd4, White has a strong centralised knight',
-      'Leads to open games with active piece play for both sides',
-      'Kasparov used this opening to great effect in his world championship matches',
-      'White aims for quick development and initiative',
-    ],
-  },
-  {
-    id: 'petroff-defence',
-    name: 'Petroff Defence',
-    eco: 'C42',
-    difficulty: 'Intermediate',
-    description: 'A solid, symmetrical defence that aims for equality and a drawish middlegame.',
-    moves: [
-      { move: 'e4', fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1', explanation: 'White claims the centre.' },
-      { move: 'e5', fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2', explanation: 'Symmetrical centre.' },
-      { move: 'Nf3', fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2', explanation: 'White attacks e5.', arrows: [['f3', 'e5']] },
-      { move: 'Nf6', fen: 'rnbqkb1r/pppp1ppp/5n2/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3', explanation: 'The Petroff! Instead of defending e5, Black counterattacks e4. This symmetrical approach leads to solid, equal positions. A favourite of top-level players seeking a safe draw with Black.', arrows: [['f6', 'e4']], highlights: ['f6'] },
-    ],
-    keyIdeas: [
-      'Black counterattacks instead of defending — symmetry is the theme',
-      'After Nxe5, Black should NOT play Nxe4 immediately but first d6 to drive the knight back',
-      'Extremely solid — one of the hardest openings for White to get an advantage against',
-      'Popular at the highest level, used extensively by Caruana and Kramnik',
-      'Drawish reputation, but sharp lines exist in the Stafford Gambit sidelines',
-    ],
+    "keyIdeas": [
+      "Black gets a solid pawn structure with easy piece development",
+      "The light-squared bishop can develop actively to f5 or g4",
+      "Black's position is solid but slightly passive compared to the Sicilian",
+      "Main lines are the Classical (Nc3), Advance (e5), and Exchange (exd5)",
+      "A favourite of Karpov and other positional players"
+    ]
   },
   {
-    id: 'pirc-defence',
-    name: 'Pirc Defence',
-    eco: 'B07',
-    difficulty: 'Intermediate',
-    description: 'A hypermodern defence allowing White a big centre, then counterattacking.',
-    moves: [
-      { move: 'e4', fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1', explanation: 'White claims the centre.' },
-      { move: 'd6', fen: 'rnbqkbnr/ppp1pppp/3p4/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2', explanation: 'Black plays modestly, preparing to develop the knight to f6 and fianchetto the bishop to g7. This is the hypermodern approach — let White build a centre, then attack it.' },
-      { move: 'd4', fen: 'rnbqkbnr/ppp1pppp/3p4/8/3PP3/8/PPP2PPP/RNBQKBNR b KQkq - 0 2', explanation: 'White builds the ideal pawn centre.' },
-      { move: 'Nf6', fen: 'rnbqkb1r/ppp1pppp/3p1n2/8/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 1 3', explanation: 'The knight attacks e4, putting immediate pressure on the centre.' },
-      { move: 'Nc3', fen: 'rnbqkb1r/ppp1pppp/3p1n2/8/3PP3/2N5/PPP2PPP/R1BQKBNR b KQkq - 2 3', explanation: 'White defends e4. Black will now typically play g6 and Bg7, fianchettoing the bishop to target the centre from afar.', arrows: [['g7', 'a1']] },
+    "id": "petroff-defence",
+    "name": "Petroff Defence",
+    "eco": "C42",
+    "difficulty": "Intermediate",
+    "description": "A solid, symmetrical defence that aims for equality and a drawish middlegame.",
+    "moves": [
+      {
+        "move": "e4",
+        "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White claims the centre."
+      },
+      {
+        "move": "e5",
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "explanation": "Symmetrical centre."
+      },
+      {
+        "move": "Nf3",
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+        "explanation": "White attacks e5.",
+        "arrows": [
+          [
+            "f3",
+            "e5"
+          ]
+        ]
+      },
+      {
+        "move": "Nf6",
+        "fen": "rnbqkb1r/pppp1ppp/5n2/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+        "explanation": "The Petroff! Instead of defending e5, Black counterattacks e4. This symmetrical approach leads to solid, equal positions. A favourite of top-level players seeking a safe draw with Black.",
+        "arrows": [
+          [
+            "f6",
+            "e4"
+          ]
+        ],
+        "highlights": [
+          "f6"
+        ]
+      }
     ],
-    keyIdeas: [
-      'Black concedes space to develop flexibly behind the pawn structure',
-      'The fianchettoed bishop on g7 targets the long diagonal',
-      'Black often counterattacks with e5 or c5 at the right moment',
-      'Can transpose to the King\'s Indian or Modern Defence',
-      'Requires understanding of when to strike against White\'s centre',
-    ],
+    "keyIdeas": [
+      "Black counterattacks instead of defending — symmetry is the theme",
+      "After Nxe5, Black should NOT play Nxe4 immediately but first d6 to drive the knight back",
+      "Extremely solid — one of the hardest openings for White to get an advantage against",
+      "Popular at the highest level, used extensively by Caruana and Kramnik",
+      "Drawish reputation, but sharp lines exist in the Stafford Gambit sidelines"
+    ]
   },
   {
-    id: 'english-opening',
-    name: 'English Opening',
-    eco: 'A20',
-    difficulty: 'Intermediate',
-    description: 'A flexible flank opening that controls d5 without committing to a central pawn structure.',
-    moves: [
-      { move: 'c4', fen: 'rnbqkbnr/pppppppp/8/8/2P5/8/PP1PPPPP/RNBQKBNR b KQkq - 0 1', explanation: 'The English! White controls d5 from the flank rather than occupying the centre immediately. This is a flexible, positional approach.', highlights: ['c4'] },
-      { move: 'e5', fen: 'rnbqkbnr/pppp1ppp/8/4p3/2P5/8/PP1PPPPP/RNBQKBNR w KQkq - 0 2', explanation: 'Black occupies the centre. This is the Reversed Sicilian setup — White plays a Sicilian Defence with an extra tempo.' },
-      { move: 'Nc3', fen: 'rnbqkbnr/pppp1ppp/8/4p3/2P5/2N5/PP1PPPPP/R1BQKBNR b KQkq - 1 2', explanation: 'White develops the knight toward the centre.' },
-      { move: 'Nf6', fen: 'rnbqkb1r/pppp1ppp/5n2/4p3/2P5/2N5/PP1PPPPP/R1BQKBNR w KQkq - 2 3', explanation: 'Black develops naturally.' },
-      { move: 'g3', fen: 'rnbqkb1r/pppp1ppp/5n2/4p3/2P5/2N3P1/PP1PPP1P/R1BQKBNR b KQkq - 0 3', explanation: 'White prepares to fianchetto the bishop to g2, creating pressure on the long diagonal.', arrows: [['f1', 'g2'], ['g2', 'b7']] },
-      { move: 'd5', fen: 'rnbqkb1r/ppp2ppp/5n2/3pp3/2P5/2N3P1/PP1PPP1P/R1BQKBNR w KQkq - 0 4', explanation: 'Black strikes in the centre. After cxd5 Nxd5, Black has active piece play. The position is rich and strategic.' },
+    "id": "pirc-defence",
+    "name": "Pirc Defence",
+    "eco": "B07",
+    "difficulty": "Intermediate",
+    "description": "A hypermodern defence allowing White a big centre, then counterattacking.",
+    "moves": [
+      {
+        "move": "e4",
+        "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White claims the centre."
+      },
+      {
+        "move": "d6",
+        "fen": "rnbqkbnr/ppp1pppp/3p4/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "explanation": "Black plays modestly, preparing to develop the knight to f6 and fianchetto the bishop to g7. This is the hypermodern approach — let White build a centre, then attack it."
+      },
+      {
+        "move": "d4",
+        "fen": "rnbqkbnr/ppp1pppp/3p4/8/3PP3/8/PPP2PPP/RNBQKBNR b KQkq - 0 2",
+        "explanation": "White builds the ideal pawn centre."
+      },
+      {
+        "move": "Nf6",
+        "fen": "rnbqkb1r/ppp1pppp/3p1n2/8/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 1 3",
+        "explanation": "The knight attacks e4, putting immediate pressure on the centre."
+      },
+      {
+        "move": "Nc3",
+        "fen": "rnbqkb1r/ppp1pppp/3p1n2/8/3PP3/2N5/PPP2PPP/R1BQKBNR b KQkq - 2 3",
+        "explanation": "White defends e4. Black will now typically play g6 and Bg7, fianchettoing the bishop to target the centre from afar.",
+        "arrows": [
+          [
+            "g7",
+            "a1"
+          ]
+        ]
+      }
     ],
-    keyIdeas: [
-      'Flexible — can transpose into many different structures',
-      'The fianchettoed bishop on g2 is a long-term asset',
-      'White avoids early central commitments, keeping options open',
-      'Often leads to strategic, manoeuvring positions',
-      'A favourite of Botvinnik, Karpov, and many modern GMs',
-    ],
+    "keyIdeas": [
+      "Black concedes space to develop flexibly behind the pawn structure",
+      "The fianchettoed bishop on g7 targets the long diagonal",
+      "Black often counterattacks with e5 or c5 at the right moment",
+      "Can transpose to the King's Indian or Modern Defence",
+      "Requires understanding of when to strike against White's centre"
+    ]
   },
   {
-    id: 'dutch-defence',
-    name: 'Dutch Defence',
-    eco: 'A80',
-    difficulty: 'Intermediate',
-    description: 'An aggressive defence aiming for kingside attacking chances from the start.',
-    moves: [
-      { move: 'd4', fen: 'rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1', explanation: 'White opens with the queen pawn.' },
-      { move: 'f5', fen: 'rnbqkbnr/ppppp1pp/8/5p2/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2', explanation: 'The Dutch Defence! Black immediately stakes a claim on the e4 square and signals aggressive kingside intentions. It\'s risky but creates unbalanced, fighting positions.', highlights: ['f5'], arrows: [['f5', 'e4']] },
+    "id": "english-opening",
+    "name": "English Opening",
+    "eco": "A20",
+    "difficulty": "Intermediate",
+    "description": "A flexible flank opening that controls d5 without committing to a central pawn structure.",
+    "moves": [
+      {
+        "move": "c4",
+        "fen": "rnbqkbnr/pppppppp/8/8/2P5/8/PP1PPPPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "The English! White controls d5 from the flank rather than occupying the centre immediately. This is a flexible, positional approach.",
+        "highlights": [
+          "c4"
+        ]
+      },
+      {
+        "move": "e5",
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/2P5/8/PP1PPPPP/RNBQKBNR w KQkq - 0 2",
+        "explanation": "Black occupies the centre. This is the Reversed Sicilian setup — White plays a Sicilian Defence with an extra tempo."
+      },
+      {
+        "move": "Nc3",
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/2P5/2N5/PP1PPPPP/R1BQKBNR b KQkq - 1 2",
+        "explanation": "White develops the knight toward the centre."
+      },
+      {
+        "move": "Nf6",
+        "fen": "rnbqkb1r/pppp1ppp/5n2/4p3/2P5/2N5/PP1PPPPP/R1BQKBNR w KQkq - 2 3",
+        "explanation": "Black develops naturally."
+      },
+      {
+        "move": "g3",
+        "fen": "rnbqkb1r/pppp1ppp/5n2/4p3/2P5/2N3P1/PP1PPP1P/R1BQKBNR b KQkq - 0 3",
+        "explanation": "White prepares to fianchetto the bishop to g2, creating pressure on the long diagonal.",
+        "arrows": [
+          [
+            "f1",
+            "g2"
+          ],
+          [
+            "g2",
+            "b7"
+          ]
+        ]
+      },
+      {
+        "move": "d5",
+        "fen": "rnbqkb1r/ppp2ppp/5n2/3pp3/2P5/2N3P1/PP1PPP1P/R1BQKBNR w KQkq - 0 4",
+        "explanation": "Black strikes in the centre. After cxd5 Nxd5, Black has active piece play. The position is rich and strategic."
+      }
     ],
-    keyIdeas: [
-      'Black controls e4 and prepares a kingside attack',
-      'Three main systems: Stonewall (d5+e6+f5), Leningrad (g6+Bg7), and Classical (e6+Be7)',
-      'The Stonewall creates a fortress but leaves the dark-squared bishop passive',
-      'The Leningrad Dutch combines the fianchetto with f5 for dynamic play',
-      'Risky — the weakened kingside can be exploited if Black is not careful',
-    ],
+    "keyIdeas": [
+      "Flexible — can transpose into many different structures",
+      "The fianchettoed bishop on g2 is a long-term asset",
+      "White avoids early central commitments, keeping options open",
+      "Often leads to strategic, manoeuvring positions",
+      "A favourite of Botvinnik, Karpov, and many modern GMs"
+    ]
   },
   {
-    id: 'grunfeld-defence',
-    name: 'Grunfeld Defence',
-    eco: 'D80',
-    difficulty: 'Advanced',
-    description: 'A dynamic defence that invites White to build a centre and then destroys it.',
-    moves: [
-      { move: 'd4', fen: 'rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1', explanation: 'White opens with the queen pawn.' },
-      { move: 'Nf6', fen: 'rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2', explanation: 'Black develops flexibly.' },
-      { move: 'c4', fen: 'rnbqkb1r/pppppppp/5n2/8/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2', explanation: 'White expands in the centre.' },
-      { move: 'g6', fen: 'rnbqkb1r/pppppp1p/5np1/8/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3', explanation: 'Black prepares the fianchetto — similar to the King\'s Indian.' },
-      { move: 'Nc3', fen: 'rnbqkb1r/pppppp1p/5np1/8/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq - 1 3', explanation: 'White develops toward the centre.' },
-      { move: 'd5', fen: 'rnbqkb1r/ppp1pp1p/5np1/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 0 4', explanation: 'The Grunfeld! Instead of the King\'s Indian\'s d6, Black immediately challenges the centre. After cxd5 Nxd5, White gets a big centre but Black will systematically attack it with c5, Bg7, Nc6, and other moves.', arrows: [['d5', 'c4'], ['d5', 'e4']], highlights: ['d5'] },
+    "id": "dutch-defence",
+    "name": "Dutch Defence",
+    "eco": "A80",
+    "difficulty": "Intermediate",
+    "description": "An aggressive defence aiming for kingside attacking chances from the start.",
+    "moves": [
+      {
+        "move": "d4",
+        "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White opens with the queen pawn."
+      },
+      {
+        "move": "f5",
+        "fen": "rnbqkbnr/ppppp1pp/8/5p2/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2",
+        "explanation": "The Dutch Defence! Black immediately stakes a claim on the e4 square and signals aggressive kingside intentions. It's risky but creates unbalanced, fighting positions.",
+        "highlights": [
+          "f5"
+        ],
+        "arrows": [
+          [
+            "f5",
+            "e4"
+          ]
+        ]
+      }
     ],
-    keyIdeas: [
-      'Black sacrifices central space to create dynamic counterplay against White\'s centre',
-      'The Bg7 becomes a monster piece targeting d4 and the queenside',
-      'Black\'s plan: c5 to undermine d4, Nc6 to pressure d4, and e5 at the right moment',
-      'White must defend the centre carefully — if it collapses, Black gets a huge advantage',
-      'Kasparov\'s favourite defence — incredibly rich in theory and ideas',
-    ],
+    "keyIdeas": [
+      "Black controls e4 and prepares a kingside attack",
+      "Three main systems: Stonewall (d5+e6+f5), Leningrad (g6+Bg7), and Classical (e6+Be7)",
+      "The Stonewall creates a fortress but leaves the dark-squared bishop passive",
+      "The Leningrad Dutch combines the fianchetto with f5 for dynamic play",
+      "Risky — the weakened kingside can be exploited if Black is not careful"
+    ]
   },
   {
-    id: 'slav-defence',
-    name: 'Slav Defence',
-    eco: 'D10',
-    difficulty: 'Intermediate',
-    description: 'A solid reply to the Queen\'s Gambit that keeps the light-squared bishop active.',
-    moves: [
-      { move: 'd4', fen: 'rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1', explanation: 'White opens with the queen pawn.' },
-      { move: 'd5', fen: 'rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2', explanation: 'Black claims the centre.' },
-      { move: 'c4', fen: 'rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2', explanation: 'The Queen\'s Gambit.' },
-      { move: 'c6', fen: 'rnbqkbnr/pp2pppp/2p5/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3', explanation: 'The Slav! Black supports d5 with c6 instead of e6. The crucial difference: the light-squared bishop is NOT blocked and can develop actively to f5 or g4. This solves the main problem of the QGD.', arrows: [['c8', 'f5']], highlights: ['c6'] },
+    "id": "slav-defence",
+    "name": "Slav Defence",
+    "eco": "D10",
+    "difficulty": "Intermediate",
+    "description": "A solid reply to the Queen's Gambit that keeps the light-squared bishop active.",
+    "moves": [
+      {
+        "move": "d4",
+        "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White opens with the queen pawn."
+      },
+      {
+        "move": "d5",
+        "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2",
+        "explanation": "Black claims the centre."
+      },
+      {
+        "move": "c4",
+        "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2",
+        "explanation": "The Queen's Gambit."
+      },
+      {
+        "move": "c6",
+        "fen": "rnbqkbnr/pp2pppp/2p5/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+        "explanation": "The Slav! Black supports d5 with c6 instead of e6. The crucial difference: the light-squared bishop is NOT blocked and can develop actively to f5 or g4. This solves the main problem of the QGD.",
+        "arrows": [
+          [
+            "c8",
+            "f5"
+          ]
+        ],
+        "highlights": [
+          "c6"
+        ]
+      }
     ],
-    keyIdeas: [
-      'The light-squared bishop stays active — can go to f5 or g4',
-      'Solid pawn structure: d5+c6 is very hard to break down',
-      'Black can accept the gambit with dxc4 (Slav Accepted) or decline with e6',
-      'The Semi-Slav (c6+e6) is a hybrid that leads to very sharp play',
-      'A staple defence for world champions including Euwe and Anand',
-    ],
+    "keyIdeas": [
+      "The light-squared bishop stays active — can go to f5 or g4",
+      "Solid pawn structure: d5+c6 is very hard to break down",
+      "Black can accept the gambit with dxc4 (Slav Accepted) or decline with e6",
+      "The Semi-Slav (c6+e6) is a hybrid that leads to very sharp play",
+      "A staple defence for world champions including Euwe and Anand"
+    ]
   },
   {
-    id: 'nimzo-indian',
-    name: 'Nimzo-Indian Defence',
-    eco: 'E20',
-    difficulty: 'Advanced',
-    description: 'One of the most respected defences in chess — controlling e4 by pinning the knight.',
-    moves: [
-      { move: 'd4', fen: 'rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1', explanation: 'White opens with the queen pawn.' },
-      { move: 'Nf6', fen: 'rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2', explanation: 'Black develops and prevents e4.' },
-      { move: 'c4', fen: 'rnbqkb1r/pppppppp/5n2/8/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2', explanation: 'White expands.' },
-      { move: 'e6', fen: 'rnbqkb1r/pppp1ppp/4pn2/8/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3', explanation: 'Black solidifies the centre and opens the diagonal for the dark-squared bishop.' },
-      { move: 'Nc3', fen: 'rnbqkb1r/pppp1ppp/4pn2/8/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq - 1 3', explanation: 'White develops the knight.' },
-      { move: 'Bb4', fen: 'rnbqk2r/pppp1ppp/4pn2/8/1bPP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4', explanation: 'The Nimzo-Indian! Black pins the knight on c3, preventing e4. This is one of the most strategically rich openings in chess. Black is willing to give up the bishop pair in exchange for doubling White\'s c-pawns and controlling the centre.', arrows: [['b4', 'c3']], highlights: ['b4', 'c3'] },
+    "id": "vienna-game",
+    "name": "Vienna Game",
+    "eco": "C25",
+    "difficulty": "Intermediate",
+    "description": "A romantic-era opening preparing f4 to build a strong centre.",
+    "moves": [
+      {
+        "move": "e4",
+        "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White claims the centre."
+      },
+      {
+        "move": "e5",
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "explanation": "Symmetrical centre."
+      },
+      {
+        "move": "Nc3",
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/2N5/PPPP1PPP/R1BQKBNR b KQkq - 1 2",
+        "explanation": "The Vienna! Instead of Nf3, White develops the knight to c3 first, preparing f4 on the next move. This is a \"delayed King's Gambit\" approach.",
+        "highlights": [
+          "c3"
+        ]
+      },
+      {
+        "move": "Nf6",
+        "fen": "rnbqkb1r/pppp1ppp/5n2/4p3/4P3/2N5/PPPP1PPP/R1BQKBNR w KQkq - 2 3",
+        "explanation": "Black develops and attacks e4."
+      },
+      {
+        "move": "f4",
+        "fen": "rnbqkb1r/pppp1ppp/5n2/4p3/4PP2/2N5/PPPP2PP/R1BQKBNR b KQkq - 0 3",
+        "explanation": "The Vienna Gambit! White offers the f-pawn to blast open the centre. After exf4, White gets a strong centre with d4 and open lines for attack. Very aggressive.",
+        "arrows": [
+          [
+            "f4",
+            "e5"
+          ]
+        ]
+      }
     ],
-    keyIdeas: [
-      'The pin on Nc3 prevents e4, controlling the centre indirectly',
-      'If White plays a3 Bxc3+ bxc3, White gets the bishop pair but doubled c-pawns',
-      'The doubled c-pawns can be both a strength (central control) and weakness (structural)',
-      'One of the deepest openings in chess — every world champion has faced it',
-      'Black gets flexible development and often plays d5 or c5 to challenge the centre',
-    ],
+    "keyIdeas": [
+      "A \"prepared\" King's Gambit — Nc3 supports e4 before playing f4",
+      "Leads to sharp, tactical positions with attacking chances for White",
+      "If Black declines with d5, the position becomes more strategic",
+      "White aims for quick development and kingside attack",
+      "Less theoretically explored than mainline openings — a practical surprise weapon"
+    ]
   },
   {
-    id: 'modern-benoni',
-    name: 'Modern Benoni',
-    eco: 'A60',
-    difficulty: 'Advanced',
-    description: 'A sharp, unbalanced defence creating asymmetric pawn structures.',
-    moves: [
-      { move: 'd4', fen: 'rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1', explanation: 'White opens with the queen pawn.' },
-      { move: 'Nf6', fen: 'rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2', explanation: 'Black develops.' },
-      { move: 'c4', fen: 'rnbqkb1r/pppppppp/5n2/8/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2', explanation: 'White expands.' },
-      { move: 'c5', fen: 'rnbqkb1r/pp1ppppp/5n2/2p5/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3', explanation: 'Black challenges d4 immediately with c5.' },
-      { move: 'd5', fen: 'rnbqkb1r/pp1ppppp/5n2/2pP4/2P5/8/PP2PPPP/RNBQKBNR b KQkq - 0 3', explanation: 'White advances, creating asymmetry. The pawn on d5 gives White space but also creates a target.' },
-      { move: 'e6', fen: 'rnbqkb1r/pp1p1ppp/4pn2/2pP4/2P5/8/PP2PPPP/RNBQKBNR w KQkq - 0 4', explanation: 'Black undermines the d5 pawn.' },
-      { move: 'Nc3', fen: 'rnbqkb1r/pp1p1ppp/4pn2/2pP4/2P5/2N5/PP2PPPP/R1BQKBNR b KQkq - 1 4', explanation: 'White develops.' },
-      { move: 'exd5', fen: 'rnbqkb1r/pp1p1ppp/5n2/2pp4/2P5/2N5/PP2PPPP/R1BQKBNR w KQkq - 0 5', explanation: 'Black captures, opening the e-file.' },
-      { move: 'cxd5', fen: 'rnbqkb1r/pp1p1ppp/5n2/2pP4/8/2N5/PP2PPPP/R1BQKBNR b KQkq - 0 5', explanation: 'White recaptures, maintaining the space advantage.' },
-      { move: 'd6', fen: 'rnbqkb1r/pp3ppp/3p1n2/2pP4/8/2N5/PP2PPPP/R1BQKBNR w KQkq - 0 6', explanation: 'The Benoni structure is established. Black has a queenside pawn majority and will play b5 expansion, while White has a central space advantage and kingside chances.', arrows: [['b7', 'b5']], highlights: ['c5', 'd6'] },
+    "id": "sicilian-najdorf",
+    "name": "Sicilian Defence — Najdorf",
+    "eco": "B90",
+    "difficulty": "Advanced",
+    "description": "The sharpest and most popular defence to 1.e4, favoured by world champions.",
+    "moves": [
+      {
+        "move": "e4",
+        "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White occupies the centre."
+      },
+      {
+        "move": "c5",
+        "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "explanation": "The Sicilian Defence! Black fights for the d4 square asymmetrically, avoiding a symmetrical pawn structure. This leads to unbalanced, fighting games."
+      },
+      {
+        "move": "Nf3",
+        "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+        "explanation": "White develops naturally, preparing d4."
+      },
+      {
+        "move": "d6",
+        "fen": "rnbqkbnr/pp2pppp/3p4/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3",
+        "explanation": "Black supports the c5 pawn and prepares to develop the knight to f6."
+      },
+      {
+        "move": "d4",
+        "fen": "rnbqkbnr/pp2pppp/3p4/2p5/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq - 0 3",
+        "explanation": "White strikes in the centre, challenging Black's c5 pawn. This creates an open position."
+      },
+      {
+        "move": "cxd4",
+        "fen": "rnbqkbnr/pp2pppp/3p4/8/3pP3/5N2/PPP2PPP/RNBQKB1R w KQkq - 0 4",
+        "explanation": "Black captures, opening the c-file which will become a key asset for Black's counterplay."
+      },
+      {
+        "move": "Nxd4",
+        "fen": "rnbqkbnr/pp2pppp/3p4/8/3NP3/8/PPP2PPP/RNBQKB1R b KQkq - 0 4",
+        "explanation": "White recaptures with the knight, which sits powerfully in the centre."
+      },
+      {
+        "move": "Nf6",
+        "fen": "rnbqkb1r/pp2pppp/3p1n2/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 1 5",
+        "explanation": "Black attacks the e4 pawn and develops a piece. This is the most natural square for the knight."
+      },
+      {
+        "move": "Nc3",
+        "fen": "rnbqkb1r/pp2pppp/3p1n2/8/3NP3/2N5/PPP2PPP/R1BQKB1R b KQkq - 2 5",
+        "explanation": "White defends e4 and develops the knight to its ideal square."
+      },
+      {
+        "move": "a6",
+        "fen": "rnbqkb1r/1p2pppp/p2p1n2/8/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 0 6",
+        "explanation": "The Najdorf move! This modest pawn move is incredibly flexible — it prevents Nb5, prepares b5 expansion, and keeps all options open. Bobby Fischer's weapon of choice.",
+        "highlights": [
+          "a6"
+        ]
+      }
     ],
-    keyIdeas: [
-      'Asymmetric pawn structure — Black\'s queenside majority vs White\'s central space',
-      'Black plays for b5 expansion and activity on the queenside',
-      'White aims for e4-e5 to open the centre and attack',
-      'The d6 pawn can become a weakness but also supports e5',
-      'Dynamic, double-edged play — beloved by Tal and other attacking players',
-    ],
+    "keyIdeas": [
+      "Black gets an asymmetric pawn structure with chances on the queenside",
+      "The c-file becomes a crucial avenue for Black's rooks",
+      "a6 prepares queenside expansion with b5 and Bb7",
+      "Extremely rich in theory with many sharp variations (Be2, Bg5, Bc4, f3)",
+      "Black accepts a slightly cramped position for long-term dynamic chances"
+    ]
   },
   {
-    id: 'scandinavian',
-    name: 'Scandinavian Defence',
-    eco: 'B01',
-    difficulty: 'Beginner',
-    description: 'A direct approach — Black immediately challenges e4 with the queen pawn.',
-    moves: [
-      { move: 'e4', fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1', explanation: 'White claims the centre.' },
-      { move: 'd5', fen: 'rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2', explanation: 'Black immediately challenges the e4 pawn. The most direct approach possible.', arrows: [['d5', 'e4']] },
-      { move: 'exd5', fen: 'rnbqkbnr/ppp1pppp/8/3P4/8/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2', explanation: 'White captures. Now Black must decide: recapture with the queen (main line) or play Nf6 (Modern Scandinavian).' },
-      { move: 'Qxd5', fen: 'rnb1kbnr/ppp1pppp/8/3q4/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 3', explanation: 'The classic Scandinavian. The queen recaptures but will be kicked by Nc3. Black must spend a tempo moving the queen again, but gets a clear, simple position with no bad pieces.', highlights: ['d5'] },
+    "id": "kings-indian",
+    "name": "King's Indian Defence",
+    "eco": "E60",
+    "difficulty": "Advanced",
+    "description": "A hypermodern defence where Black lets White build a centre then attacks it.",
+    "moves": [
+      {
+        "move": "d4",
+        "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White opens with the queen pawn."
+      },
+      {
+        "move": "Nf6",
+        "fen": "rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2",
+        "explanation": "Black develops the knight and delays committing to a pawn structure, a hypermodern approach."
+      },
+      {
+        "move": "c4",
+        "fen": "rnbqkb1r/pppppppp/5n2/8/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2",
+        "explanation": "White grabs more space in the centre, establishing the classical d4+c4 pawn duo."
+      },
+      {
+        "move": "g6",
+        "fen": "rnbqkb1r/pppppp1p/5np1/8/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+        "explanation": "Black prepares to fianchetto the bishop to g7, from where it will exert enormous pressure on the long diagonal."
+      },
+      {
+        "move": "Nc3",
+        "fen": "rnbqkb1r/pppppp1p/5np1/8/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq - 1 3",
+        "explanation": "White develops naturally, defending the centre."
+      },
+      {
+        "move": "Bg7",
+        "fen": "rnbqk2r/ppppppbp/5np1/8/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4",
+        "explanation": "The fianchettoed bishop is the pride of the King's Indian. It targets the centre and the queenside along the long diagonal.",
+        "arrows": [
+          [
+            "g7",
+            "a1"
+          ]
+        ]
+      },
+      {
+        "move": "e4",
+        "fen": "rnbqk2r/ppppppbp/5np1/8/2PPP3/2N5/PP3PPP/R1BQKBNR b KQkq - 0 4",
+        "explanation": "White builds a massive pawn centre. This looks imposing, but Black has plans to undermine it."
+      },
+      {
+        "move": "d6",
+        "fen": "rnbqk2r/ppp1ppbp/3p1np1/8/2PPP3/2N5/PP3PPP/R1BQKBNR w KQkq - 0 5",
+        "explanation": "Black completes the King's Indian setup. The plan is to castle, then counterattack with e5 or c5.",
+        "arrows": [
+          [
+            "e7",
+            "e5"
+          ]
+        ]
+      }
     ],
-    keyIdeas: [
-      'Black gets easy development and no bad bishop',
-      'The queen will typically go to a5 or d6 after Nc3',
-      'Simple to learn — very few theoretical lines to memorize',
-      'Black\'s position is solid but slightly passive due to the tempo loss',
-      'A practical weapon at all levels, especially in rapid and blitz',
-    ],
+    "keyIdeas": [
+      "Black concedes the centre initially, then counterattacks with e5 or c5",
+      "The Bg7 is a powerful piece on the long diagonal",
+      "After e5, if White plays d5, Black attacks on the kingside with f5",
+      "If the centre stays open, Black gets dynamic piece play",
+      "Kasparov and Fischer used this opening at the highest level"
+    ]
   },
   {
-    id: 'vienna-game',
-    name: 'Vienna Game',
-    eco: 'C25',
-    difficulty: 'Intermediate',
-    description: 'A romantic-era opening preparing f4 to build a strong centre.',
-    moves: [
-      { move: 'e4', fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1', explanation: 'White claims the centre.' },
-      { move: 'e5', fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2', explanation: 'Symmetrical centre.' },
-      { move: 'Nc3', fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/2N5/PPPP1PPP/R1BQKBNR b KQkq - 1 2', explanation: 'The Vienna! Instead of Nf3, White develops the knight to c3 first, preparing f4 on the next move. This is a "delayed King\'s Gambit" approach.', highlights: ['c3'] },
-      { move: 'Nf6', fen: 'rnbqkb1r/pppp1ppp/5n2/4p3/4P3/2N5/PPPP1PPP/R1BQKBNR w KQkq - 2 3', explanation: 'Black develops and attacks e4.' },
-      { move: 'f4', fen: 'rnbqkb1r/pppp1ppp/5n2/4p3/4PP2/2N5/PPPP2PP/R1BQKBNR b KQkq - 0 3', explanation: 'The Vienna Gambit! White offers the f-pawn to blast open the centre. After exf4, White gets a strong centre with d4 and open lines for attack. Very aggressive.', arrows: [['f4', 'e5']] },
+    "id": "grunfeld-defence",
+    "name": "Grunfeld Defence",
+    "eco": "D80",
+    "difficulty": "Advanced",
+    "description": "A dynamic defence that invites White to build a centre and then destroys it.",
+    "moves": [
+      {
+        "move": "d4",
+        "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White opens with the queen pawn."
+      },
+      {
+        "move": "Nf6",
+        "fen": "rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2",
+        "explanation": "Black develops flexibly."
+      },
+      {
+        "move": "c4",
+        "fen": "rnbqkb1r/pppppppp/5n2/8/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2",
+        "explanation": "White expands in the centre."
+      },
+      {
+        "move": "g6",
+        "fen": "rnbqkb1r/pppppp1p/5np1/8/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+        "explanation": "Black prepares the fianchetto — similar to the King's Indian."
+      },
+      {
+        "move": "Nc3",
+        "fen": "rnbqkb1r/pppppp1p/5np1/8/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq - 1 3",
+        "explanation": "White develops toward the centre."
+      },
+      {
+        "move": "d5",
+        "fen": "rnbqkb1r/ppp1pp1p/5np1/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 0 4",
+        "explanation": "The Grunfeld! Instead of the King's Indian's d6, Black immediately challenges the centre. After cxd5 Nxd5, White gets a big centre but Black will systematically attack it with c5, Bg7, Nc6, and other moves.",
+        "arrows": [
+          [
+            "d5",
+            "c4"
+          ],
+          [
+            "d5",
+            "e4"
+          ]
+        ],
+        "highlights": [
+          "d5"
+        ]
+      }
     ],
-    keyIdeas: [
-      'A "prepared" King\'s Gambit — Nc3 supports e4 before playing f4',
-      'Leads to sharp, tactical positions with attacking chances for White',
-      'If Black declines with d5, the position becomes more strategic',
-      'White aims for quick development and kingside attack',
-      'Less theoretically explored than mainline openings — a practical surprise weapon',
-    ],
+    "keyIdeas": [
+      "Black sacrifices central space to create dynamic counterplay against White's centre",
+      "The Bg7 becomes a monster piece targeting d4 and the queenside",
+      "Black's plan: c5 to undermine d4, Nc6 to pressure d4, and e5 at the right moment",
+      "White must defend the centre carefully — if it collapses, Black gets a huge advantage",
+      "Kasparov's favourite defence — incredibly rich in theory and ideas"
+    ]
   },
   {
-    id: 'alekhine-defence',
-    name: "Alekhine's Defence",
-    eco: 'B02',
-    difficulty: 'Advanced',
-    description: 'A provocative defence that invites White to overextend the centre pawns.',
-    moves: [
-      { move: 'e4', fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1', explanation: 'White claims the centre.' },
-      { move: 'Nf6', fen: 'rnbqkb1r/pppppppp/5n2/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 1 2', explanation: 'Alekhine\'s Defence! Black immediately attacks e4 with the knight, provoking White to advance. The idea is to make White overextend.', arrows: [['f6', 'e4']], highlights: ['f6'] },
-      { move: 'e5', fen: 'rnbqkb1r/pppppppp/5n2/4P3/8/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2', explanation: 'White advances, attacking the knight and gaining space. But the pawn has left its ideal e4 square and may become a target later.' },
-      { move: 'Nd5', fen: 'rnbqkb1r/pppppppp/8/3nP3/8/8/PPPP1PPP/RNBQKBNR w KQkq - 1 3', explanation: 'The knight retreats to d5, a strong central square. Black will continue provoking White\'s pawns with d6 and c5.' },
-      { move: 'd4', fen: 'rnbqkb1r/pppppppp/8/3nP3/3P4/8/PPP2PPP/RNBQKBNR b KQkq - 0 3', explanation: 'White builds a massive centre — but it\'s a target. Black\'s entire strategy revolves around undermining these pawns.' },
-      { move: 'd6', fen: 'rnbqkb1r/ppp1pppp/3p4/3nP3/3P4/8/PPP2PPP/RNBQKBNR w KQkq - 0 4', explanation: 'Black strikes at the e5 pawn. After exd6, White\'s centre is diminished. After e6, the centre is closed and Black manoeuvres behind it.', arrows: [['d6', 'e5']] },
+    "id": "nimzo-indian",
+    "name": "Nimzo-Indian Defence",
+    "eco": "E20",
+    "difficulty": "Advanced",
+    "description": "One of the most respected defences in chess — controlling e4 by pinning the knight.",
+    "moves": [
+      {
+        "move": "d4",
+        "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White opens with the queen pawn."
+      },
+      {
+        "move": "Nf6",
+        "fen": "rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2",
+        "explanation": "Black develops and prevents e4."
+      },
+      {
+        "move": "c4",
+        "fen": "rnbqkb1r/pppppppp/5n2/8/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2",
+        "explanation": "White expands."
+      },
+      {
+        "move": "e6",
+        "fen": "rnbqkb1r/pppp1ppp/4pn2/8/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+        "explanation": "Black solidifies the centre and opens the diagonal for the dark-squared bishop."
+      },
+      {
+        "move": "Nc3",
+        "fen": "rnbqkb1r/pppp1ppp/4pn2/8/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq - 1 3",
+        "explanation": "White develops the knight."
+      },
+      {
+        "move": "Bb4",
+        "fen": "rnbqk2r/pppp1ppp/4pn2/8/1bPP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4",
+        "explanation": "The Nimzo-Indian! Black pins the knight on c3, preventing e4. This is one of the most strategically rich openings in chess. Black is willing to give up the bishop pair in exchange for doubling White's c-pawns and controlling the centre.",
+        "arrows": [
+          [
+            "b4",
+            "c3"
+          ]
+        ],
+        "highlights": [
+          "b4",
+          "c3"
+        ]
+      }
     ],
-    keyIdeas: [
-      'Black deliberately provokes White\'s pawns to overextend',
-      'White\'s big centre looks imposing but can become a liability',
-      'Black attacks the centre with d6, c5, and piece pressure',
-      'Named after world champion Alexander Alekhine',
-      'Requires precise understanding of when the centre collapses',
-    ],
+    "keyIdeas": [
+      "The pin on Nc3 prevents e4, controlling the centre indirectly",
+      "If White plays a3 Bxc3+ bxc3, White gets the bishop pair but doubled c-pawns",
+      "The doubled c-pawns can be both a strength (central control) and weakness (structural)",
+      "One of the deepest openings in chess — every world champion has faced it",
+      "Black gets flexible development and often plays d5 or c5 to challenge the centre"
+    ]
   },
+  {
+    "id": "modern-benoni",
+    "name": "Modern Benoni",
+    "eco": "A60",
+    "difficulty": "Advanced",
+    "description": "A sharp, unbalanced defence creating asymmetric pawn structures.",
+    "moves": [
+      {
+        "move": "d4",
+        "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White opens with the queen pawn."
+      },
+      {
+        "move": "Nf6",
+        "fen": "rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2",
+        "explanation": "Black develops."
+      },
+      {
+        "move": "c4",
+        "fen": "rnbqkb1r/pppppppp/5n2/8/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2",
+        "explanation": "White expands."
+      },
+      {
+        "move": "c5",
+        "fen": "rnbqkb1r/pp1ppppp/5n2/2p5/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3",
+        "explanation": "Black challenges d4 immediately with c5."
+      },
+      {
+        "move": "d5",
+        "fen": "rnbqkb1r/pp1ppppp/5n2/2pP4/2P5/8/PP2PPPP/RNBQKBNR b KQkq - 0 3",
+        "explanation": "White advances, creating asymmetry. The pawn on d5 gives White space but also creates a target."
+      },
+      {
+        "move": "e6",
+        "fen": "rnbqkb1r/pp1p1ppp/4pn2/2pP4/2P5/8/PP2PPPP/RNBQKBNR w KQkq - 0 4",
+        "explanation": "Black undermines the d5 pawn."
+      },
+      {
+        "move": "Nc3",
+        "fen": "rnbqkb1r/pp1p1ppp/4pn2/2pP4/2P5/2N5/PP2PPPP/R1BQKBNR b KQkq - 1 4",
+        "explanation": "White develops."
+      },
+      {
+        "move": "exd5",
+        "fen": "rnbqkb1r/pp1p1ppp/5n2/2pp4/2P5/2N5/PP2PPPP/R1BQKBNR w KQkq - 0 5",
+        "explanation": "Black captures, opening the e-file."
+      },
+      {
+        "move": "cxd5",
+        "fen": "rnbqkb1r/pp1p1ppp/5n2/2pP4/8/2N5/PP2PPPP/R1BQKBNR b KQkq - 0 5",
+        "explanation": "White recaptures, maintaining the space advantage."
+      },
+      {
+        "move": "d6",
+        "fen": "rnbqkb1r/pp3ppp/3p1n2/2pP4/8/2N5/PP2PPPP/R1BQKBNR w KQkq - 0 6",
+        "explanation": "The Benoni structure is established. Black has a queenside pawn majority and will play b5 expansion, while White has a central space advantage and kingside chances.",
+        "arrows": [
+          [
+            "b7",
+            "b5"
+          ]
+        ],
+        "highlights": [
+          "c5",
+          "d6"
+        ]
+      }
+    ],
+    "keyIdeas": [
+      "Asymmetric pawn structure — Black's queenside majority vs White's central space",
+      "Black plays for b5 expansion and activity on the queenside",
+      "White aims for e4-e5 to open the centre and attack",
+      "The d6 pawn can become a weakness but also supports e5",
+      "Dynamic, double-edged play — beloved by Tal and other attacking players"
+    ]
+  },
+  {
+    "id": "alekhine-defence",
+    "name": "Alekhine's Defence",
+    "eco": "B02",
+    "difficulty": "Advanced",
+    "description": "A provocative defence that invites White to overextend the centre pawns.",
+    "moves": [
+      {
+        "move": "e4",
+        "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+        "explanation": "White claims the centre."
+      },
+      {
+        "move": "Nf6",
+        "fen": "rnbqkb1r/pppppppp/5n2/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 1 2",
+        "explanation": "Alekhine's Defence! Black immediately attacks e4 with the knight, provoking White to advance. The idea is to make White overextend.",
+        "arrows": [
+          [
+            "f6",
+            "e4"
+          ]
+        ],
+        "highlights": [
+          "f6"
+        ]
+      },
+      {
+        "move": "e5",
+        "fen": "rnbqkb1r/pppppppp/5n2/4P3/8/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2",
+        "explanation": "White advances, attacking the knight and gaining space. But the pawn has left its ideal e4 square and may become a target later."
+      },
+      {
+        "move": "Nd5",
+        "fen": "rnbqkb1r/pppppppp/8/3nP3/8/8/PPPP1PPP/RNBQKBNR w KQkq - 1 3",
+        "explanation": "The knight retreats to d5, a strong central square. Black will continue provoking White's pawns with d6 and c5."
+      },
+      {
+        "move": "d4",
+        "fen": "rnbqkb1r/pppppppp/8/3nP3/3P4/8/PPP2PPP/RNBQKBNR b KQkq - 0 3",
+        "explanation": "White builds a massive centre — but it's a target. Black's entire strategy revolves around undermining these pawns."
+      },
+      {
+        "move": "d6",
+        "fen": "rnbqkb1r/ppp1pppp/3p4/3nP3/3P4/8/PPP2PPP/RNBQKBNR w KQkq - 0 4",
+        "explanation": "Black strikes at the e5 pawn. After exd6, White's centre is diminished. After e6, the centre is closed and Black manoeuvres behind it.",
+        "arrows": [
+          [
+            "d6",
+            "e5"
+          ]
+        ]
+      }
+    ],
+    "keyIdeas": [
+      "Black deliberately provokes White's pawns to overextend",
+      "White's big centre looks imposing but can become a liability",
+      "Black attacks the centre with d6, c5, and piece pressure",
+      "Named after world champion Alexander Alekhine",
+      "Requires precise understanding of when the centre collapses"
+    ]
+  }
 ];
 
 export default openings;
