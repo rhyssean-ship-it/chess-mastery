@@ -110,7 +110,7 @@ export default function OpeningTrainer() {
       <Breadcrumb to="/openings" label="Back to Openings" />
       <h1 className="text-2xl font-display text-gold mb-1">{opening.name}</h1>
       <p className="text-text-dim text-sm mb-2">{opening.eco} &middot; {opening.difficulty}</p>
-      <p className="text-text-dim text-base mb-8">{opening.description}</p>
+      <p className="text-text text-base mb-8">{opening.description}</p>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
         {/* Board */}

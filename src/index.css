@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @import "tailwindcss";
 @import "chessground/assets/chessground.base.css";
@@ -17,7 +17,7 @@
   --color-incorrect: #E57373;
   --color-amber: #FFA726;
   --font-display: 'Playfair Display', 'Georgia', serif;
-  --font-body: 'Lora', 'Georgia', serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
   --shadow-card-hover: 0 10px 30px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.3);
 }
@@ -30,9 +30,9 @@ body {
   margin: 0;
   padding: 0;
   font-family: var(--font-body);
-  font-size: 17px;
-  line-height: 1.65;
-  letter-spacing: 0.01em;
+  font-size: 15px;
+  line-height: 1.6;
+  letter-spacing: 0;
   background-color: var(--color-bg);
   color: var(--color-text);
   min-height: 100vh;
@@ -67,7 +67,7 @@ h2 { font-size: 1.875rem; font-weight: 600; }
 h3 { font-size: 1.25rem; font-weight: 600; }
 h4 { font-size: 1.05rem; font-weight: 600; }
 
-p { line-height: 1.75; }
+p { line-height: 1.65; }
 
 /* Mono for chess notation and data */
 .font-mono, code, kbd {
