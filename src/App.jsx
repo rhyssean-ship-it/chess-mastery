@@ -31,7 +31,7 @@ function App() {
   return (
     <div className="min-h-screen">
       <Nav />
-      <main className="lg:ml-60 pt-14 lg:pt-0 min-h-screen">
+      <main className="lg:ml-56 pt-14 lg:pt-0 min-h-screen">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/daily" element={<DailyChallenge />} />
