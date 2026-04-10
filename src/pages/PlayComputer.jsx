@@ -169,8 +169,12 @@ export default function PlayComputer() {
 
   const turnColor = gameRef.current ? (gameRef.current.turn() === 'w' ? 'white' : 'black') : 'white';
   const isPlayerTurn = turnColor === playerColor && !thinking;
-  const evalBar = Math.max(-5, Math.min(5, evaluation));
-  const evalPct = ((evalBar + 5) / 10) * 100;
+  // Eval bar: white portion grows when White is winning
+  // evaluation is already from player's perspective (positive = player winning)
+  // Convert to White's perspective for the bar display
+  const whiteEval = playerColor === 'white' ? evaluation : -evaluation;
+  const evalClamped = Math.max(-5, Math.min(5, whiteEval));
+  const evalPct = ((evalClamped + 5) / 10) * 100;
 
   if (phase === 'setup') {
     return (
