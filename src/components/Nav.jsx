@@ -85,14 +85,9 @@ export default function Nav() {
   const navContent = (
     <>
       {/* Logo */}
-      <div className="px-4 pt-5 pb-3">
-        <Link to="/" className="flex items-center gap-2.5 no-underline group" onClick={() => setMobileOpen(false)}>
-          <div className="w-8 h-8 rounded-lg bg-gold/10 border border-gold/20 flex items-center justify-center group-hover:bg-gold/20 transition-colors">
-            <svg viewBox="0 0 24 24" className="w-4 h-4 text-gold" fill="currentColor">
-              <path d="M12 2L9 7H6l1.5 4L6 15h3l1 2h4l1-2h3l-1.5-4L18 7h-3L12 2zM10 17v3h4v-3h-4z" />
-            </svg>
-          </div>
-          <div className="font-display text-gold text-sm font-bold tracking-wide leading-tight">Chess Mastery</div>
+      <div className="px-4 pt-5 pb-4">
+        <Link to="/" className="no-underline" onClick={() => setMobileOpen(false)}>
+          <div className="font-display text-gold text-lg font-bold tracking-wide">enPassant</div>
         </Link>
       </div>
 
@@ -106,7 +101,7 @@ export default function Nav() {
           if (section.link) {
             return (
               <Link key={section.id} to={section.link} onClick={() => setMobileOpen(false)}
-                className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm no-underline transition-all duration-150 ${
+                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-base no-underline transition-all duration-150 ${
                   sectionActive ? 'bg-gold/10 text-gold border border-gold/20' : 'text-text-dim hover:text-text hover:bg-bg-hover border border-transparent'
                 }`}>
                 <span className={sectionActive ? 'text-gold' : 'text-text-dim'}>{section.icon}</span>
@@ -121,7 +116,7 @@ export default function Nav() {
             <div key={section.id}>
               <button
                 onClick={() => toggleSection(section.id)}
-                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all duration-150 ${
+                className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-base transition-all duration-150 ${
                   sectionActive ? 'text-gold' : 'text-text-dim hover:text-text hover:bg-bg-hover'
                 }`}
               >
@@ -135,7 +130,7 @@ export default function Nav() {
                 <div className="ml-[26px] pl-3 border-l border-bg-hover/60 mt-0.5 mb-1 space-y-0.5" style={{ animation: 'expandIn 150ms ease-out' }}>
                   {section.children.map(child => (
                     <Link key={child.to} to={child.to} onClick={() => setMobileOpen(false)}
-                      className={`block px-3 py-1.5 rounded-md text-xs no-underline transition-all duration-150 ${
+                      className={`block px-3 py-1.5 rounded-md text-sm no-underline transition-all duration-150 ${
                         isActive(child.to)
                           ? 'text-gold bg-gold/8 font-medium'
                           : 'text-text-dim hover:text-text hover:bg-bg-hover/50'
@@ -168,13 +163,8 @@ export default function Nav() {
 
       {/* Mobile top bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-bg-card/95 backdrop-blur-sm border-b border-bg-hover flex items-center justify-between px-4">
-        <Link to="/" className="flex items-center gap-2 no-underline">
-          <div className="w-8 h-8 rounded-lg bg-gold/10 border border-gold/20 flex items-center justify-center">
-            <svg viewBox="0 0 24 24" className="w-4 h-4 text-gold" fill="currentColor">
-              <path d="M12 2L9 7H6l1.5 4L6 15h3l1 2h4l1-2h3l-1.5-4L18 7h-3L12 2zM10 17v3h4v-3h-4z" />
-            </svg>
-          </div>
-          <span className="font-display text-gold text-sm font-bold">Chess Mastery</span>
+        <Link to="/" className="no-underline">
+          <span className="font-display text-gold text-base font-bold">enPassant</span>
         </Link>
         <button className="text-text-dim hover:text-text p-2 btn-press rounded-lg hover:bg-bg-hover transition-colors" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

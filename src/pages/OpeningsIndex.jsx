@@ -19,7 +19,7 @@ export default function OpeningsIndex() {
             key={op.id}
             to={`/openings/${op.id}`}
             title={op.name}
-            description={`${op.eco} — ${op.description}`}
+            description={null}
             difficulty={op.difficulty}
             completed={completed.includes(op.id)}
             thumbnail={
