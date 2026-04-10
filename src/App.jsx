@@ -18,6 +18,14 @@ import PatternRecognition from './pages/PatternRecognition'
 import { GamesIndex, GameViewer } from './pages/MasterGames'
 import PawnStructures from './pages/PawnStructures'
 import CalculationTrainer from './pages/CalculationTrainer'
+import OpeningTraps from './pages/OpeningTraps'
+import MoveOrderQuiz from './pages/MoveOrderQuiz'
+import TheoreticalEndgames from './pages/TheoreticalEndgames'
+import PracticalEndgames from './pages/PracticalEndgames'
+import DailyChallenge from './pages/DailyChallenge'
+import WeaknessAnalyzer from './pages/WeaknessAnalyzer'
+import ConceptFlashcards from './pages/ConceptFlashcards'
+import Glossary from './pages/Glossary'
 
 function App() {
   return (
@@ -26,13 +34,18 @@ function App() {
       <main className="lg:ml-60 pt-14 lg:pt-0 min-h-screen">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/daily" element={<DailyChallenge />} />
           <Route path="/openings" element={<OpeningsIndex />} />
           <Route path="/openings/:id" element={<OpeningTrainer />} />
+          <Route path="/opening-traps" element={<OpeningTraps />} />
+          <Route path="/move-order" element={<MoveOrderQuiz />} />
           <Route path="/tactics" element={<TacticsQueue />} />
           <Route path="/strategy" element={<StrategyIndex />} />
           <Route path="/strategy/:id" element={<StrategyLesson />} />
           <Route path="/endgames" element={<EndgameIndex />} />
           <Route path="/endgames/:id" element={<EndgameLesson />} />
+          <Route path="/theoretical-endgames" element={<TheoreticalEndgames />} />
+          <Route path="/practical-endgames" element={<PracticalEndgames />} />
           <Route path="/middlegame" element={<PlanIndex />} />
           <Route path="/middlegame/:id" element={<PlanDetail />} />
           <Route path="/critical-moments" element={<CriticalMoments />} />
@@ -44,6 +57,9 @@ function App() {
           <Route path="/repertoire" element={<RepertoireBuilder />} />
           <Route path="/visualisation" element={<VisualisationDrills />} />
           <Route path="/game-review" element={<GameReview />} />
+          <Route path="/flashcards" element={<ConceptFlashcards />} />
+          <Route path="/glossary" element={<Glossary />} />
+          <Route path="/weakness" element={<WeaknessAnalyzer />} />
           <Route path="/progress" element={<ProgressDashboard />} />
         </Routes>
       </main>
