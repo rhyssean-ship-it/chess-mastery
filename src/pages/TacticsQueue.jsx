@@ -126,19 +126,20 @@ export default function TacticsQueue() {
 
   if (queue.length === 0) {
     return (
-      <div className="page-enter max-w-3xl mx-auto px-4 py-16 text-center">
-        <h1 className="text-3xl font-display text-gold mb-4">Tactics</h1>
-        <p className="text-text-dim text-lg">No puzzles due today. Come back tomorrow!</p>
+      <div className="page-enter max-w-3xl mx-auto px-6 py-16 text-center">
+        <h1 className="text-3xl font-display text-gold mb-1">Tactics</h1>
+        <p className="text-text-dim text-sm mb-8">Sharpen your tactical eye with daily puzzles.</p>
+        <p className="text-text-dim text-lg">♟️ You're all caught up! No puzzles due right now — take a well-earned rest and come back tomorrow for a fresh set of challenges.</p>
       </div>
     );
   }
 
   if (queueIndex >= queue.length) {
     return (
-      <div className="page-enter max-w-3xl mx-auto px-4 py-16 text-center">
-        <h1 className="text-3xl font-display text-gold mb-4">Session Complete</h1>
-        <p className="text-text-dim text-lg mb-4">You've finished all due puzzles for today. Great work!</p>
-        <button onClick={() => { setQueueIndex(0); resetToPuzzle(queue[0]); }} className="bg-gold text-bg px-6 py-2.5 rounded font-semibold hover:bg-gold-dim transition-colors">
+      <div className="page-enter max-w-3xl mx-auto px-6 py-16 text-center">
+        <h1 className="text-3xl font-display text-gold mb-1">Session Complete</h1>
+        <p className="text-text-dim text-sm mb-8">You've finished all due puzzles for today. Great work!</p>
+        <button onClick={() => { setQueueIndex(0); resetToPuzzle(queue[0]); }} className="bg-gold text-bg px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
           Restart Session
         </button>
       </div>
@@ -148,15 +149,16 @@ export default function TacticsQueue() {
   const turnColor = puzzle.sideToMove === 'white' ? 'white' : 'black';
 
   return (
-    <div className="page-enter max-w-5xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-display text-gold mb-6">Tactics</h1>
+    <div className="page-enter max-w-5xl mx-auto px-6 py-10">
+      <h1 className="text-3xl font-display text-gold mb-1">Tactics</h1>
+      <p className="text-text-dim text-sm mb-8">Sharpen your tactical eye with daily puzzles.</p>
 
       <ProgressBar value={queueIndex} max={queue.length} label="Today's Queue" className="mb-6" />
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
         {/* Board */}
         <div className="w-full max-w-[560px]">
-          <div className={`rounded-lg transition-shadow duration-300 ${flash === 'correct' ? 'shadow-[0_0_30px_rgba(76,175,80,0.4)]' : flash === 'incorrect' ? 'shadow-[0_0_30px_rgba(229,115,115,0.4)]' : ''}`}>
+          <div className={`rounded-xl transition-shadow duration-300 ${flash === 'correct' ? 'shadow-[0_0_30px_rgba(76,175,80,0.4)]' : flash === 'incorrect' ? 'shadow-[0_0_30px_rgba(229,115,115,0.4)]' : ''}`}>
             <ChessBoard
               fen={fen}
               orientation={turnColor}
@@ -175,7 +177,7 @@ export default function TacticsQueue() {
             <span className="text-xs px-2 py-0.5 rounded-full bg-bg-hover text-text-dim">{puzzle.category}</span>
           </div>
 
-          <div className="bg-bg-card border border-bg-hover rounded-lg p-4">
+          <div className="bg-bg-card border border-bg-hover rounded-xl p-4">
             <p className="text-sm font-semibold mb-1">{turnColor === 'white' ? 'White' : 'Black'} to move</p>
             <p className="text-text-dim text-sm">Find the best continuation.</p>
           </div>
@@ -183,7 +185,7 @@ export default function TacticsQueue() {
           {solveState === 'playing' && (
             <button
               onClick={() => setShowHint(true)}
-              className="w-full py-2 rounded bg-bg-card border border-bg-hover text-sm text-text-dim hover:text-text hover:bg-bg-hover transition-colors"
+              className="w-full py-2 rounded-lg bg-bg-card border border-bg-hover text-sm text-text-dim hover:text-text hover:bg-bg-hover transition-all btn-press"
             >
               {showHint ? puzzle.hint : 'Show Hint'}
             </button>
@@ -191,7 +193,7 @@ export default function TacticsQueue() {
 
           {solveState === 'correct' && (
             <div className="space-y-3">
-              <div className="bg-correct/10 border border-correct/30 rounded-lg p-4">
+              <div className="bg-correct/10 border border-correct/30 rounded-xl p-4">
                 <p className="text-sm font-semibold text-correct mb-1">&#10003; Correct!</p>
                 <p className="text-sm text-text-dim">{puzzle.explanation}</p>
               </div>
@@ -201,15 +203,15 @@ export default function TacticsQueue() {
 
           {solveState === 'wrong' && (
             <div className="space-y-3">
-              <div className="bg-incorrect/10 border border-incorrect/30 rounded-lg p-4">
+              <div className="bg-incorrect/10 border border-incorrect/30 rounded-xl p-4">
                 <p className="text-sm font-semibold text-incorrect mb-1">&#10007; Incorrect</p>
                 <p className="text-sm text-text-dim">That's not the best move.</p>
               </div>
               <div className="flex gap-3">
-                <button onClick={tryAgain} className="flex-1 py-2 rounded bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-colors">
+                <button onClick={tryAgain} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press">
                   Try Again
                 </button>
-                <button onClick={showSolution} className="flex-1 py-2 rounded bg-gold/20 text-gold text-sm hover:bg-gold/30 transition-colors">
+                <button onClick={showSolution} className="flex-1 py-2 rounded-lg bg-gold/20 text-gold text-sm hover:bg-gold/30 transition-all btn-press">
                   Show Solution
                 </button>
               </div>

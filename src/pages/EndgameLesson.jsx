@@ -18,7 +18,7 @@ export default function EndgameLesson() {
   const [drillDone, setDrillDone] = useState(false);
 
   if (!lesson) {
-    return <div className="page-enter max-w-4xl mx-auto px-4 py-10">
+    return <div className="page-enter max-w-4xl mx-auto px-6 py-10">
       <p className="text-text-dim">Lesson not found. <Link to="/endgames" className="text-gold">Back to endgames</Link></p>
     </div>;
   }
@@ -91,7 +91,7 @@ export default function EndgameLesson() {
   }
 
   return (
-    <div className="page-enter max-w-3xl mx-auto px-4 py-10">
+    <div className="page-enter max-w-3xl mx-auto px-6 py-10">
       <Link to="/endgames" className="text-text-dim hover:text-gold text-sm no-underline mb-4 inline-block">&larr; Back to Endgames</Link>
       <h1 className="text-2xl font-display text-gold mb-1">{lesson.title}</h1>
       <p className="text-text-dim text-sm mb-8">{lesson.category} &middot; {lesson.difficulty}</p>
@@ -108,7 +108,7 @@ export default function EndgameLesson() {
             />
           </div>
           {drillFeedback && (
-            <div className={`rounded-lg p-4 border max-w-[480px] mx-auto ${drillFeedback.correct ? 'bg-correct/10 border-correct/30' : 'bg-incorrect/10 border-incorrect/30'}`}>
+            <div className={`rounded-xl p-4 border max-w-[480px] mx-auto ${drillFeedback.correct ? 'bg-correct/10 border-correct/30' : 'bg-incorrect/10 border-incorrect/30'}`}>
               <span className="mr-2">{drillFeedback.correct ? '&#10003;' : '&#10007;'}</span>
               {drillFeedback.message}
             </div>
@@ -117,7 +117,7 @@ export default function EndgameLesson() {
             <div className="text-center">
               <p className="text-correct font-semibold mb-3">&#10003; Drill complete!</p>
               <p className="text-text-dim text-sm mb-4">{lesson.drillPosition.explanation}</p>
-              <button onClick={() => setDrillMode(false)} className="bg-gold text-bg px-5 py-2 rounded font-semibold hover:bg-gold-dim transition-colors">Back to Lesson</button>
+              <button onClick={() => setDrillMode(false)} className="bg-gold text-bg px-5 py-2 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">Back to Lesson</button>
             </div>
           )}
         </div>
@@ -139,13 +139,13 @@ export default function EndgameLesson() {
           </div>
 
           <div className="mt-10 pt-6 border-t border-bg-hover flex flex-wrap gap-3 items-center">
-            <button onClick={startDrill} className="bg-gold text-bg px-5 py-2.5 rounded font-semibold hover:bg-gold-dim transition-colors">
+            <button onClick={startDrill} className="bg-gold text-bg px-5 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
               Drill This Position
             </button>
             {isComplete ? (
               <span className="text-correct text-sm">&#10003; Completed</span>
             ) : (
-              <button onClick={markComplete} className="bg-bg-card border border-bg-hover px-5 py-2.5 rounded text-sm hover:bg-bg-hover transition-colors">
+              <button onClick={markComplete} className="bg-bg-card border border-bg-hover px-5 py-2.5 rounded-lg text-sm hover:bg-bg-hover transition-all btn-press">
                 Mark as Complete
               </button>
             )}

@@ -153,7 +153,7 @@ export default function OpeningTrainer() {
                     <p className="text-text-dim text-sm mb-3">
                       {testCorrect === testTotal ? 'Perfect! You know this opening well.' : 'Keep practicing to improve your recall.'}
                     </p>
-                    <button onClick={() => { setTestMode(false); progressService.recordOpeningDrill(id, 'white', Math.round((testCorrect / testTotal) * 100)); }} className="bg-gold text-bg px-4 py-2 rounded font-semibold text-sm hover:bg-gold-dim transition-colors">
+                    <button onClick={() => { setTestMode(false); progressService.recordOpeningDrill(id, 'white', Math.round((testCorrect / testTotal) * 100)); }} className="bg-gold text-bg px-4 py-2 rounded-lg font-semibold btn-press text-sm hover:bg-gold-dim transition-colors">
                       Back to Study
                     </button>
                   </div>
@@ -162,7 +162,7 @@ export default function OpeningTrainer() {
                 )}
               </div>
               {testFeedback && (
-                <div className={`rounded-lg p-4 border ${testFeedback.correct ? 'bg-correct/10 border-correct/30' : 'bg-incorrect/10 border-incorrect/30'}`}>
+                <div className={`rounded-xl p-4 border ${testFeedback.correct ? 'bg-correct/10 border-correct/30' : 'bg-incorrect/10 border-incorrect/30'}`}>
                   <span className="mr-2">{testFeedback.correct ? '&#10003;' : '&#10007;'}</span>
                   {testFeedback.message}
                 </div>
@@ -172,8 +172,8 @@ export default function OpeningTrainer() {
             <>
               {/* Move navigation */}
               <div className="flex gap-2">
-                <button onClick={goPrev} disabled={currentMove < 0} className="flex-1 py-2 rounded bg-bg-card border border-bg-hover text-sm disabled:opacity-30 hover:bg-bg-hover transition-colors">&larr; Prev</button>
-                <button onClick={goNext} disabled={currentMove >= moves.length - 1} className="flex-1 py-2 rounded bg-bg-card border border-bg-hover text-sm disabled:opacity-30 hover:bg-bg-hover transition-colors">Next &rarr;</button>
+                <button onClick={goPrev} disabled={currentMove < 0} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-bg-hover transition-all btn-press">&larr; Prev</button>
+                <button onClick={goNext} disabled={currentMove >= moves.length - 1} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-bg-hover transition-all btn-press">Next &rarr;</button>
               </div>
 
               {/* Move list */}
@@ -200,7 +200,7 @@ export default function OpeningTrainer() {
               )}
 
               {/* Test button */}
-              <button onClick={startTest} className="w-full bg-gold text-bg py-2.5 rounded font-semibold hover:bg-gold-dim transition-colors">
+              <button onClick={startTest} className="w-full bg-gold text-bg py-2.5 rounded-lg font-semibold btn-press hover:bg-gold-dim transition-colors">
                 Test Me
               </button>
             </>

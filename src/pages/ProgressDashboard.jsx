@@ -50,32 +50,33 @@ export default function ProgressDashboard() {
   }
 
   return (
-    <div className="page-enter max-w-4xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-display text-gold mb-8">Progress Dashboard</h1>
+    <div className="page-enter max-w-4xl mx-auto px-6 py-10">
+      <h1 className="text-3xl font-display text-gold mb-1">Progress Dashboard</h1>
+      <p className="text-text-dim text-sm mb-8">Track your chess improvement over time.</p>
 
       {/* Tactics */}
       <section className="mb-10">
         <h2 className="text-lg font-display mb-4">Tactics Stats</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-          <div className="bg-bg-card border border-bg-hover rounded-lg p-4 text-center">
-            <div className="text-xl font-bold">{puzzleStats.total}</div>
+          <div className="bg-bg-card border border-bg-hover rounded-xl p-4 text-center card-stagger">
+            <div className="text-xl font-bold stat-animate">{puzzleStats.total}</div>
             <div className="text-xs text-text-dim">Puzzles Solved</div>
           </div>
-          <div className="bg-bg-card border border-bg-hover rounded-lg p-4 text-center">
-            <div className="text-xl font-bold">{overallAccuracy}%</div>
+          <div className="bg-bg-card border border-bg-hover rounded-xl p-4 text-center card-stagger">
+            <div className="text-xl font-bold stat-animate">{overallAccuracy}%</div>
             <div className="text-xs text-text-dim">Accuracy</div>
           </div>
-          <div className="bg-bg-card border border-bg-hover rounded-lg p-4 text-center">
-            <div className="text-xl font-bold text-gold">{streak}</div>
+          <div className="bg-bg-card border border-bg-hover rounded-xl p-4 text-center card-stagger">
+            <div className="text-xl font-bold text-gold stat-animate">{streak}</div>
             <div className="text-xs text-text-dim">Day Streak</div>
           </div>
-          <div className="bg-bg-card border border-bg-hover rounded-lg p-4 text-center">
-            <div className="text-xl font-bold">{getDueCount(puzzles.map(p => p.id))}</div>
+          <div className="bg-bg-card border border-bg-hover rounded-xl p-4 text-center card-stagger">
+            <div className="text-xl font-bold stat-animate">{getDueCount(puzzles.map(p => p.id))}</div>
             <div className="text-xs text-text-dim">Due Today</div>
           </div>
         </div>
         {categoryData.length > 0 && (
-          <div className="bg-bg-card border border-bg-hover rounded-lg p-4">
+          <div className="bg-bg-card border border-bg-hover rounded-xl p-4">
             <h3 className="text-sm text-text-dim mb-3">Accuracy by Category</h3>
             <BarChart data={categoryData} />
           </div>
@@ -85,7 +86,7 @@ export default function ProgressDashboard() {
       {/* Openings */}
       <section className="mb-10">
         <h2 className="text-lg font-display mb-4">Openings Progress</h2>
-        <div className="bg-bg-card border border-bg-hover rounded-lg overflow-hidden">
+        <div className="bg-bg-card border border-bg-hover rounded-xl overflow-hidden">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-bg-hover text-text-dim text-xs">
@@ -132,7 +133,7 @@ export default function ProgressDashboard() {
           {['board-vision', 'blindfold', 'piece-counting'].map(type => {
             const s = drillStats[type];
             return (
-              <div key={type} className="bg-bg-card border border-bg-hover rounded-lg p-4">
+              <div key={type} className="bg-bg-card border border-bg-hover rounded-xl p-4">
                 <h4 className="text-sm font-semibold mb-1 capitalize">{type.replace('-', ' ')}</h4>
                 {s ? (
                   <>
@@ -157,7 +158,7 @@ export default function ProgressDashboard() {
         ) : (
           <div className="space-y-2">
             {recentActivity.map((a, i) => (
-              <div key={i} className="bg-bg-card border border-bg-hover rounded-lg px-4 py-2 flex justify-between text-sm">
+              <div key={i} className="bg-bg-card border border-bg-hover rounded-xl px-4 py-2 flex justify-between text-sm">
                 <span>{a.action}</span>
                 <span className="text-text-dim">{new Date(a.date).toLocaleDateString()}</span>
               </div>
@@ -168,7 +169,7 @@ export default function ProgressDashboard() {
 
       {/* Reset */}
       <div className="pt-6 border-t border-bg-hover">
-        <button onClick={() => setShowReset(true)} className="bg-incorrect/20 text-incorrect px-5 py-2 rounded text-sm hover:bg-incorrect/30 transition-colors">
+        <button onClick={() => setShowReset(true)} className="bg-incorrect/20 text-incorrect px-5 py-2 rounded-lg text-sm hover:bg-incorrect/30 transition-all btn-press">
           Reset All Progress
         </button>
       </div>

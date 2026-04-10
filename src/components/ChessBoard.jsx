@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Chessground } from 'chessground';
 
 export default function ChessBoard({
@@ -17,10 +17,12 @@ export default function ChessBoard({
 }) {
   const boardRef = useRef(null);
   const cgRef = useRef(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (boardRef.current && !cgRef.current) {
       cgRef.current = Chessground(boardRef.current, buildConfig());
+      setLoaded(true);
     }
     return () => {
       if (cgRef.current) {
@@ -64,33 +66,26 @@ export default function ChessBoard({
     if (lastMove) config.lastMove = lastMove;
     if (check) config.check = turnColor === 'white' ? 'black' : 'white';
 
+    const shapes = [];
     if (arrows.length > 0) {
-      config.drawable = {
-        autoShapes: [
-          ...arrows.map(([from, to]) => ({
-            orig: from,
-            dest: to,
-            brush: 'green',
-          })),
-          ...highlights.map(sq => ({
-            orig: sq,
-            brush: 'yellow',
-          })),
-        ],
-      };
-    } else if (highlights.length > 0) {
-      config.drawable = {
-        autoShapes: highlights.map(sq => ({
-          orig: sq,
-          brush: 'yellow',
-        })),
-      };
+      shapes.push(...arrows.map(([from, to]) => ({ orig: from, dest: to, brush: 'green' })));
+    }
+    if (highlights.length > 0) {
+      shapes.push(...highlights.map(sq => ({ orig: sq, brush: 'yellow' })));
+    }
+    if (shapes.length > 0) {
+      config.drawable = { autoShapes: shapes };
     }
 
     return config;
   }
 
   return (
-    <div className={`cg-wrap ${className}`} ref={boardRef} />
+    <div className={`relative rounded-lg overflow-hidden ${className}`} aria-label="Chess board">
+      {!loaded && (
+        <div className="absolute inset-0 skeleton aspect-square" />
+      )}
+      <div className={`cg-wrap ${className}`} ref={boardRef} />
+    </div>
   );
 }

@@ -15,9 +15,10 @@ import ProgressDashboard from './pages/ProgressDashboard'
 
 function App() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen">
       <Nav />
-      <main className="flex-1">
+      {/* Main content: offset for sidebar on desktop, top bar on mobile */}
+      <main className="lg:ml-60 pt-14 lg:pt-0 min-h-screen">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/openings" element={<OpeningsIndex />} />

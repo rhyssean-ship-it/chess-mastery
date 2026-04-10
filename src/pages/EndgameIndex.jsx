@@ -8,9 +8,9 @@ export default function EndgameIndex() {
   const completed = progressService.getCompletedLessons('endgame');
 
   return (
-    <div className="page-enter max-w-6xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-display text-gold mb-2">Endgame Trainer</h1>
-      <p className="text-text-dim mb-8">Master essential endgame techniques.</p>
+    <div className="page-enter max-w-6xl mx-auto px-6 py-10">
+      <h1 className="text-3xl font-display text-gold mb-1">Endgame Trainer</h1>
+      <p className="text-text-dim text-sm mb-8">Master essential endgame techniques.</p>
 
       {categories.map(cat => {
         const lessons = endgameLessons.filter(l => l.category === cat);

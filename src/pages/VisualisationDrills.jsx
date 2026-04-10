@@ -157,14 +157,14 @@ function BoardVisionDrill() {
 
       {!feedback && q.type === 'yesno' && (
         <div className="flex gap-3">
-          <button onClick={() => submitAnswer('Yes')} className="flex-1 py-2 rounded bg-bg-card border border-bg-hover hover:bg-bg-hover">Yes</button>
-          <button onClick={() => submitAnswer('No')} className="flex-1 py-2 rounded bg-bg-card border border-bg-hover hover:bg-bg-hover">No</button>
+          <button onClick={() => submitAnswer('Yes')} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover hover:bg-bg-hover transition-all btn-press">Yes</button>
+          <button onClick={() => submitAnswer('No')} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover hover:bg-bg-hover transition-all btn-press">No</button>
         </div>
       )}
       {!feedback && q.type === 'choice' && (
         <div className="grid grid-cols-2 gap-2">
           {q.options.map(o => (
-            <button key={o} onClick={() => submitAnswer(o)} className="py-2 rounded bg-bg-card border border-bg-hover hover:bg-bg-hover text-sm">{o}</button>
+            <button key={o} onClick={() => submitAnswer(o)} className="py-2 rounded-lg bg-bg-card border border-bg-hover hover:bg-bg-hover text-sm transition-all btn-press">{o}</button>
           ))}
         </div>
       )}
@@ -177,7 +177,7 @@ function BoardVisionDrill() {
             className="flex-1 bg-bg border border-bg-hover rounded px-3 py-2 text-text"
             min="0" max="16" autoFocus
           />
-          <button type="submit" className="px-4 py-2 rounded bg-gold text-bg font-semibold">Submit</button>
+          <button type="submit" className="px-4 py-2 rounded-lg bg-gold text-bg font-semibold transition-all btn-press">Submit</button>
         </form>
       )}
     </div>
@@ -232,7 +232,7 @@ function BlindfoldDrill() {
         </div>
         <p className="text-text-dim text-sm text-center">Moves played: {game.moves.map((m, i) => `${i % 2 === 0 ? Math.floor(i / 2) + 1 + '. ' : ''}${m}`).join(' ')}</p>
         <div className="text-center">
-          <button onClick={start} className="bg-gold text-bg px-5 py-2 rounded font-semibold hover:bg-gold-dim transition-colors">Start</button>
+          <button onClick={start} className="bg-gold text-bg px-5 py-2 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">Start</button>
         </div>
       </div>
     );
@@ -362,12 +362,12 @@ function PieceCountingDrill() {
       )}
       {!feedback && q.type === 'choice' ? (
         <div className="flex gap-2">
-          {q.options.map(o => <button key={o} onClick={() => submitAnswer(o)} className="flex-1 py-2 rounded bg-bg-card border border-bg-hover hover:bg-bg-hover text-sm">{o}</button>)}
+          {q.options.map(o => <button key={o} onClick={() => submitAnswer(o)} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover hover:bg-bg-hover text-sm transition-all btn-press">{o}</button>)}
         </div>
       ) : !feedback && (
         <form onSubmit={e => { e.preventDefault(); submitAnswer(answer); }} className="flex gap-2">
           <input type="number" value={answer} onChange={e => setAnswer(e.target.value)} className="flex-1 bg-bg border border-bg-hover rounded px-3 py-2 text-text" min="0" max="16" autoFocus />
-          <button type="submit" className="px-4 py-2 rounded bg-gold text-bg font-semibold">Submit</button>
+          <button type="submit" className="px-4 py-2 rounded-lg bg-gold text-bg font-semibold transition-all btn-press">Submit</button>
         </form>
       )}
     </div>
@@ -389,12 +389,13 @@ export default function VisualisationDrills() {
     const drill = drills.find(d => d.id === activeDrill);
     const DrillComponent = drill.Component;
     return (
-      <div className="page-enter max-w-4xl mx-auto px-4 py-10">
-        <button onClick={() => setActiveDrill(null)} className="text-text-dim hover:text-gold text-sm mb-4 inline-block">&larr; Back to Drills</button>
-        <h1 className="text-2xl font-display text-gold mb-6">{drill.name}</h1>
+      <div className="page-enter max-w-4xl mx-auto px-6 py-10">
+        <button onClick={() => setActiveDrill(null)} className="text-text-dim hover:text-gold text-sm mb-4 inline-block transition-all">&larr; Back to Drills</button>
+        <h1 className="text-2xl font-display text-gold mb-1">{drill.name}</h1>
+        <p className="text-text-dim text-sm mb-8">Test your board visualisation skills.</p>
         <DrillComponent key={key} />
         <div className="text-center mt-6">
-          <button onClick={() => setKey(k => k + 1)} className="bg-gold text-bg px-5 py-2 rounded font-semibold hover:bg-gold-dim transition-colors">
+          <button onClick={() => setKey(k => k + 1)} className="bg-gold text-bg px-5 py-2 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
             New Round
           </button>
         </div>
@@ -403,13 +404,13 @@ export default function VisualisationDrills() {
   }
 
   return (
-    <div className="page-enter max-w-4xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-display text-gold mb-2">Visualisation Drills</h1>
-      <p className="text-text-dim mb-8">Train your ability to read the board.</p>
+    <div className="page-enter max-w-4xl mx-auto px-6 py-10">
+      <h1 className="text-3xl font-display text-gold mb-1">Visualisation Drills</h1>
+      <p className="text-text-dim text-sm mb-8">Train your ability to read the board.</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {drills.map(d => (
-          <button key={d.id} onClick={() => setActiveDrill(d.id)} className="text-left bg-bg-card border border-bg-hover rounded-xl p-5 hover:border-gold/30 transition-colors">
+          <button key={d.id} onClick={() => setActiveDrill(d.id)} className="text-left bg-bg-card border border-bg-hover rounded-xl p-5 hover:border-gold/30 transition-all card-hover card-stagger btn-press">
             <h3 className="font-display text-base font-semibold mb-1">{d.name}</h3>
             <p className="text-sm text-text-dim mb-3">{d.desc}</p>
             {stats[d.id] && (

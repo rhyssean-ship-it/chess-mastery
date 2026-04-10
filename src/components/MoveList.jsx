@@ -1,4 +1,14 @@
+import { useEffect, useRef } from 'react';
+
 export default function MoveList({ history, currentIndex, onSelectMove }) {
+  const activeRef = useRef(null);
+
+  useEffect(() => {
+    if (activeRef.current) {
+      activeRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }, [currentIndex]);
+
   const pairs = [];
   for (let i = 0; i < history.length; i += 2) {
     pairs.push({
@@ -11,23 +21,25 @@ export default function MoveList({ history, currentIndex, onSelectMove }) {
   }
 
   return (
-    <div className="bg-bg-card rounded-lg p-3 max-h-80 overflow-y-auto">
+    <div className="bg-bg-card rounded-xl p-3 max-h-72 overflow-y-auto border border-bg-hover">
       <table className="w-full text-sm">
         <tbody>
           {pairs.map(p => (
             <tr key={p.number}>
-              <td className="text-text-dim w-8 pr-2 text-right">{p.number}.</td>
+              <td className="text-text-dim/50 w-8 pr-2 text-right text-xs tabular-nums">{p.number}.</td>
               <td
-                className={`px-2 py-0.5 cursor-pointer rounded transition-colors ${
-                  currentIndex === p.whiteIdx ? 'bg-gold text-bg font-semibold' : 'hover:bg-bg-hover'
+                ref={currentIndex === p.whiteIdx ? activeRef : null}
+                className={`px-2 py-1 cursor-pointer rounded-md transition-all duration-150 ${
+                  currentIndex === p.whiteIdx ? 'bg-gold text-bg font-semibold shadow-sm' : 'hover:bg-bg-hover'
                 }`}
                 onClick={() => onSelectMove(p.whiteIdx)}
               >
                 {p.white?.move?.san || p.white?.san || ''}
               </td>
               <td
-                className={`px-2 py-0.5 cursor-pointer rounded transition-colors ${
-                  p.black && currentIndex === p.blackIdx ? 'bg-gold text-bg font-semibold' : 'hover:bg-bg-hover'
+                ref={p.black && currentIndex === p.blackIdx ? activeRef : null}
+                className={`px-2 py-1 cursor-pointer rounded-md transition-all duration-150 ${
+                  p.black && currentIndex === p.blackIdx ? 'bg-gold text-bg font-semibold shadow-sm' : 'hover:bg-bg-hover'
                 }`}
                 onClick={() => p.black && onSelectMove(p.blackIdx)}
               >

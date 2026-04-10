@@ -3,21 +3,24 @@ export default function RatingButtons({ onRate }) {
     <div className="flex gap-3">
       <button
         onClick={() => onRate('hard')}
-        className="flex-1 py-2 px-4 rounded bg-incorrect/20 text-incorrect hover:bg-incorrect/30 transition-colors font-semibold text-sm"
+        aria-label="Rate puzzle as hard"
+        className="flex-1 py-2.5 px-4 rounded-lg bg-incorrect/15 text-incorrect hover:bg-incorrect/25 transition-all btn-press font-semibold text-sm border border-incorrect/20"
       >
-        Hard &#10007;
+        &#10007; Hard
       </button>
       <button
         onClick={() => onRate('medium')}
-        className="flex-1 py-2 px-4 rounded bg-amber/20 text-amber hover:bg-amber/30 transition-colors font-semibold text-sm"
+        aria-label="Rate puzzle as medium"
+        className="flex-1 py-2.5 px-4 rounded-lg bg-amber/15 text-amber hover:bg-amber/25 transition-all btn-press font-semibold text-sm border border-amber/20"
       >
         Medium
       </button>
       <button
         onClick={() => onRate('easy')}
-        className="flex-1 py-2 px-4 rounded bg-correct/20 text-correct hover:bg-correct/30 transition-colors font-semibold text-sm"
+        aria-label="Rate puzzle as easy"
+        className="flex-1 py-2.5 px-4 rounded-lg bg-correct/15 text-correct hover:bg-correct/25 transition-all btn-press font-semibold text-sm border border-correct/20"
       >
-        Easy &#10003;
+        &#10003; Easy
       </button>
     </div>
   );

@@ -9,7 +9,7 @@ export default function StrategyLesson() {
   const isComplete = progressService.isLessonComplete('strategy', id);
 
   if (!lesson) {
-    return <div className="page-enter max-w-4xl mx-auto px-4 py-10">
+    return <div className="page-enter max-w-4xl mx-auto px-6 py-10">
       <p className="text-text-dim">Lesson not found. <Link to="/strategy" className="text-gold">Back to strategy</Link></p>
     </div>;
   }
@@ -20,7 +20,7 @@ export default function StrategyLesson() {
   }
 
   return (
-    <div className="page-enter max-w-3xl mx-auto px-4 py-10">
+    <div className="page-enter max-w-3xl mx-auto px-6 py-10">
       <Link to="/strategy" className="text-text-dim hover:text-gold text-sm no-underline mb-4 inline-block">&larr; Back to Strategy</Link>
       <h1 className="text-2xl font-display text-gold mb-1">{lesson.title}</h1>
       <p className="text-text-dim text-sm mb-8">{lesson.difficulty} &middot; {lesson.readTime}</p>
@@ -53,7 +53,7 @@ export default function StrategyLesson() {
         {isComplete ? (
           <p className="text-correct text-sm">&#10003; Lesson completed</p>
         ) : (
-          <button onClick={markComplete} className="bg-gold text-bg px-6 py-2.5 rounded font-semibold hover:bg-gold-dim transition-colors">
+          <button onClick={markComplete} className="bg-gold text-bg px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
             Mark as Complete
           </button>
         )}
