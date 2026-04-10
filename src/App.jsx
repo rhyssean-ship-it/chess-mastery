@@ -27,6 +27,8 @@ import WeaknessAnalyzer from './pages/WeaknessAnalyzer'
 import ConceptFlashcards from './pages/ConceptFlashcards'
 import Glossary from './pages/Glossary'
 import Settings from './pages/Settings'
+import PlayComputer from './pages/PlayComputer'
+import PracticePlay from './pages/PracticePlay'
 
 function App() {
   return (
@@ -60,6 +62,8 @@ function App() {
           <Route path="/flashcards" element={<ConceptFlashcards />} />
           <Route path="/glossary" element={<Glossary />} />
           <Route path="/weakness" element={<WeaknessAnalyzer />} />
+          <Route path="/play" element={<PlayComputer />} />
+          <Route path="/practice-play" element={<PracticePlay />} />
           <Route path="/progress" element={<ProgressDashboard />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>

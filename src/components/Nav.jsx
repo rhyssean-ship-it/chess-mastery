@@ -34,6 +34,11 @@ const sections = [
       { to: '/theoretical-endgames', label: 'Key Positions' },
       { to: '/practical-endgames', label: 'Practical Puzzles' },
     ]},
+  { id: 'play', label: 'Play', icon: I('M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z'),
+    children: [
+      { to: '/play', label: 'vs Computer' },
+      { to: '/practice-play', label: 'Practice Play' },
+    ]},
   { id: 'tools', label: 'Tools', icon: I('M11.42 15.17l-5.658 3.286a.893.893 0 01-1.298-.949l1.08-6.305L.825 6.657a.893.893 0 01.494-1.524l6.328-.92L10.47.37a.893.893 0 011.061 0l2.822 3.843 6.329.92a.893.893 0 01.494 1.524l-4.72 4.545 1.08 6.305a.893.893 0 01-1.299.949l-5.658-3.286z'),
     children: [
       { to: '/game-review', label: 'Game Review' },
