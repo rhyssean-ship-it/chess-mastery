@@ -6,6 +6,11 @@ const I = (d) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 const sections = [
   { id: 'daily', label: 'Daily', icon: I('M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5'),
     link: '/' },
+  { id: 'play', label: 'Play', icon: I('M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z'),
+    children: [
+      { to: '/play', label: 'vs Computer' },
+      { to: '/practice-play', label: 'Practice Play' },
+    ]},
   { id: 'openings', label: 'Openings', icon: I('M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25'),
     children: [
       { to: '/openings', label: 'Library' },
@@ -33,11 +38,6 @@ const sections = [
       { to: '/endgames', label: 'Endgame Lessons' },
       { to: '/theoretical-endgames', label: 'Key Positions' },
       { to: '/practical-endgames', label: 'Practical Puzzles' },
-    ]},
-  { id: 'play', label: 'Play', icon: I('M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z'),
-    children: [
-      { to: '/play', label: 'vs Computer' },
-      { to: '/practice-play', label: 'Practice Play' },
     ]},
   { id: 'tools', label: 'Tools', icon: I('M11.42 15.17l-5.658 3.286a.893.893 0 01-1.298-.949l1.08-6.305L.825 6.657a.893.893 0 01.494-1.524l6.328-.92L10.47.37a.893.893 0 011.061 0l2.822 3.843 6.329.92a.893.893 0 01.494 1.524l-4.72 4.545 1.08 6.305a.893.893 0 01-1.299.949l-5.658-3.286z'),
     children: [
