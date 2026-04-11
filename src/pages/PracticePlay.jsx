@@ -46,16 +46,25 @@ export default function PracticePlay() {
   }, []);
 
   useEffect(() => {
+    if (phase !== 'playing' && phase !== 'ended') {
+      setBoardSize(0);
+      return;
+    }
+    if (boardSize > 0) return;
     const el = boardAreaRef.current;
     if (!el) return;
     const ro = new ResizeObserver(([entry]) => {
       const h = entry.contentRect.height;
       const w = entry.contentRect.width - 20;
-      setBoardSize(Math.floor(Math.min(h, w)));
+      const size = Math.floor(Math.min(h, w));
+      if (size > 0) {
+        setBoardSize(size);
+        ro.disconnect();
+      }
     });
     ro.observe(el);
     return () => ro.disconnect();
-  }, [phase]);
+  }, [phase, boardSize]);
 
   function startGame() {
     const g = new Chess();

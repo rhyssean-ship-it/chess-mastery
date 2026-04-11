@@ -49,17 +49,27 @@ export default function PlayComputer() {
   }, []);
 
   // Measure available board area height on mobile/tablet
+  // Measure board area once when entering play phase, then lock it
   useEffect(() => {
+    if (phase !== 'playing' && phase !== 'ended') {
+      setBoardSize(0); // reset so it re-measures on next game
+      return;
+    }
+    if (boardSize > 0) return; // already measured, keep locked
     const el = boardAreaRef.current;
     if (!el) return;
     const ro = new ResizeObserver(([entry]) => {
       const h = entry.contentRect.height;
-      const w = entry.contentRect.width - 20; // subtract eval bar + gap
-      setBoardSize(Math.floor(Math.min(h, w)));
+      const w = entry.contentRect.width - 20;
+      const size = Math.floor(Math.min(h, w));
+      if (size > 0) {
+        setBoardSize(size);
+        ro.disconnect(); // measured once, done
+      }
     });
     ro.observe(el);
     return () => ro.disconnect();
-  }, [phase]);
+  }, [phase, boardSize]);
 
   function startGame() {
     if (engineRef.current) engineRef.current.destroy();
