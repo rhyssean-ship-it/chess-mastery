@@ -1,14 +1,29 @@
 import { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Chess } from 'chess.js';
 import ChessBoard from '../components/ChessBoard';
 import MoveList from '../components/MoveList';
 import StockfishService, { ELO_PRESETS } from '../services/stockfishService';
 import { progressService } from '../services/progressService';
 
+function getInitialLevel(searchParams) {
+  const elo = parseInt(searchParams.get('elo'));
+  if (!elo) return 4;
+  // Find the closest ELO preset
+  let best = 0;
+  let bestDiff = Math.abs(ELO_PRESETS[0].elo - elo);
+  for (let i = 1; i < ELO_PRESETS.length; i++) {
+    const diff = Math.abs(ELO_PRESETS[i].elo - elo);
+    if (diff < bestDiff) { best = i; bestDiff = diff; }
+  }
+  return best;
+}
+
 export default function PlayComputer() {
+  const [searchParams] = useSearchParams();
   const [phase, setPhase] = useState('setup');
   const [playerColor, setPlayerColor] = useState('white');
-  const [levelIndex, setLevelIndex] = useState(4);
+  const [levelIndex, setLevelIndex] = useState(() => getInitialLevel(searchParams));
   const [fen, setFen] = useState('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
   const [history, setHistory] = useState([]);
   const [moveIndex, setMoveIndex] = useState(-1);
@@ -267,7 +282,7 @@ export default function PlayComputer() {
 
         {/* Info panel — pinned to bottom on mobile/tablet */}
         <div className="shrink-0 mt-3 lg:mt-0 space-y-3 lg:space-y-4">
-          <div className="lg:block hidden">
+          <div className="max-h-32 lg:max-h-none overflow-y-auto">
             <MoveList history={history} currentIndex={moveIndex} onSelectMove={() => {}} />
           </div>
           {/* Compact info row on mobile/tablet, full card on desktop */}
