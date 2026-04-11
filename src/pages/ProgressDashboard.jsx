@@ -20,7 +20,7 @@ function BarChart({ data }) {
     <div className="space-y-3">
       {data.map(d => (
         <div key={d.label} className="flex items-center gap-3">
-          <span className="text-xs text-text-dim w-32 text-right truncate" title={d.label}>{d.label}</span>
+          <span className="text-xs text-text-dim w-20 sm:w-28 md:w-32 text-right truncate" title={d.label}>{d.label}</span>
           <div className="flex-1 h-6 bg-bg-hover/50 rounded overflow-hidden">
             <div
               className={`h-full bg-gradient-to-r ${getBarColor(d.value)} rounded progress-fill`}
@@ -66,7 +66,7 @@ export default function ProgressDashboard() {
       {/* Tactics */}
       <section className="mb-6">
         <h2 className="text-xl font-display mb-4">Tactics Stats</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
           {[
             { value: puzzleStats.total, label: 'Puzzles Solved', accent: false },
             { value: `${overallAccuracy}%`, label: 'Accuracy', accent: false },

@@ -254,7 +254,7 @@ function BlindfoldDrill() {
     <div className="space-y-4 max-w-md mx-auto">
       <p className="font-semibold text-center">Where is the {colorName} {pieceNames[targetPiece.piece.type]}?</p>
       <p className="text-text-dim text-sm text-center">Click the correct square on the grid below.</p>
-      <div className="grid grid-cols-8 gap-0.5 max-w-[320px] mx-auto">
+      <div className="grid grid-cols-8 gap-0.5 max-w-[280px] sm:max-w-[340px] mx-auto">
         {ranks.slice().reverse().map(r => files.map(f => {
           const sq = f + r;
           const isDark = (files.indexOf(f) + ranks.indexOf(r)) % 2 === 0;

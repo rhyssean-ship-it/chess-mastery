@@ -154,7 +154,7 @@ p { line-height: 1.65; }
 .callout-warning .callout-title { color: var(--color-incorrect); }
 .callout-tip .callout-title { color: var(--color-correct); }
 
-/* === MOBILE TOUCH TARGETS === */
+/* === MOBILE OPTIMISATION === */
 @media (max-width: 1023px) {
   button, a[role="button"], .btn-press {
     min-height: 44px;
@@ -167,6 +167,34 @@ p { line-height: 1.65; }
   .board-frame {
     padding: 4px;
   }
+
+  /* Disable stagger delays on mobile for snappier feel */
+  .card-stagger {
+    animation-delay: 0ms !important;
+  }
+}
+
+/* Safe area insets for notch/dynamic island */
+@supports (padding: max(0px)) {
+  .lg\:hidden.fixed.top-0 {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Landscape phone adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  .page-enter {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.25rem; }
+}
+
+/* Performance hints for animations */
+.cg-wrap piece.dragging {
+  will-change: transform, filter;
 }
 
 /* === FOCUS RINGS === */

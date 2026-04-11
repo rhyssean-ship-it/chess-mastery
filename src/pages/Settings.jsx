@@ -27,7 +27,7 @@ export default function Settings() {
             onClick={() => setTheme('dark')}
             className={`card-base p-5 text-center btn-press transition-all ${theme === 'dark' ? '!border-gold/50 bg-gold/5' : 'hover:border-gold/20'}`}
           >
-            <div className="w-full aspect-[3/2] rounded-lg overflow-hidden mb-3 mx-auto max-w-[120px] bg-[#0f1117] border border-[#252a35] flex items-center justify-center">
+            <div className="w-full aspect-[3/2] rounded-lg overflow-hidden mb-3 mx-auto bg-[#0f1117] border border-[#252a35] flex items-center justify-center">
               <div className="w-8 h-1 rounded bg-[#C9A84C]" />
             </div>
             <span className="text-base font-medium">Dark</span>
@@ -37,7 +37,7 @@ export default function Settings() {
             onClick={() => setTheme('light')}
             className={`card-base p-5 text-center btn-press transition-all ${theme === 'light' ? '!border-gold/50 bg-gold/5' : 'hover:border-gold/20'}`}
           >
-            <div className="w-full aspect-[3/2] rounded-lg overflow-hidden mb-3 mx-auto max-w-[120px] bg-[#f5f3f0] border border-[#eae7e2] flex items-center justify-center">
+            <div className="w-full aspect-[3/2] rounded-lg overflow-hidden mb-3 mx-auto bg-[#f5f3f0] border border-[#eae7e2] flex items-center justify-center">
               <div className="w-8 h-1 rounded bg-[#9e7e2a]" />
             </div>
             <span className="text-base font-medium">Light</span>
@@ -65,9 +65,9 @@ export default function Settings() {
               </div>
               <button
                 onClick={() => update(pref.key, !settings[pref.key])}
-                className={`w-12 h-7 rounded-full transition-all duration-200 relative shrink-0 ${settings[pref.key] ? 'bg-gold' : 'bg-bg-hover'}`}
+                className={`w-14 h-8 sm:w-12 sm:h-7 rounded-full transition-all duration-200 relative shrink-0 ${settings[pref.key] ? 'bg-gold' : 'bg-bg-hover'}`}
               >
-                <div className={`w-5 h-5 rounded-full bg-white shadow absolute top-1 transition-all duration-200 ${settings[pref.key] ? 'left-6' : 'left-1'}`} />
+                <div className={`w-6 h-6 sm:w-5 sm:h-5 rounded-full bg-white shadow absolute top-1 transition-all duration-200 ${settings[pref.key] ? 'left-7 sm:left-6' : 'left-1'}`} />
               </button>
             </div>
           ))}

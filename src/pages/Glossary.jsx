@@ -28,7 +28,7 @@ export default function Glossary() {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Search terms..."
-          className="flex-1 bg-bg-card border border-bg-hover rounded-lg px-4 py-2.5 text-sm text-text focus:outline-none focus:border-gold/50"
+          className="flex-1 bg-bg-card border border-bg-hover rounded-lg px-4 py-3 text-sm text-text focus:outline-none focus:border-gold/50"
         />
         <div className="flex flex-wrap gap-1.5">
           {categories.map(cat => (
@@ -48,7 +48,7 @@ export default function Glossary() {
               className="w-full px-5 py-4 text-left flex items-center justify-between hover:bg-bg-hover/30 transition-colors"
             >
               <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-                <h3 className="text-base font-semibold">{term.term}</h3>
+                <h3 className="text-base font-semibold break-words">{term.term}</h3>
                 <span className="text-xs px-2 py-0.5 rounded-full bg-bg-hover text-text-dim">{term.category}</span>
               </div>
               <svg className={`w-4 h-4 text-text-dim transition-transform ${expanded === term.id ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">

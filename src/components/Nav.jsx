@@ -4,11 +4,9 @@ import { Link, useLocation } from 'react-router-dom';
 const I = (d) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-[18px] h-[18px]"><path d={d} strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 const sections = [
-  // === DAILY & JOURNEY ===
-  { id: 'daily', label: 'Daily', icon: I('M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5'),
-    link: '/' },
+  // === JOURNEY ===
   { id: 'path', label: 'Learning Path', icon: I('M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6'),
-    link: '/learning-path' },
+    link: '/' },
 
   // === LEARN: FUNDAMENTALS ===
   { id: 'fundamentals', label: 'Fundamentals', icon: I('M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18'),
@@ -31,6 +29,7 @@ const sections = [
   // === CORE SKILLS ===
   { id: 'tactics', label: 'Tactics', icon: I('M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z'),
     children: [
+      { to: '/daily', label: 'Daily Challenge' },
       { to: '/tactics', label: 'Puzzle Queue' },
       { to: '/calculation', label: 'Calculation' },
       { to: '/visualisation', label: 'Visualisation' },
@@ -222,7 +221,7 @@ export default function Nav() {
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute left-0 top-0 bottom-0 w-64 bg-bg-card flex flex-col shadow-2xl" style={{ animation: 'slideInLeft 200ms ease-out' }}>
+          <aside className="absolute left-0 top-0 bottom-0 w-full sm:w-72 bg-bg-card flex flex-col shadow-2xl" style={{ animation: 'slideInLeft 200ms ease-out' }}>
             {navContent}
           </aside>
         </div>

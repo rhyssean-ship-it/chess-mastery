@@ -122,7 +122,7 @@ export default function GameReview() {
           value={pgnInput}
           onChange={e => setPgnInput(e.target.value)}
           placeholder="Paste PGN here..."
-          className="w-full h-32 sm:h-48 card-base p-4 text-text text-sm font-mono resize-none focus:outline-none focus:border-gold/50"
+          className="w-full h-32 sm:h-48 card-base p-4 text-text text-sm font-mono resize-none break-all focus:outline-none focus:border-gold/50"
         />
         {error && <p className="text-incorrect text-sm mt-2">{error}</p>}
         <button onClick={loadGame} className="mt-4 bg-gold text-bg px-4 sm:px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
@@ -150,10 +150,10 @@ export default function GameReview() {
 
           {/* Navigation */}
           <div className="flex gap-2 mt-3">
-            <button onClick={() => setCurrentIndex(-1)} className="flex-1 py-1.5 rounded-lg card-base text-base hover:bg-bg-hover transition-all btn-press">&#x23EE;</button>
-            <button onClick={() => setCurrentIndex(Math.max(-1, currentIndex - 1))} className="flex-1 py-1.5 rounded-lg card-base text-base hover:bg-bg-hover transition-all btn-press">&larr;</button>
-            <button onClick={() => setCurrentIndex(Math.min(moves.length - 1, currentIndex + 1))} className="flex-1 py-1.5 rounded-lg card-base text-base hover:bg-bg-hover transition-all btn-press">&rarr;</button>
-            <button onClick={() => setCurrentIndex(moves.length - 1)} className="flex-1 py-1.5 rounded-lg card-base text-base hover:bg-bg-hover transition-all btn-press">&#x23ED;</button>
+            <button onClick={() => setCurrentIndex(-1)} className="flex-1 py-2 rounded-lg card-base text-base hover:bg-bg-hover transition-all btn-press">&#x23EE;</button>
+            <button onClick={() => setCurrentIndex(Math.max(-1, currentIndex - 1))} className="flex-1 py-2 rounded-lg card-base text-base hover:bg-bg-hover transition-all btn-press">&larr;</button>
+            <button onClick={() => setCurrentIndex(Math.min(moves.length - 1, currentIndex + 1))} className="flex-1 py-2 rounded-lg card-base text-base hover:bg-bg-hover transition-all btn-press">&rarr;</button>
+            <button onClick={() => setCurrentIndex(moves.length - 1)} className="flex-1 py-2 rounded-lg card-base text-base hover:bg-bg-hover transition-all btn-press">&#x23ED;</button>
           </div>
         </div>
 

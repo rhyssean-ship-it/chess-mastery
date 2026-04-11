@@ -197,7 +197,7 @@ export default function PlayComputer() {
               <label className="text-sm text-text-dim font-medium">Difficulty</label>
               <span className="text-gold font-bold tabular-nums">{preset.elo} ELO</span>
             </div>
-            <input type="range" min={0} max={ELO_PRESETS.length - 1} value={levelIndex} onChange={e => setLevelIndex(parseInt(e.target.value))} className="w-full accent-gold h-2 rounded-full appearance-none bg-bg-hover cursor-pointer" />
+            <input type="range" min={0} max={ELO_PRESETS.length - 1} value={levelIndex} onChange={e => setLevelIndex(parseInt(e.target.value))} className="w-full accent-gold h-3 sm:h-2 rounded-full appearance-none bg-bg-hover cursor-pointer" />
             <div className="flex justify-between mt-2">
               <span className="text-xs text-text-dim">400</span>
               <span className="text-base font-semibold text-text">{preset.label}</span>

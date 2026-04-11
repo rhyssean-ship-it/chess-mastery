@@ -4,7 +4,7 @@ import Nav from './components/Nav'
 import { useTheme } from './hooks/useTheme'
 
 // Eagerly load the landing page
-import DailyChallenge from './pages/DailyChallenge'
+import LearningPath from './pages/LearningPath'
 
 // Lazy load everything else
 const OpeningsIndex = lazy(() => import('./pages/OpeningsIndex'))
@@ -41,7 +41,7 @@ const CommonMistakes = lazy(() => import('./pages/CommonMistakes'))
 const PreMoveChecklist = lazy(() => import('./pages/PreMoveChecklist'))
 const GamePhaseGuide = lazy(() => import('./pages/GamePhaseGuide'))
 const BlunderDetection = lazy(() => import('./pages/BlunderDetection'))
-const LearningPath = lazy(() => import('./pages/LearningPath'))
+const DailyChallenge = lazy(() => import('./pages/DailyChallenge'))
 
 // Named exports need wrapper
 const MiddlegamePlans = lazy(() => import('./pages/MiddlegamePlans').then(m => ({ default: m.PlanIndex })))
@@ -69,7 +69,8 @@ function App() {
       <main className="lg:ml-56 pt-14 lg:pt-0 min-h-screen">
         <Suspense fallback={<Loading />}>
           <Routes>
-            <Route path="/" element={<DailyChallenge />} />
+            <Route path="/" element={<LearningPath />} />
+            <Route path="/daily" element={<DailyChallenge />} />
             <Route path="/openings" element={<OpeningsIndex />} />
             <Route path="/openings/:id" element={<OpeningTrainer />} />
             <Route path="/opening-traps" element={<OpeningTraps />} />
@@ -106,7 +107,7 @@ function App() {
           <Route path="/pre-move-checklist" element={<PreMoveChecklist />} />
           <Route path="/game-phases" element={<GamePhaseGuide />} />
           <Route path="/blunder-detection" element={<BlunderDetection />} />
-          <Route path="/learning-path" element={<LearningPath />} />
+          {/* /learning-path redirects to / */}
           <Route path="/settings" element={<Settings />} />
           </Routes>
         </Suspense>

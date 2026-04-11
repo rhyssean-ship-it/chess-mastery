@@ -113,7 +113,7 @@ export default function CalculationTrainer() {
             <p className="text-xs text-text-dim uppercase tracking-wider mb-2">Sequence to calculate</p>
             <div className="flex flex-wrap gap-1.5">
               {drill.sequence.map((move, i) => (
-                <span key={i} className={`px-2.5 py-1 rounded text-sm font-mono ${
+                <span key={i} className={`px-2 sm:px-2.5 py-1 rounded text-sm font-mono ${
                   phase === 'revealed' ? 'bg-gold/10 text-gold border border-gold/20' : 'bg-bg-hover text-text-dim'
                 }`}>
                   {phase === 'revealed' ? move : '???'}

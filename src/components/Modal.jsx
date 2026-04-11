@@ -13,7 +13,7 @@ export default function Modal({ title, children, onClose, onConfirm, confirmText
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div
-        className="bg-bg-card border border-bg-hover rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl"
+        className="bg-bg-card border border-bg-hover rounded-2xl p-4 sm:p-6 max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto w-full mx-4 shadow-2xl"
         onClick={e => e.stopPropagation()}
         style={{ animation: 'modalIn 200ms ease-out' }}
       >

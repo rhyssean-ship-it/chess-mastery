@@ -147,13 +147,13 @@ export default function RepertoireBuilder() {
             <div className="flex gap-3">
               <button
                 onClick={() => setSelectedSide('white')}
-                className={`flex-1 py-2 rounded-lg text-base font-semibold transition-all btn-press ${selectedSide === 'white' ? 'bg-gold text-bg' : 'bg-bg-hover text-text-dim'}`}
+                className={`flex-1 py-2.5 rounded-lg text-base font-semibold transition-all btn-press ${selectedSide === 'white' ? 'bg-gold text-bg' : 'bg-bg-hover text-text-dim'}`}
               >
                 White
               </button>
               <button
                 onClick={() => setSelectedSide('black')}
-                className={`flex-1 py-2 rounded text-base font-semibold transition-colors ${selectedSide === 'black' ? 'bg-gold text-bg' : 'bg-bg-hover text-text-dim'}`}
+                className={`flex-1 py-2.5 rounded-lg text-base font-semibold transition-all btn-press ${selectedSide === 'black' ? 'bg-gold text-bg' : 'bg-bg-hover text-text-dim'}`}
               >
                 Black
               </button>
