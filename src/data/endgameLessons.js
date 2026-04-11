@@ -111,24 +111,6 @@ const endgameLessons = [
     },
   },
   {
-    id: 'rook-vs-pawn',
-    title: 'Rook vs Pawn',
-    category: 'Rook Endings',
-    description: 'When to draw and when to win with rook against a pawn.',
-    difficulty: 'Advanced',
-    content: [
-      { type: 'text', content: 'Rook vs a passed pawn near promotion is a critical endgame scenario. Generally, the rook wins — but there are exceptions when the pawn is far advanced and the rook is badly placed. The defending king\'s position relative to the pawn is decisive.' },
-      { type: 'text', content: 'If the rook can get behind the passed pawn (on the same file), it usually wins easily. From behind, the rook gains checking distance as the pawn advances, and the attacking king cannot shelter. This is why "rooks belong behind passed pawns" — yours or your opponent\'s.' },
-      { type: 'position', fen: '8/8/2k5/3p4/8/8/8/R3K3 w - - 0 1', caption: 'White\'s rook can get behind the d-pawn by playing Rd1. From there, it controls the pawn\'s advance and checks the king from a distance.', arrows: [['a1', 'd1']] },
-      { type: 'text', content: 'The exception: if the pawn reaches the 7th rank with the king supporting it and the rook cannot get behind it, special techniques are needed. The Lucena and Philidor positions handle these cases. Know the theory and you will navigate rook endings with confidence.' },
-    ],
-    drillPosition: {
-      fen: '8/8/2k5/3p4/8/8/8/R3K3 w - - 0 1',
-      solution: ['Rd1', 'Kd6', 'Kd2', 'd4', 'Kd3'],
-      explanation: 'The rook gets behind the pawn with Rd1, then the king advances to blockade. The rook behind the pawn plus the approaching king wins.',
-    },
-  },
-  {
     id: 'seventh-rank-rook',
     title: 'The 7th Rank Rook',
     category: 'Rook Endings',
@@ -144,6 +126,24 @@ const endgameLessons = [
       fen: '6k1/1R3ppp/8/8/8/8/5PPP/6K1 w - - 0 1',
       solution: ['Rxf7', 'Kh8', 'Kf1'],
       explanation: 'The rook harvests pawns on the 7th rank. After Rxf7, White wins material and the endgame is easily won with the extra pawns.',
+    },
+  },
+  {
+    id: 'rook-vs-pawn',
+    title: 'Rook vs Pawn',
+    category: 'Rook Endings',
+    description: 'When to draw and when to win with rook against a pawn.',
+    difficulty: 'Advanced',
+    content: [
+      { type: 'text', content: 'Rook vs a passed pawn near promotion is a critical endgame scenario. Generally, the rook wins — but there are exceptions when the pawn is far advanced and the rook is badly placed. The defending king\'s position relative to the pawn is decisive.' },
+      { type: 'text', content: 'If the rook can get behind the passed pawn (on the same file), it usually wins easily. From behind, the rook gains checking distance as the pawn advances, and the attacking king cannot shelter. This is why "rooks belong behind passed pawns" — yours or your opponent\'s.' },
+      { type: 'position', fen: '8/8/2k5/3p4/8/8/8/R3K3 w - - 0 1', caption: 'White\'s rook can get behind the d-pawn by playing Rd1. From there, it controls the pawn\'s advance and checks the king from a distance.', arrows: [['a1', 'd1']] },
+      { type: 'text', content: 'The exception: if the pawn reaches the 7th rank with the king supporting it and the rook cannot get behind it, special techniques are needed. The Lucena and Philidor positions handle these cases. Know the theory and you will navigate rook endings with confidence.' },
+    ],
+    drillPosition: {
+      fen: '8/8/2k5/3p4/8/8/8/R3K3 w - - 0 1',
+      solution: ['Rd1', 'Kd6', 'Kd2', 'd4', 'Kd3'],
+      explanation: 'The rook gets behind the pawn with Rd1, then the king advances to blockade. The rook behind the pawn plus the approaching king wins.',
     },
   },
 
@@ -188,24 +188,6 @@ const endgameLessons = [
 
   // === QUEEN ENDINGS (2) ===
   {
-    id: 'queen-vs-pawn',
-    title: 'Queen vs Pawn on 7th Rank',
-    category: 'Queen Endings',
-    description: 'When the queen wins and when the pawn draws.',
-    difficulty: 'Advanced',
-    content: [
-      { type: 'text', content: 'Queen vs a pawn on the 7th rank is usually winning for the queen — but there are three famous exceptions where the pawn draws: bishop-pawn (c- or f-pawn), and the central pawns in certain configurations, due to stalemate tricks.' },
-      { type: 'text', content: 'The queen wins by: 1) Giving checks to drive the enemy king in front of the pawn, 2) Then approaching with her own king, 3) Eventually forcing the king away and capturing the pawn. This requires precision but is a systematic technique.' },
-      { type: 'position', fen: '8/1P6/1K6/8/8/8/6q1/7k w - - 0 1', caption: 'A bishop-pawn (b-pawn) on the 7th rank. But wait — this is not the drawing case. The drawing fortress only works with c/f pawns due to stalemate patterns.', highlights: ['b7'] },
-      { type: 'text', content: 'The drawing mechanism with c/f pawns: the defending king hides in the corner where it gets stalemated if the queen captures the pawn. The queen must avoid stalemate while trying to win. With precise defence, it\'s a draw.' },
-    ],
-    drillPosition: {
-      fen: '8/8/8/8/5K2/8/1p6/1k4Q1 w - - 0 1',
-      solution: ['Qd4+', 'Ka2', 'Qa4+', 'Kb1', 'Qb3+', 'Ka1', 'Ke3'],
-      explanation: 'The queen uses a series of checks to drive the king in front of the pawn, then the king approaches. The queen and king together will eventually win the pawn.',
-    },
-  },
-  {
     id: 'staircase-mate',
     title: 'Queen and King vs King',
     category: 'Queen Endings',
@@ -221,6 +203,24 @@ const endgameLessons = [
       fen: '8/8/8/3k4/8/8/8/4QK2 w - - 0 1',
       solution: ['Qe4+', 'Kd6', 'Kf2', 'Kc5', 'Ke3', 'Kd6', 'Qd4+', 'Ke6', 'Ke4'],
       explanation: 'The queen cuts off the king\'s escape squares (the "staircase"), and the White king marches up to support. Checkmate will follow on the edge of the board.',
+    },
+  },
+  {
+    id: 'queen-vs-pawn',
+    title: 'Queen vs Pawn on 7th Rank',
+    category: 'Queen Endings',
+    description: 'When the queen wins and when the pawn draws.',
+    difficulty: 'Advanced',
+    content: [
+      { type: 'text', content: 'Queen vs a pawn on the 7th rank is usually winning for the queen — but there are three famous exceptions where the pawn draws: bishop-pawn (c- or f-pawn), and the central pawns in certain configurations, due to stalemate tricks.' },
+      { type: 'text', content: 'The queen wins by: 1) Giving checks to drive the enemy king in front of the pawn, 2) Then approaching with her own king, 3) Eventually forcing the king away and capturing the pawn. This requires precision but is a systematic technique.' },
+      { type: 'position', fen: '8/1P6/1K6/8/8/8/6q1/7k w - - 0 1', caption: 'A bishop-pawn (b-pawn) on the 7th rank. But wait — this is not the drawing case. The drawing fortress only works with c/f pawns due to stalemate patterns.', highlights: ['b7'] },
+      { type: 'text', content: 'The drawing mechanism with c/f pawns: the defending king hides in the corner where it gets stalemated if the queen captures the pawn. The queen must avoid stalemate while trying to win. With precise defence, it\'s a draw.' },
+    ],
+    drillPosition: {
+      fen: '8/8/8/8/5K2/8/1p6/1k4Q1 w - - 0 1',
+      solution: ['Qd4+', 'Ka2', 'Qa4+', 'Kb1', 'Qb3+', 'Ka1', 'Ke3'],
+      explanation: 'The queen uses a series of checks to drive the king in front of the pawn, then the king approaches. The queen and king together will eventually win the pawn.',
     },
   },
 ];

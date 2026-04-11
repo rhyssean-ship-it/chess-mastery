@@ -7,6 +7,7 @@ const preMoveChecklist = {
     { id: 5, question: 'After I move, is anything hanging?', description: 'Before you click/touch the piece, visualise the board AFTER your move. Does your move leave anything undefended?', icon: '\u2714' },
   ],
   exercises: [
+    // === BEGINNER (3) ===
     {
       id: 'pmc-1', difficulty: 'Beginner',
       fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2',
@@ -38,21 +39,6 @@ const preMoveChecklist = {
       betterMove: null,
     },
     {
-      id: 'pmc-3', difficulty: 'Intermediate',
-      fen: 'r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',
-      plannedMove: 'Nxe5',
-      question: 'You want to capture Nxe5. Is this safe?',
-      checklistAnswers: [
-        { step: 1, answer: 'No hanging pieces currently.', ok: true },
-        { step: 2, answer: 'Black\'s pieces are developed actively — Bc5 eyes f2.', ok: true },
-        { step: 3, answer: 'King not yet castled — should castle soon.', ok: true },
-        { step: 4, answer: 'Winning a pawn seems good...', ok: true },
-        { step: 5, answer: 'DANGER! After Nxe5 Nxe5, the knight on e5 is fine, but then Black can play Bxf2+! forking the king and rook. This is a known trap.', ok: false },
-      ],
-      verdict: 'Trap! Nxe5 looks like it wins a pawn, but Bxf2+ is a devastating fork. Castle first with O-O instead.',
-      betterMove: 'O-O',
-    },
-    {
       id: 'pmc-4', difficulty: 'Beginner',
       fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1',
       plannedMove: 'e5',
@@ -66,6 +52,23 @@ const preMoveChecklist = {
       ],
       verdict: 'Good move! 1...e5 is the most popular response — it fights for the centre immediately.',
       betterMove: null,
+    },
+
+    // === INTERMEDIATE (2) ===
+    {
+      id: 'pmc-3', difficulty: 'Intermediate',
+      fen: 'r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',
+      plannedMove: 'Nxe5',
+      question: 'You want to capture Nxe5. Is this safe?',
+      checklistAnswers: [
+        { step: 1, answer: 'No hanging pieces currently.', ok: true },
+        { step: 2, answer: 'Black\'s pieces are developed actively — Bc5 eyes f2.', ok: true },
+        { step: 3, answer: 'King not yet castled — should castle soon.', ok: true },
+        { step: 4, answer: 'Winning a pawn seems good...', ok: true },
+        { step: 5, answer: 'DANGER! After Nxe5 Nxe5, the knight on e5 is fine, but then Black can play Bxf2+! forking the king and rook. This is a known trap.', ok: false },
+      ],
+      verdict: 'Trap! Nxe5 looks like it wins a pawn, but Bxf2+ is a devastating fork. Castle first with O-O instead.',
+      betterMove: 'O-O',
     },
     {
       id: 'pmc-5', difficulty: 'Intermediate',

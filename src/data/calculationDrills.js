@@ -1,4 +1,5 @@
 const calculationDrills = [
+  // === BEGINNER (3) ===
   {
     id: 'calc-1',
     difficulty: 'Beginner',
@@ -19,6 +20,18 @@ const calculationDrills = [
     sequenceExplanation: 'A classic back rank mate — the g7/f7/h7 pawns prevent the king from escaping.',
     depth: 1,
   },
+  {
+    id: 'calc-9',
+    difficulty: 'Beginner',
+    fen: 'rnbqkb1r/pppppppp/5n2/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 1 2',
+    question: 'Calculate: what happens after e5 Nd5 d4? Where does each piece end up?',
+    answer: 'After e5, the knight must retreat. Nd5 goes to the only good square. Then d4 builds a strong pawn centre. White has pawns on d4 and e5, knight still on b1 and g1, Black\'s knight is on d5.',
+    sequence: ['e5', 'Nd5', 'd4'],
+    sequenceExplanation: 'Simple calculation exercise: track where pieces are after a 3-move sequence. This is Alekhine\'s Defence with White gaining space.',
+    depth: 2,
+  },
+
+  // === INTERMEDIATE (5) ===
   {
     id: 'calc-3',
     difficulty: 'Intermediate',
@@ -50,16 +63,6 @@ const calculationDrills = [
     depth: 2,
   },
   {
-    id: 'calc-6',
-    difficulty: 'Advanced',
-    fen: 'r1b2rk1/2q1bppp/p2ppn2/np4B1/3PP3/2N2N2/PPBQ1PPP/R4RK1 w - - 0 1',
-    question: 'Calculate 3 moves: what happens after Bxf6 Bxf6 Nd5 exd5 exd5? What has White achieved?',
-    answer: 'White has opened the e-file with a strong pawn on d5. The bishop on c2 now eyes the kingside, and the open e-file gives White attacking chances. Black\'s knight on b5 is offside.',
-    sequence: ['Bxf6', 'Bxf6', 'Nd5', 'exd5', 'exd5'],
-    sequenceExplanation: 'A thematic Sicilian exchange sacrifice idea — White trades the bishop pair for central control and a powerful d5 pawn.',
-    depth: 3,
-  },
-  {
     id: 'calc-7',
     difficulty: 'Intermediate',
     fen: '3r2k1/5ppp/8/8/8/8/2Q2PPP/6K1 w - - 0 1',
@@ -68,6 +71,28 @@ const calculationDrills = [
     sequence: ['Qc8', 'Rxc8'],
     sequenceExplanation: 'This tests whether you calculate the opponent\'s responses. Qc8 looks forcing but after Rxc8 White has nothing. Always check what your opponent does!',
     depth: 2,
+  },
+  {
+    id: 'calc-11',
+    difficulty: 'Intermediate',
+    fen: 'r1bq1rk1/ppp2ppp/2n1pn2/3p4/1bPP4/2N1PN2/PP3PPP/R1BQKB1R w KQ - 0 6',
+    question: 'Calculate: after a3 Bxc3+ bxc3, what has changed structurally? Is this good for White?',
+    answer: 'White gets doubled c-pawns (c3+c4) but gains the bishop pair and an open b-file. The doubled pawns control d4 and d5 strongly. Whether this is good depends on the position opening up — if it does, the bishops dominate.',
+    sequence: ['a3', 'Bxc3+', 'bxc3'],
+    sequenceExplanation: 'This is a key Nimzo-Indian decision. White deliberately accepts structural damage for the bishop pair — a classic strategic trade-off.',
+    depth: 2,
+  },
+
+  // === ADVANCED (4) ===
+  {
+    id: 'calc-6',
+    difficulty: 'Advanced',
+    fen: 'r1b2rk1/2q1bppp/p2ppn2/np4B1/3PP3/2N2N2/PPBQ1PPP/R4RK1 w - - 0 1',
+    question: 'Calculate 3 moves: what happens after Bxf6 Bxf6 Nd5 exd5 exd5? What has White achieved?',
+    answer: 'White has opened the e-file with a strong pawn on d5. The bishop on c2 now eyes the kingside, and the open e-file gives White attacking chances. Black\'s knight on b5 is offside.',
+    sequence: ['Bxf6', 'Bxf6', 'Nd5', 'exd5', 'exd5'],
+    sequenceExplanation: 'A thematic Sicilian exchange sacrifice idea — White trades the bishop pair for central control and a powerful d5 pawn.',
+    depth: 3,
   },
   {
     id: 'calc-8',
@@ -80,16 +105,6 @@ const calculationDrills = [
     depth: 3,
   },
   {
-    id: 'calc-9',
-    difficulty: 'Beginner',
-    fen: 'rnbqkb1r/pppppppp/5n2/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 1 2',
-    question: 'Calculate: what happens after e5 Nd5 d4? Where does each piece end up?',
-    answer: 'After e5, the knight must retreat. Nd5 goes to the only good square. Then d4 builds a strong pawn centre. White has pawns on d4 and e5, knight still on b1 and g1, Black\'s knight is on d5.',
-    sequence: ['e5', 'Nd5', 'd4'],
-    sequenceExplanation: 'Simple calculation exercise: track where pieces are after a 3-move sequence. This is Alekhine\'s Defence with White gaining space.',
-    depth: 2,
-  },
-  {
     id: 'calc-10',
     difficulty: 'Advanced',
     fen: 'r2q1rk1/pb1nbppp/1p2pn2/2p5/3P4/1PN1PN2/PB2BPPP/R2Q1RK1 w - - 0 10',
@@ -98,16 +113,6 @@ const calculationDrills = [
     sequence: ['d5', 'exd5', 'cxd5'],
     sequenceExplanation: 'The central pawn break d4-d5 is a thematic idea. It opens diagonals for the bishops and creates a passed pawn.',
     depth: 3,
-  },
-  {
-    id: 'calc-11',
-    difficulty: 'Intermediate',
-    fen: 'r1bq1rk1/ppp2ppp/2n1pn2/3p4/1bPP4/2N1PN2/PP3PPP/R1BQKB1R w KQ - 0 6',
-    question: 'Calculate: after a3 Bxc3+ bxc3, what has changed structurally? Is this good for White?',
-    answer: 'White gets doubled c-pawns (c3+c4) but gains the bishop pair and an open b-file. The doubled pawns control d4 and d5 strongly. Whether this is good depends on the position opening up — if it does, the bishops dominate.',
-    sequence: ['a3', 'Bxc3+', 'bxc3'],
-    sequenceExplanation: 'This is a key Nimzo-Indian decision. White deliberately accepts structural damage for the bishop pair — a classic strategic trade-off.',
-    depth: 2,
   },
   {
     id: 'calc-12',

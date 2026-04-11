@@ -1,3 +1,4 @@
+// === BEGINNER (5) ===
 const checkmatePatterns = [
   {
     id: 'cp-1',
@@ -9,17 +10,6 @@ const checkmatePatterns = [
     description: 'The rook delivers checkmate on the back rank because the king is trapped behind its own pawns.',
     hint: 'Look at the 8th rank. The king has no escape squares.',
     pattern: 'The king is trapped behind pawns on the 7th rank with no escape squares. A rook or queen delivers mate on the back rank.',
-  },
-  {
-    id: 'cp-2',
-    name: 'Smothered Mate',
-    difficulty: 'Advanced',
-    fen: '6rk/6pp/7N/8/8/8/8/6K1 w - - 0 1',
-    sideToMove: 'white',
-    solution: ['Nf7#'],
-    description: 'The knight delivers checkmate while the king is completely surrounded (smothered) by its own pieces.',
-    hint: 'The king is boxed in by its own rook and pawns. Where can the knight deliver check with no escape?',
-    pattern: 'The king is surrounded by friendly pieces on all escape squares. A knight delivers check from a square none of the surrounding pieces can capture on.',
   },
   {
     id: 'cp-3',
@@ -44,6 +34,19 @@ const checkmatePatterns = [
     pattern: 'White has weakened the king\'s diagonal with pawn moves (f3 and g4). The queen delivers mate along the h4-e1 diagonal.',
   },
   {
+    id: 'cp-13',
+    name: 'Ladder Mate',
+    difficulty: 'Beginner',
+    fen: '1k6/8/1K6/8/8/8/8/RR6 w - - 0 1',
+    sideToMove: 'white',
+    solution: ['Ra8#'],
+    description: 'Two rooks work together like rungs on a ladder, pushing the king to the edge of the board and delivering checkmate.',
+    hint: 'One rook cuts off ranks while the other delivers the final check.',
+    pattern: 'Two rooks (or rook and queen) alternate checking, driving the king to the board\'s edge. Each piece covers a rank, preventing the king from escaping.',
+  },
+
+  // === INTERMEDIATE (6) ===
+  {
     id: 'cp-5',
     name: "Anastasia's Mate",
     difficulty: 'Intermediate',
@@ -64,17 +67,6 @@ const checkmatePatterns = [
     description: 'The rook delivers checkmate on the back rank while the knight controls the escape squares. A classic rook and knight pattern.',
     hint: 'The knight covers g8. Where should the rook go?',
     pattern: 'The rook mates on the h-file (or edge file) while the knight controls the two escape squares. The king is trapped in the corner.',
-  },
-  {
-    id: 'cp-7',
-    name: "Boden's Mate",
-    difficulty: 'Advanced',
-    fen: '2kr4/ppp5/2n5/8/8/8/1b6/BK6 b - - 0 1',
-    sideToMove: 'black',
-    solution: ['Ba3#'],
-    description: 'Two bishops deliver checkmate along criss-crossing diagonals. The king is blocked by its own pieces.',
-    hint: 'Two bishops can form a deadly criss-cross pattern on the diagonals.',
-    pattern: 'Two bishops attack the king along intersecting diagonals. The king\'s own pawns block all escape routes.',
   },
   {
     id: 'cp-8',
@@ -110,6 +102,41 @@ const checkmatePatterns = [
     pattern: 'The king is on the back rank flanked by two friendly pieces (the "epaulettes"). The queen delivers mate from the front, and the king has no escape.',
   },
   {
+    id: 'cp-15',
+    name: "Lolli's Mate",
+    difficulty: 'Intermediate',
+    fen: '5rk1/5pQp/6P1/8/8/8/8/6K1 w - - 0 1',
+    sideToMove: 'white',
+    solution: ['Qxh7#'],
+    description: 'The queen captures on h7 with checkmate, supported by the pawn on g6. The king is trapped with no escape squares.',
+    hint: 'The pawn on g6 supports the queen. Can the queen take on h7?',
+    pattern: 'The queen delivers mate on h7 supported by a pawn on g6. The f7 pawn and the rook block the king\'s escape. Similar to Damiano\'s mate but the final blow lands on h7.',
+  },
+
+  // === ADVANCED (5) ===
+  {
+    id: 'cp-2',
+    name: 'Smothered Mate',
+    difficulty: 'Advanced',
+    fen: '6rk/6pp/7N/8/8/8/8/6K1 w - - 0 1',
+    sideToMove: 'white',
+    solution: ['Nf7#'],
+    description: 'The knight delivers checkmate while the king is completely surrounded (smothered) by its own pieces.',
+    hint: 'The king is boxed in by its own rook and pawns. Where can the knight deliver check with no escape?',
+    pattern: 'The king is surrounded by friendly pieces on all escape squares. A knight delivers check from a square none of the surrounding pieces can capture on.',
+  },
+  {
+    id: 'cp-7',
+    name: "Boden's Mate",
+    difficulty: 'Advanced',
+    fen: '2kr4/ppp5/2n5/8/8/8/1b6/BK6 b - - 0 1',
+    sideToMove: 'black',
+    solution: ['Ba3#'],
+    description: 'Two bishops deliver checkmate along criss-crossing diagonals. The king is blocked by its own pieces.',
+    hint: 'Two bishops can form a deadly criss-cross pattern on the diagonals.',
+    pattern: 'Two bishops attack the king along intersecting diagonals. The king\'s own pawns block all escape routes.',
+  },
+  {
     id: 'cp-11',
     name: 'Greek Gift',
     difficulty: 'Advanced',
@@ -132,17 +159,6 @@ const checkmatePatterns = [
     pattern: 'A knight restricts the king\'s escape squares while a rook delivers mate on the back rank. The pawn structure further limits the king.',
   },
   {
-    id: 'cp-13',
-    name: 'Ladder Mate',
-    difficulty: 'Beginner',
-    fen: '1k6/8/1K6/8/8/8/8/RR6 w - - 0 1',
-    sideToMove: 'white',
-    solution: ['Ra8#'],
-    description: 'Two rooks work together like rungs on a ladder, pushing the king to the edge of the board and delivering checkmate.',
-    hint: 'One rook cuts off ranks while the other delivers the final check.',
-    pattern: 'Two rooks (or rook and queen) alternate checking, driving the king to the board\'s edge. Each piece covers a rank, preventing the king from escaping.',
-  },
-  {
     id: 'cp-14',
     name: "Legal's Mate",
     difficulty: 'Advanced',
@@ -152,17 +168,6 @@ const checkmatePatterns = [
     description: 'White sacrifices the queen (allowing Qxd1) and delivers mate with minor pieces. The bishop checks on f7, the king moves, and a knight delivers the final blow.',
     hint: 'A knight sacrifice on e5 starts the combination. Even if Black captures the queen, mate follows with Bxf7+ and Nd5#.',
     pattern: 'A queen sacrifice lures the opponent into a false sense of security. Minor pieces coordinate to deliver a surprise checkmate with bishop and knights.',
-  },
-  {
-    id: 'cp-15',
-    name: "Lolli's Mate",
-    difficulty: 'Intermediate',
-    fen: '5rk1/5pQp/6P1/8/8/8/8/6K1 w - - 0 1',
-    sideToMove: 'white',
-    solution: ['Qxh7#'],
-    description: 'The queen captures on h7 with checkmate, supported by the pawn on g6. The king is trapped with no escape squares.',
-    hint: 'The pawn on g6 supports the queen. Can the queen take on h7?',
-    pattern: 'The queen delivers mate on h7 supported by a pawn on g6. The f7 pawn and the rook block the king\'s escape. Similar to Damiano\'s mate but the final blow lands on h7.',
   },
 ];
 

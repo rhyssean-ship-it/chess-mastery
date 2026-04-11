@@ -1,5 +1,5 @@
 const theoreticalEndgames = [
-  // 1. King + Queen vs King
+  // === BEGINNER (3) ===
   {
     id: 'te-1',
     name: 'King + Queen vs King',
@@ -15,8 +15,6 @@ const theoreticalEndgames = [
       'King must help — the queen alone cannot force mate.',
     ],
   },
-
-  // 2. King + Rook vs King
   {
     id: 'te-2',
     name: 'King + Rook vs King',
@@ -32,43 +30,6 @@ const theoreticalEndgames = [
       'Patience is key — it can take up to 16 moves.',
     ],
   },
-
-  // 3. King + Bishop + Knight vs King (Basics)
-  {
-    id: 'te-3',
-    name: 'King + Bishop + Knight vs King',
-    difficulty: 'Advanced',
-    fen: '4k3/8/8/8/8/8/8/1B2K1N1 w - - 0 1',
-    goal: 'win',
-    description: 'The hardest basic checkmate. Drive the king to a corner that matches the bishop\'s colour.',
-    technique: 'Force the king to the correct corner (same colour as the bishop). Use the "W-manoeuvre" with the knight. The king and two pieces work together to restrict the enemy king gradually.',
-    solution: ['Kd2', 'Kd7', 'Kd3', 'Ke6', 'Ke4', 'Kd6', 'Nf3', 'Ke6', 'Nd4+', 'Kd6', 'Kd3'],
-    keyPoints: [
-      'Must force the king to the corner matching the bishop\'s colour.',
-      'The "W-manoeuvre" is the key technique for the final phase.',
-      'This endgame requires up to 33 moves — within the 50-move rule but tight.',
-      'Practice the technique repeatedly; it appears rarely but must be known.',
-    ],
-  },
-
-  // 4. King + Two Bishops vs King
-  {
-    id: 'te-4',
-    name: 'King + Two Bishops vs King',
-    difficulty: 'Intermediate',
-    fen: '4k3/8/8/8/8/8/8/2B1KB2 w - - 0 1',
-    goal: 'win',
-    description: 'Checkmate using two bishops working together to create a barrier.',
-    technique: 'The two bishops create a diagonal barrier. Place them side by side on adjacent diagonals to push the king to the edge and then to a corner. The king assists in the final mating net.',
-    solution: ['Bd3', 'Kd7', 'Kd2', 'Ke6', 'Ke3', 'Kd5', 'Be4+', 'Ke6', 'Bd4', 'Kd7', 'Kd3'],
-    keyPoints: [
-      'Two bishops work best on adjacent diagonals, creating a wall.',
-      'Any corner works — unlike B+N, colour doesn\'t matter.',
-      'Centralise the bishops and bring the king up for the final mate.',
-    ],
-  },
-
-  // 5. King + Pawn vs King (Opposition)
   {
     id: 'te-5',
     name: 'King + Pawn vs King (Opposition)',
@@ -85,7 +46,22 @@ const theoreticalEndgames = [
     ],
   },
 
-  // 6. Lucena Position
+  // === INTERMEDIATE (4) ===
+  {
+    id: 'te-4',
+    name: 'King + Two Bishops vs King',
+    difficulty: 'Intermediate',
+    fen: '4k3/8/8/8/8/8/8/2B1KB2 w - - 0 1',
+    goal: 'win',
+    description: 'Checkmate using two bishops working together to create a barrier.',
+    technique: 'The two bishops create a diagonal barrier. Place them side by side on adjacent diagonals to push the king to the edge and then to a corner. The king assists in the final mating net.',
+    solution: ['Bd3', 'Kd7', 'Kd2', 'Ke6', 'Ke3', 'Kd5', 'Be4+', 'Ke6', 'Bd4', 'Kd7', 'Kd3'],
+    keyPoints: [
+      'Two bishops work best on adjacent diagonals, creating a wall.',
+      'Any corner works — unlike B+N, colour doesn\'t matter.',
+      'Centralise the bishops and bring the king up for the final mate.',
+    ],
+  },
   {
     id: 'te-6',
     name: 'Lucena Position',
@@ -101,8 +77,6 @@ const theoreticalEndgames = [
       'Once the rook interposes the checks, the pawn promotes.',
     ],
   },
-
-  // 7. Philidor Position
   {
     id: 'te-7',
     name: 'Philidor Position',
@@ -119,8 +93,6 @@ const theoreticalEndgames = [
       'Pair this with the Lucena — if you know both, you understand rook endgames.',
     ],
   },
-
-  // 8. King + Rook + Pawn vs King + Rook (Basic)
   {
     id: 'te-8',
     name: 'Rook + Pawn vs Rook (Basic Winning Technique)',
@@ -135,6 +107,24 @@ const theoreticalEndgames = [
       'If the position becomes a Lucena, you win. If it becomes a Philidor, it\'s drawn.',
       'Centralise your king and push the pawn at the right moment.',
       'Know the "short side" and "long side" concepts for rook placement.',
+    ],
+  },
+
+  // === ADVANCED (1) ===
+  {
+    id: 'te-3',
+    name: 'King + Bishop + Knight vs King',
+    difficulty: 'Advanced',
+    fen: '4k3/8/8/8/8/8/8/1B2K1N1 w - - 0 1',
+    goal: 'win',
+    description: 'The hardest basic checkmate. Drive the king to a corner that matches the bishop\'s colour.',
+    technique: 'Force the king to the correct corner (same colour as the bishop). Use the "W-manoeuvre" with the knight. The king and two pieces work together to restrict the enemy king gradually.',
+    solution: ['Kd2', 'Kd7', 'Kd3', 'Ke6', 'Ke4', 'Kd6', 'Nf3', 'Ke6', 'Nd4+', 'Kd6', 'Kd3'],
+    keyPoints: [
+      'Must force the king to the corner matching the bishop\'s colour.',
+      'The "W-manoeuvre" is the key technique for the final phase.',
+      'This endgame requires up to 33 moves — within the 50-move rule but tight.',
+      'Practice the technique repeatedly; it appears rarely but must be known.',
     ],
   },
 ];

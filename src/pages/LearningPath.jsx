@@ -12,7 +12,7 @@ const stages = [
       { to: '/checkmate-patterns', label: 'Checkmate Patterns' },
       { to: '/game-phases', label: 'Game Phases Guide' },
     ],
-    colour: 'correct',
+    color: '#4CAF50',
   },
   {
     elo: '700 → 1000',
@@ -25,7 +25,7 @@ const stages = [
       { to: '/tactics', label: 'Tactics Puzzles (Beginner)' },
       { to: '/theoretical-endgames', label: 'Basic Endgames' },
     ],
-    colour: 'amber',
+    color: '#66BB6A',
   },
   {
     elo: '1000 → 1200',
@@ -38,7 +38,7 @@ const stages = [
       { to: '/repertoire', label: 'Repertoire Builder' },
       { to: '/practice-play', label: 'Practice Play (with coaching)' },
     ],
-    colour: 'gold',
+    color: '#A0C34E',
   },
   {
     elo: '1200 → 1350',
@@ -51,7 +51,7 @@ const stages = [
       { to: '/critical-moments', label: 'Critical Moments' },
       { to: '/pattern-recognition', label: 'Pattern Recognition' },
     ],
-    colour: 'amber',
+    color: '#C9A84C',
   },
   {
     elo: '1350 → 1500',
@@ -64,7 +64,7 @@ const stages = [
       { to: '/endgames', label: 'Endgame Lessons' },
       { to: '/practical-endgames', label: 'Practical Endgames' },
     ],
-    colour: 'incorrect',
+    color: '#FFA726',
   },
   {
     elo: '1500 → 1700',
@@ -78,7 +78,7 @@ const stages = [
       { to: '/play', label: 'Play at 1400-1600 ELO' },
       { to: '/game-review', label: 'Review Your Games' },
     ],
-    colour: 'gold',
+    color: '#EF8C3A',
   },
   {
     elo: '1700 → 1850',
@@ -92,7 +92,7 @@ const stages = [
       { to: '/pawn-structures', label: 'Dynamic Pawn Structures' },
       { to: '/play', label: 'Play at 1600-1800 ELO' },
     ],
-    colour: 'amber',
+    color: '#E57373',
   },
   {
     elo: '1850 → 2000',
@@ -107,7 +107,7 @@ const stages = [
       { to: '/weakness', label: 'Weakness Analysis & Targeted Training' },
       { to: '/play', label: 'Play at 1800-2000 ELO' },
     ],
-    colour: 'incorrect',
+    color: '#D32F2F',
   },
 ];
 
@@ -125,21 +125,11 @@ export default function LearningPath() {
           {stages.map((stage, i) => (
             <div key={i} className="relative pl-16">
               {/* Circle marker */}
-              <div className={`absolute left-3.5 w-5 h-5 rounded-full border-2 bg-bg ${
-                stage.colour === 'correct' ? 'border-correct' :
-                stage.colour === 'amber' ? 'border-amber' :
-                stage.colour === 'gold' ? 'border-gold' :
-                'border-incorrect'
-              }`} />
+              <div className="absolute left-3.5 w-5 h-5 rounded-full border-2 bg-bg" style={{ borderColor: stage.color }} />
 
               <div className="card-base p-6 card-stagger" style={{ animationDelay: `${i * 80}ms` }}>
                 <div className="flex items-center gap-3 mb-2">
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                    stage.colour === 'correct' ? 'bg-correct/20 text-correct' :
-                    stage.colour === 'amber' ? 'bg-amber/20 text-amber' :
-                    stage.colour === 'gold' ? 'bg-gold/20 text-gold' :
-                    'bg-incorrect/20 text-incorrect'
-                  }`}>{stage.elo}</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: `${stage.color}20`, color: stage.color }}>{stage.elo}</span>
                   <span className="text-xs text-text-dim">Stage {i + 1}</span>
                 </div>
                 <h2 className="text-xl font-display mb-1">{stage.title}</h2>

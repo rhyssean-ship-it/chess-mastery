@@ -29,6 +29,7 @@ export default function GamePhaseGuide() {
         {/* Content */}
         <div className="space-y-6 leading-relaxed mb-8">
           {phase.content.map((section, i) => {
+            if (section.type === 'heading') return <h3 key={i} className="text-lg font-display text-gold mt-4">{section.content}</h3>;
             if (section.type === 'text') return <p key={i} className="text-text">{section.content}</p>;
             if (section.type === 'position') return (
               <div key={i} className="my-8">
