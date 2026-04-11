@@ -227,7 +227,7 @@ export default function PlayComputer() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_280px] lg:grid-cols-[1fr_320px] gap-6 sm:gap-8">
-        <div className="w-full max-w-[560px]">
+        <div className="w-full max-w-[560px] md:sticky md:top-4 self-start">
           <div className="flex gap-2">
             <div className="w-4 rounded-full overflow-hidden bg-bg-hover flex-shrink-0 relative" title={`Eval: ${evaluation > 0 ? '+' : ''}${evaluation.toFixed(1)}`}>
               <div className="absolute bottom-0 left-0 right-0 bg-white transition-all duration-500 ease-out rounded-full" style={{ height: `${evalPct}%` }} />

@@ -2,10 +2,16 @@ import { useEffect, useRef } from 'react';
 
 export default function MoveList({ history, currentIndex, onSelectMove }) {
   const activeRef = useRef(null);
+  const containerRef = useRef(null);
 
   useEffect(() => {
-    if (activeRef.current) {
-      activeRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    if (activeRef.current && containerRef.current) {
+      const container = containerRef.current;
+      const el = activeRef.current;
+      const top = el.offsetTop - container.offsetTop;
+      if (top < container.scrollTop || top + el.offsetHeight > container.scrollTop + container.clientHeight) {
+        container.scrollTop = top - container.clientHeight / 2;
+      }
     }
   }, [currentIndex]);
 
@@ -21,7 +27,7 @@ export default function MoveList({ history, currentIndex, onSelectMove }) {
   }
 
   return (
-    <div className="bg-bg-card rounded-xl p-3 max-h-72 overflow-y-auto border border-bg-hover">
+    <div ref={containerRef} className="bg-bg-card rounded-xl p-3 max-h-72 overflow-y-auto border border-bg-hover">
       <table className="w-full text-base">
         <tbody>
           {pairs.map(p => (

@@ -318,7 +318,7 @@ export default function PracticePlay() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_280px] lg:grid-cols-[1fr_320px] gap-8">
-        <div className="w-full max-w-[560px]">
+        <div className="w-full max-w-[560px] md:sticky md:top-4 self-start">
           <div className="flex gap-2">
             {showEval && (
               <div className="w-4 rounded-full overflow-hidden bg-bg-hover flex-shrink-0 relative">
