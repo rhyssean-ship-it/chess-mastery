@@ -209,7 +209,7 @@ export default function PracticePlay() {
         showOpeningHint(openingMoveIdx);
       }
     }
-  }, [thinking, openingMoveIdx, openingPhase]);
+  }, [thinking, openingMoveIdx, openingPhase, opening, playerColor, showHints, phase]);
 
   function requestHint() {
     if (!gameRef.current || thinking || !hintEngineRef.current) return;
