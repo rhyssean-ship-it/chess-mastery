@@ -295,13 +295,13 @@ export default function PracticePlay() {
   }
 
   return (
-    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-10">
-      <div className="flex items-center justify-between mb-4">
+    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-4 lg:py-10">
+      <div className="flex items-center justify-between mb-3 lg:mb-4">
         <div>
-          <h1 className="text-2xl font-display text-gold mb-0.5">
+          <h1 className="text-xl lg:text-2xl font-display text-gold mb-0.5">
             {phase === 'ended' ? result : thinking ? 'Engine thinking...' : isPlayerTurn ? 'Your move' : ''}
           </h1>
-          <p className="text-text-dim text-sm">{opening?.name} vs Stockfish ({preset.label})</p>
+          <p className="text-text-dim text-xs lg:text-sm">{opening?.name} vs Stockfish ({preset.label})</p>
         </div>
       </div>
 
@@ -317,8 +317,8 @@ export default function PracticePlay() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_280px] lg:grid-cols-[1fr_320px] gap-8">
-        <div className="w-full max-w-[560px] md:sticky md:top-4 self-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 sm:gap-8">
+        <div className="w-full max-w-full lg:max-w-[560px] lg:sticky lg:top-4 self-start">
           <div className="flex gap-2">
             {showEval && (
               <div className="w-4 rounded-full overflow-hidden bg-bg-hover flex-shrink-0 relative">
