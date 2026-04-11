@@ -39,6 +39,7 @@ export default function ChessBoard({
     const config = {
       fen,
       orientation,
+      turnColor,
       coordinates,
       animation: { enabled: true, duration: 280 },
       highlight: { lastMove: true, check: true },
