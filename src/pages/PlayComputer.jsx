@@ -32,6 +32,8 @@ export default function PlayComputer() {
   const [result, setResult] = useState(null);
   const [lastMove, setLastMove] = useState(null);
   const [hintArrow, setHintArrow] = useState(null);
+  const [boardSize, setBoardSize] = useState(0);
+  const boardAreaRef = useRef(null);
   const gameRef = useRef(null);
   const engineRef = useRef(null);
   const hintEngineRef = useRef(null);
@@ -45,6 +47,19 @@ export default function PlayComputer() {
       if (hintEngineRef.current) hintEngineRef.current.destroy();
     };
   }, []);
+
+  // Measure available board area height on mobile/tablet
+  useEffect(() => {
+    const el = boardAreaRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      const h = entry.contentRect.height;
+      const w = entry.contentRect.width - 20; // subtract eval bar + gap
+      setBoardSize(Math.floor(Math.min(h, w)));
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [phase]);
 
   function startGame() {
     if (engineRef.current) engineRef.current.destroy();
@@ -254,22 +269,24 @@ export default function PlayComputer() {
         </div>
 
         {/* Board — takes remaining space */}
-        <div className="flex-1 min-h-0 flex gap-1.5 items-center justify-center">
+        <div ref={boardAreaRef} className="flex-1 min-h-0 flex gap-1.5 items-center justify-center">
           <div className="w-3 rounded-full overflow-hidden bg-bg-hover flex-shrink-0 relative self-stretch" title={`Eval: ${evaluation > 0 ? '+' : ''}${evaluation.toFixed(1)}`}>
             <div className="absolute bottom-0 left-0 right-0 bg-white transition-all duration-500 ease-out rounded-full" style={{ height: `${evalPct}%` }} />
           </div>
-          <div className="h-full max-h-full board-constrained">
-            <ChessBoard
-              fen={fen}
-              orientation={playerColor}
-              movable={isPlayerTurn && phase === 'playing'}
-              dests={isPlayerTurn && phase === 'playing' ? getLegalDests() : new Map()}
-              turnColor={turnColor}
-              onMove={handleMove}
-              lastMove={lastMove}
-              arrows={hintArrow || []}
-            />
-          </div>
+          {boardSize > 0 && (
+            <div style={{ width: boardSize, height: boardSize }}>
+              <ChessBoard
+                fen={fen}
+                orientation={playerColor}
+                movable={isPlayerTurn && phase === 'playing'}
+                dests={isPlayerTurn && phase === 'playing' ? getLegalDests() : new Map()}
+                turnColor={turnColor}
+                onMove={handleMove}
+                lastMove={lastMove}
+                arrows={hintArrow || []}
+              />
+            </div>
+          )}
         </div>
 
         {/* Buttons */}

@@ -82,8 +82,8 @@ export default function ChessBoard({
     : '';
 
   return (
-    <div className={`${frameClass} ${className} h-full`} aria-label={movable ? 'Interactive chess board' : 'Chess board'}>
-      <div className="relative h-full">
+    <div className={`${frameClass} ${className}`} aria-label={movable ? 'Interactive chess board' : 'Chess board'}>
+      <div className="relative">
         {!loaded && <div className="absolute inset-0 skeleton aspect-square" />}
         <div className="cg-wrap" ref={boardRef} />
       </div>

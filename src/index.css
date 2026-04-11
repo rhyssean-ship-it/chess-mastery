@@ -369,12 +369,6 @@ kbd {
   overflow: hidden;
 }
 
-/* When inside a height-constrained container, size board from height */
-.board-constrained .cg-wrap {
-  width: auto;
-  height: 100%;
-  max-width: 100%;
-}
 
 .cg-wrap piece.king.white { background-image: url('/pieces/cburnett/wK.svg') !important; }
 .cg-wrap piece.queen.white { background-image: url('/pieces/cburnett/wQ.svg') !important; }
