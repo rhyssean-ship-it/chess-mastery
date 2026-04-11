@@ -33,6 +33,8 @@ const Settings = lazy(() => import('./pages/Settings'))
 const PlayComputer = lazy(() => import('./pages/PlayComputer'))
 const PracticePlay = lazy(() => import('./pages/PracticePlay'))
 
+const BoardNotation = lazy(() => import('./pages/BoardNotation'))
+
 // Named exports need wrapper
 const MiddlegamePlans = lazy(() => import('./pages/MiddlegamePlans').then(m => ({ default: m.PlanIndex })))
 const MiddlegamePlanDetail = lazy(() => import('./pages/MiddlegamePlans').then(m => ({ default: m.PlanDetail })))
@@ -88,7 +90,8 @@ function App() {
             <Route path="/play" element={<PlayComputer />} />
             <Route path="/practice-play" element={<PracticePlay />} />
             <Route path="/progress" element={<ProgressDashboard />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/notation" element={<BoardNotation />} />
+          <Route path="/settings" element={<Settings />} />
           </Routes>
         </Suspense>
       </main>
