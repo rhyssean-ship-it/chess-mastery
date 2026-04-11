@@ -327,7 +327,7 @@ export default function PracticePlay() {
                 <div className="absolute bottom-0 left-0 right-0 bg-white transition-all duration-500 ease-out rounded-full" style={{ height: `${evalPct}%` }} />
               </div>
             )}
-            <div className="flex-1 lg:max-h-none" style={{ maxHeight: 'calc(100dvh - 18rem)' }}>
+            <div className="flex-1 lg:max-h-none" style={{ maxHeight: 'calc(100dvh - 23rem)' }}>
               <ChessBoard
                 fen={fen}
                 orientation={playerColor}

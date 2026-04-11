@@ -216,9 +216,9 @@ export default function Nav() {
               <path d="M6 6l12 12M6 18L18 6" />
             ) : (
               <>
-                {/* Rook battlements top line */}
-                <path d="M4 5h2v2h2V5h2v2h2V5h2v2h2V5h2" />
-                {/* Middle and bottom burger lines */}
+                {/* Rook crenellations — 3 merlons */}
+                <path d="M4 7V4h3v3h2.5V4h5v3h2.5V4h3v3" fill="none" />
+                {/* Burger lines */}
                 <line x1="4" y1="12" x2="20" y2="12" />
                 <line x1="4" y1="18" x2="20" y2="18" />
               </>

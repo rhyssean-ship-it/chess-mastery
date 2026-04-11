@@ -5,13 +5,9 @@ export default function MoveList({ history, currentIndex, onSelectMove }) {
   const containerRef = useRef(null);
 
   useEffect(() => {
-    if (activeRef.current && containerRef.current) {
-      const container = containerRef.current;
-      const el = activeRef.current;
-      const top = el.offsetTop - container.offsetTop;
-      if (top < container.scrollTop || top + el.offsetHeight > container.scrollTop + container.clientHeight) {
-        container.scrollTop = top - container.clientHeight / 2;
-      }
+    // With reverse order, scroll to top to show latest move
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0;
     }
   }, [currentIndex]);
 
@@ -30,7 +26,7 @@ export default function MoveList({ history, currentIndex, onSelectMove }) {
     <div ref={containerRef} className="bg-bg-card rounded-xl p-3 max-h-72 overflow-y-auto overflow-x-hidden border border-bg-hover">
       <table className="w-full text-base">
         <tbody>
-          {pairs.map(p => (
+          {[...pairs].reverse().map(p => (
             <tr key={p.number}>
               <td className="text-text-dim/50 w-8 pr-2 text-right text-xs tabular-nums">{p.number}.</td>
               <td
