@@ -9,14 +9,29 @@ const diffColors = {
   Advanced: 'bg-incorrect/20 text-incorrect',
 };
 
+const levels = ['Beginner', 'Intermediate', 'Advanced'];
+
 export default function CalculationTrainer() {
-  const shuffled = useMemo(() => [...calculationDrills].sort(() => Math.random() - 0.5), []);
+  const [difficulty, setDifficulty] = useState('Beginner');
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [phase, setPhase] = useState('thinking'); // thinking | revealed
+  const [phase, setPhase] = useState('thinking');
   const [selfScore, setSelfScore] = useState({ correct: 0, total: 0 });
   const [finished, setFinished] = useState(false);
 
-  const drill = shuffled[currentIdx];
+  const filtered = useMemo(() =>
+    [...calculationDrills].filter(d => d.difficulty === difficulty).sort(() => Math.random() - 0.5),
+    [difficulty]
+  );
+
+  const drill = filtered[currentIdx];
+
+  function changeDifficulty(level) {
+    setDifficulty(level);
+    setCurrentIdx(0);
+    setPhase('thinking');
+    setSelfScore({ correct: 0, total: 0 });
+    setFinished(false);
+  }
 
   function reveal() {
     setPhase('revealed');
@@ -30,7 +45,7 @@ export default function CalculationTrainer() {
     if (gotIt) progressService.recordPuzzleAttempt(`calc-${drill.id}`, 'Calculation', true);
     else progressService.recordPuzzleAttempt(`calc-${drill.id}`, 'Calculation', false);
 
-    if (currentIdx + 1 >= shuffled.length) {
+    if (currentIdx + 1 >= filtered.length) {
       progressService.recordDrillScore('calculation', newCorrect, Math.round((newCorrect / newTotal) * 100));
       setFinished(true);
       return;
@@ -39,13 +54,26 @@ export default function CalculationTrainer() {
     setPhase('thinking');
   }
 
+  if (filtered.length === 0) {
+    return (
+      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-10">
+        <h1 className="text-3xl font-display text-gold mb-1">Calculation Trainer</h1>
+        <p className="text-text-dim text-base mb-8">Calculate sequences without moving pieces on the board.</p>
+        <DifficultyToggle difficulty={difficulty} onChange={changeDifficulty} />
+        <div className="card-base p-8 text-center mt-8">
+          <p className="text-text-dim">No exercises available for this level yet.</p>
+        </div>
+      </div>
+    );
+  }
+
   if (finished) {
     return (
       <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center">
         <h1 className="text-3xl font-display text-gold mb-4">Session Complete</h1>
         <p className="text-2xl font-bold mb-2 tabular-nums">{selfScore.correct}/{selfScore.total}</p>
         <p className="text-text-dim mb-6">{selfScore.correct === selfScore.total ? 'Perfect calculation!' : 'Keep training to see deeper.'}</p>
-        <button onClick={() => { setCurrentIdx(0); setPhase('thinking'); setSelfScore({ correct: 0, total: 0 }); setFinished(false); }} className="bg-gold text-bg px-4 sm:px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
+        <button onClick={() => { setCurrentIdx(0); setPhase('thinking'); setSelfScore({ correct: 0, total: 0 }); setFinished(false); }} className="bg-gold text-bg px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
           Train Again
         </button>
       </div>
@@ -55,15 +83,17 @@ export default function CalculationTrainer() {
   return (
     <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Calculation Trainer</h1>
-      <p className="text-text-dim text-base mb-8">Calculate sequences without moving pieces on the board.</p>
+      <p className="text-text-dim text-base mb-6">Calculate sequences without moving pieces on the board.</p>
 
-      <div className="flex items-center gap-3 mb-6 text-sm text-text-dim">
-        <span>Exercise {currentIdx + 1}/{shuffled.length}</span>
+      <DifficultyToggle difficulty={difficulty} onChange={changeDifficulty} />
+
+      <div className="flex items-center gap-3 mt-6 mb-6 text-sm text-text-dim">
+        <span>Exercise {currentIdx + 1}/{filtered.length}</span>
         <span>&middot;</span>
         <span className="tabular-nums">{selfScore.correct}/{selfScore.total} correct</span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_340px] lg:grid-cols-[1fr_400px] gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_340px] lg:grid-cols-[1fr_400px] gap-6 sm:gap-8">
         <div className="w-full max-w-[480px]">
           <ChessBoard fen={drill.fen} movable={false} />
         </div>
@@ -79,7 +109,6 @@ export default function CalculationTrainer() {
             <p className="text-text-dim text-xs">Calculate in your head before revealing the answer.</p>
           </div>
 
-          {/* Sequence display */}
           <div className="card-base p-4">
             <p className="text-xs text-text-dim uppercase tracking-wider mb-2">Sequence to calculate</p>
             <div className="flex flex-wrap gap-1.5">
@@ -103,16 +132,16 @@ export default function CalculationTrainer() {
             <>
               <div className="card-base p-5 border-gold/20">
                 <p className="text-gold font-semibold text-xs uppercase tracking-wider mb-2">Answer</p>
-                <p className="text-base text-text leading-relaxed mb-3">{drill.answer}</p>
-                <p className="text-xs text-text-dim/70 italic">{drill.sequenceExplanation}</p>
+                <p className="text-text leading-relaxed mb-3">{drill.answer}</p>
+                <p className="text-xs text-text-dim italic">{drill.sequenceExplanation}</p>
               </div>
 
               <p className="text-sm text-text-dim text-center">Did you calculate correctly?</p>
               <div className="flex gap-3">
-                <button onClick={() => rate(false)} className="flex-1 py-2.5 rounded-lg bg-incorrect/15 text-incorrect border border-incorrect/20 font-semibold text-base transition-all btn-press">
+                <button onClick={() => rate(false)} className="flex-1 py-2.5 rounded-lg bg-incorrect/15 text-incorrect border border-incorrect/20 font-semibold text-sm transition-all btn-press">
                   ✗ No
                 </button>
-                <button onClick={() => rate(true)} className="flex-1 py-2.5 rounded-lg bg-correct/15 text-correct border border-correct/20 font-semibold text-base transition-all btn-press">
+                <button onClick={() => rate(true)} className="flex-1 py-2.5 rounded-lg bg-correct/15 text-correct border border-correct/20 font-semibold text-sm transition-all btn-press">
                   ✓ Yes
                 </button>
               </div>
@@ -120,6 +149,28 @@ export default function CalculationTrainer() {
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function DifficultyToggle({ difficulty, onChange }) {
+  return (
+    <div className="flex gap-2">
+      {levels.map(level => (
+        <button
+          key={level}
+          onClick={() => onChange(level)}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all btn-press ${
+            difficulty === level
+              ? level === 'Beginner' ? 'bg-correct/20 text-correct border border-correct/30'
+                : level === 'Intermediate' ? 'bg-amber/20 text-amber border border-amber/30'
+                : 'bg-incorrect/20 text-incorrect border border-incorrect/30'
+              : 'bg-bg-card border border-bg-hover text-text-dim hover:text-text'
+          }`}
+        >
+          {level}
+        </button>
+      ))}
     </div>
   );
 }
