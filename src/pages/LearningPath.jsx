@@ -63,7 +63,49 @@ const stages = [
       { to: '/pawn-structures', label: 'Pawn Structures' },
       { to: '/endgames', label: 'Endgame Lessons' },
       { to: '/practical-endgames', label: 'Practical Endgames' },
-      { to: '/master-games', label: 'Master Games' },
+    ],
+    colour: 'incorrect',
+  },
+  {
+    elo: '1500 → 1700',
+    title: 'Positional Mastery',
+    description: 'Move beyond tactics into deep positional play. Understand prophylaxis, piece coordination, and long-term planning.',
+    sections: [
+      { to: '/strategy', label: 'Prophylaxis & Prevention' },
+      { to: '/middlegame', label: 'IQP, Carlsbad & Hedgehog Plans' },
+      { to: '/critical-moments', label: 'Critical Moments (Advanced)' },
+      { to: '/master-games', label: 'Study Master Games' },
+      { to: '/play', label: 'Play at 1400-1600 ELO' },
+      { to: '/game-review', label: 'Review Your Games' },
+    ],
+    colour: 'gold',
+  },
+  {
+    elo: '1700 → 1850',
+    title: 'Advanced Tactics & Calculation',
+    description: 'Sharpen deep calculation, learn complex tactical themes, and develop candidate move thinking.',
+    sections: [
+      { to: '/calculation', label: 'Calculation Trainer (Advanced)' },
+      { to: '/tactics', label: 'Advanced Tactics Puzzles' },
+      { to: '/pattern-recognition', label: 'Rapid Pattern Recognition' },
+      { to: '/visualisation', label: 'Advanced Visualisation' },
+      { to: '/pawn-structures', label: 'Dynamic Pawn Structures' },
+      { to: '/play', label: 'Play at 1600-1800 ELO' },
+    ],
+    colour: 'amber',
+  },
+  {
+    elo: '1850 → 2000',
+    title: 'Expert Preparation',
+    description: 'Refine your opening repertoire, master complex endgames, develop a personal style, and learn to convert small advantages.',
+    sections: [
+      { to: '/openings', label: 'Deep Opening Preparation' },
+      { to: '/repertoire', label: 'Repertoire Refinement' },
+      { to: '/endgames', label: 'Complex Endgames' },
+      { to: '/theoretical-endgames', label: 'Theoretical Precision' },
+      { to: '/master-games', label: 'Annotated Master Games' },
+      { to: '/weakness', label: 'Weakness Analysis & Targeted Training' },
+      { to: '/play', label: 'Play at 1800-2000 ELO' },
     ],
     colour: 'incorrect',
   },
@@ -73,7 +115,7 @@ export default function LearningPath() {
   return (
     <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Learning Path</h1>
-      <p className="text-text-dim text-base mb-10">Your roadmap from 500 to 1500 ELO. Follow each stage in order.</p>
+      <p className="text-text-dim text-base mb-10">Your roadmap from 500 to 2000 ELO. Follow each stage in order.</p>
 
       <div className="relative">
         {/* Vertical line */}
