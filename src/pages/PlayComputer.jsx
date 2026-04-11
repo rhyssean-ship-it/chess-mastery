@@ -228,9 +228,9 @@ export default function PlayComputer() {
   }
 
   return (
-    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-4 lg:py-10 lg:block flex flex-col" style={{ minHeight: 'calc(100dvh - 4rem)' }}>
+    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-2 lg:py-10">
       {/* Header */}
-      <div className="flex items-center justify-between mb-2 lg:mb-6 shrink-0">
+      <div className="flex items-center justify-between mb-1 lg:mb-6 shrink-0">
         <div>
           <h1 className="text-lg lg:text-2xl font-display text-gold mb-0.5">
             {phase === 'ended' ? result : thinking ? 'Engine thinking...' : isPlayerTurn ? 'Your move' : ''}
@@ -242,15 +242,15 @@ export default function PlayComputer() {
         )}
       </div>
 
-      {/* Desktop: side-by-side grid / Mobile+Tablet: flex column filling viewport */}
-      <div className="lg:grid lg:grid-cols-[1fr_320px] lg:gap-8 flex flex-col flex-1 min-h-0">
-        {/* Board — fills available space on mobile/tablet */}
-        <div className="flex-1 min-h-0 flex flex-col lg:block lg:sticky lg:top-4 lg:self-start lg:max-w-[560px]">
-          <div className="flex gap-2 flex-1 min-h-0">
+      {/* Desktop: side-by-side grid / Mobile+Tablet: single column */}
+      <div className="lg:grid lg:grid-cols-[1fr_320px] lg:gap-8">
+        {/* Board — constrained to leave room for info below on mobile/tablet */}
+        <div className="lg:sticky lg:top-4 lg:self-start lg:max-w-[560px]">
+          <div className="flex gap-2">
             <div className="w-4 rounded-full overflow-hidden bg-bg-hover flex-shrink-0 relative" title={`Eval: ${evaluation > 0 ? '+' : ''}${evaluation.toFixed(1)}`}>
               <div className="absolute bottom-0 left-0 right-0 bg-white transition-all duration-500 ease-out rounded-full" style={{ height: `${evalPct}%` }} />
             </div>
-            <div className="flex-1 min-h-0 aspect-square self-center max-h-full">
+            <div className="flex-1 lg:max-h-none" style={{ maxHeight: 'calc(100dvh - 15rem)' }}>
               <ChessBoard
                 fen={fen}
                 orientation={playerColor}
@@ -263,7 +263,7 @@ export default function PlayComputer() {
               />
             </div>
           </div>
-          <div className="flex gap-2 mt-2 lg:mt-3 shrink-0">
+          <div className="flex gap-2 mt-2 lg:mt-3">
             {phase === 'playing' && (
               <>
                 <button onClick={takeBack} disabled={history.length < 2 || thinking} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm lg:text-base hover:bg-bg-hover transition-all btn-press disabled:opacity-30 disabled:cursor-not-allowed">Takeback</button>
@@ -280,8 +280,8 @@ export default function PlayComputer() {
           </div>
         </div>
 
-        {/* Info panel — pinned to bottom on mobile/tablet */}
-        <div className="shrink-0 mt-3 lg:mt-0 space-y-3 lg:space-y-4">
+        {/* Info panel */}
+        <div className="mt-3 lg:mt-0 space-y-3 lg:space-y-4">
           <div className="max-h-32 lg:max-h-none overflow-y-auto">
             <MoveList history={history} currentIndex={moveIndex} onSelectMove={() => {}} />
           </div>
