@@ -6,10 +6,23 @@ const I = (d) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 const sections = [
   { id: 'daily', label: 'Daily', icon: I('M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5'),
     link: '/' },
+  { id: 'path', label: 'Learning Path', icon: I('M9 6.75V15m0 0l3-3m-3 3l-3-3m12 0a9 9 0 11-18 0 9 9 0 0118 0z'),
+    link: '/learning-path' },
   { id: 'play', label: 'Play', icon: I('M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z'),
     children: [
       { to: '/play', label: 'vs Computer' },
       { to: '/practice-play', label: 'Practice Play' },
+    ]},
+  { id: 'basics', label: 'Basics', icon: I('M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18'),
+    children: [
+      { to: '/game-phases', label: 'Game Phases' },
+      { to: '/piece-values', label: 'Piece Values' },
+      { to: '/notation', label: 'Board Notation' },
+      { to: '/checkmate-patterns', label: 'Checkmate Patterns' },
+      { to: '/hanging-pieces', label: 'Hanging Pieces' },
+      { to: '/pre-move-checklist', label: 'Pre-Move Checklist' },
+      { to: '/common-mistakes', label: 'Common Mistakes' },
+      { to: '/blunder-detection', label: 'Blunder Detection' },
     ]},
   { id: 'openings', label: 'Openings', icon: I('M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25'),
     children: [
@@ -23,7 +36,6 @@ const sections = [
       { to: '/tactics', label: 'Puzzle Queue' },
       { to: '/calculation', label: 'Calculation' },
       { to: '/visualisation', label: 'Visualisation' },
-      { to: '/notation', label: 'Board Notation' },
     ]},
   { id: 'middlegame', label: 'Middlegame', icon: I('M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z'),
     children: [
@@ -93,7 +105,7 @@ export default function Nav() {
       {/* Logo */}
       <div className="px-4 pt-5 pb-4">
         <Link to="/" className="no-underline" onClick={() => setMobileOpen(false)}>
-          <div className="font-display text-gold text-lg font-bold tracking-wide">enPassant</div>
+          <div className="font-display text-gold text-2xl font-bold tracking-wide">enPassant</div>
         </Link>
       </div>
 
@@ -181,7 +193,7 @@ export default function Nav() {
       {/* Mobile top bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-bg-card/95 backdrop-blur-sm border-b border-bg-hover flex items-center justify-between px-4">
         <Link to="/" className="no-underline">
-          <span className="font-display text-gold text-base font-bold">enPassant</span>
+          <span className="font-display text-gold text-xl font-bold">enPassant</span>
         </Link>
         <button className="text-text-dim hover:text-text p-2 btn-press rounded-lg hover:bg-bg-hover transition-colors" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

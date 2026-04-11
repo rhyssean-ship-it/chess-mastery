@@ -34,6 +34,14 @@ const PlayComputer = lazy(() => import('./pages/PlayComputer'))
 const PracticePlay = lazy(() => import('./pages/PracticePlay'))
 
 const BoardNotation = lazy(() => import('./pages/BoardNotation'))
+const CheckmatePatterns = lazy(() => import('./pages/CheckmatePatterns'))
+const PieceValueGuide = lazy(() => import('./pages/PieceValueGuide'))
+const HangingPieces = lazy(() => import('./pages/HangingPieces'))
+const CommonMistakes = lazy(() => import('./pages/CommonMistakes'))
+const PreMoveChecklist = lazy(() => import('./pages/PreMoveChecklist'))
+const GamePhaseGuide = lazy(() => import('./pages/GamePhaseGuide'))
+const BlunderDetection = lazy(() => import('./pages/BlunderDetection'))
+const LearningPath = lazy(() => import('./pages/LearningPath'))
 
 // Named exports need wrapper
 const MiddlegamePlans = lazy(() => import('./pages/MiddlegamePlans').then(m => ({ default: m.PlanIndex })))
@@ -91,6 +99,14 @@ function App() {
             <Route path="/practice-play" element={<PracticePlay />} />
             <Route path="/progress" element={<ProgressDashboard />} />
             <Route path="/notation" element={<BoardNotation />} />
+          <Route path="/checkmate-patterns" element={<CheckmatePatterns />} />
+          <Route path="/piece-values" element={<PieceValueGuide />} />
+          <Route path="/hanging-pieces" element={<HangingPieces />} />
+          <Route path="/common-mistakes" element={<CommonMistakes />} />
+          <Route path="/pre-move-checklist" element={<PreMoveChecklist />} />
+          <Route path="/game-phases" element={<GamePhaseGuide />} />
+          <Route path="/blunder-detection" element={<BlunderDetection />} />
+          <Route path="/learning-path" element={<LearningPath />} />
           <Route path="/settings" element={<Settings />} />
           </Routes>
         </Suspense>

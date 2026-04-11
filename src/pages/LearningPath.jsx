@@ -1,0 +1,120 @@
+import { Link } from 'react-router-dom';
+
+const stages = [
+  {
+    elo: '500 → 700',
+    title: 'Foundation',
+    description: 'Learn piece values, stop hanging pieces, and understand basic checkmates.',
+    sections: [
+      { to: '/piece-values', label: 'Piece Values & Trading' },
+      { to: '/hanging-pieces', label: 'Hanging Pieces Trainer' },
+      { to: '/notation', label: 'Board Notation' },
+      { to: '/checkmate-patterns', label: 'Checkmate Patterns' },
+      { to: '/game-phases', label: 'Game Phases Guide' },
+    ],
+    colour: 'correct',
+  },
+  {
+    elo: '700 → 1000',
+    title: 'Core Skills',
+    description: 'Build the pre-move checklist habit, learn common mistakes, and start solving tactics.',
+    sections: [
+      { to: '/pre-move-checklist', label: 'Pre-Move Checklist' },
+      { to: '/common-mistakes', label: 'Common Mistakes Quiz' },
+      { to: '/blunder-detection', label: 'Blunder Detection' },
+      { to: '/tactics', label: 'Tactics Puzzles (Beginner)' },
+      { to: '/theoretical-endgames', label: 'Basic Endgames' },
+    ],
+    colour: 'amber',
+  },
+  {
+    elo: '1000 → 1200',
+    title: 'Opening Knowledge',
+    description: 'Learn opening principles, study 3-4 openings deeply, and drill your repertoire.',
+    sections: [
+      { to: '/openings', label: 'Openings Library' },
+      { to: '/opening-traps', label: 'Opening Traps' },
+      { to: '/move-order', label: 'Move Order Quiz' },
+      { to: '/repertoire', label: 'Repertoire Builder' },
+      { to: '/practice-play', label: 'Practice Play (with coaching)' },
+    ],
+    colour: 'gold',
+  },
+  {
+    elo: '1200 → 1350',
+    title: 'Tactical Sharpness',
+    description: 'Deepen tactical vision with calculation, pattern recognition, and advanced puzzles.',
+    sections: [
+      { to: '/tactics', label: 'Tactics Puzzles (Intermediate)' },
+      { to: '/calculation', label: 'Calculation Trainer' },
+      { to: '/visualisation', label: 'Visualisation Drills' },
+      { to: '/critical-moments', label: 'Critical Moments' },
+      { to: '/pattern-recognition', label: 'Pattern Recognition' },
+    ],
+    colour: 'amber',
+  },
+  {
+    elo: '1350 → 1500',
+    title: 'Strategic Understanding',
+    description: 'Learn pawn structures, middlegame plans, and endgame technique to convert advantages.',
+    sections: [
+      { to: '/strategy', label: 'Strategy Lessons' },
+      { to: '/middlegame', label: 'Middlegame Plans' },
+      { to: '/pawn-structures', label: 'Pawn Structures' },
+      { to: '/endgames', label: 'Endgame Lessons' },
+      { to: '/practical-endgames', label: 'Practical Endgames' },
+      { to: '/master-games', label: 'Master Games' },
+    ],
+    colour: 'incorrect',
+  },
+];
+
+export default function LearningPath() {
+  return (
+    <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-10">
+      <h1 className="text-3xl font-display text-gold mb-1">Learning Path</h1>
+      <p className="text-text-dim text-base mb-10">Your roadmap from 500 to 1500 ELO. Follow each stage in order.</p>
+
+      <div className="relative">
+        {/* Vertical line */}
+        <div className="absolute left-6 top-0 bottom-0 w-px bg-bg-hover" />
+
+        <div className="space-y-8">
+          {stages.map((stage, i) => (
+            <div key={i} className="relative pl-16">
+              {/* Circle marker */}
+              <div className={`absolute left-3.5 w-5 h-5 rounded-full border-2 bg-bg ${
+                stage.colour === 'correct' ? 'border-correct' :
+                stage.colour === 'amber' ? 'border-amber' :
+                stage.colour === 'gold' ? 'border-gold' :
+                'border-incorrect'
+              }`} />
+
+              <div className="card-base p-6 card-stagger" style={{ animationDelay: `${i * 80}ms` }}>
+                <div className="flex items-center gap-3 mb-2">
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                    stage.colour === 'correct' ? 'bg-correct/20 text-correct' :
+                    stage.colour === 'amber' ? 'bg-amber/20 text-amber' :
+                    stage.colour === 'gold' ? 'bg-gold/20 text-gold' :
+                    'bg-incorrect/20 text-incorrect'
+                  }`}>{stage.elo}</span>
+                  <span className="text-xs text-text-dim">Stage {i + 1}</span>
+                </div>
+                <h2 className="text-xl font-display mb-1">{stage.title}</h2>
+                <p className="text-text-dim text-sm mb-4">{stage.description}</p>
+
+                <div className="flex flex-wrap gap-2">
+                  {stage.sections.map(s => (
+                    <Link key={s.to} to={s.to} className="text-xs bg-bg-hover hover:bg-bg-elevated px-3 py-1.5 rounded-lg no-underline text-text-dim hover:text-text transition-all btn-press">
+                      {s.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
