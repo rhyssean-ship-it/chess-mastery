@@ -211,8 +211,18 @@ export default function Nav() {
           <span className="font-display text-gold text-2xl font-bold">enPassant</span>
         </Link>
         <button className="text-text-dim hover:text-text p-3 btn-press rounded-lg hover:bg-bg-hover transition-colors" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            {mobileOpen ? <path d="M6 6l12 12M6 18L18 6" /> : <path d="M4 6h16M4 12h16M4 18h16" />}
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            {mobileOpen ? (
+              <path d="M6 6l12 12M6 18L18 6" />
+            ) : (
+              <>
+                {/* Rook battlements top line */}
+                <path d="M4 5h2v2h2V5h2v2h2V5h2v2h2V5h2" />
+                {/* Middle and bottom burger lines */}
+                <line x1="4" y1="12" x2="20" y2="12" />
+                <line x1="4" y1="18" x2="20" y2="18" />
+              </>
+            )}
           </svg>
         </button>
       </div>
