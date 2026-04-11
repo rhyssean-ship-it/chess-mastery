@@ -254,23 +254,21 @@ export default function PlayComputer() {
         </div>
 
         {/* Board — takes remaining space */}
-        <div className="flex-1 min-h-0 flex gap-1.5">
-          <div className="w-3 rounded-full overflow-hidden bg-bg-hover flex-shrink-0 relative" title={`Eval: ${evaluation > 0 ? '+' : ''}${evaluation.toFixed(1)}`}>
+        <div className="flex-1 min-h-0 flex gap-1.5 items-center justify-center">
+          <div className="w-3 rounded-full overflow-hidden bg-bg-hover flex-shrink-0 relative self-stretch" title={`Eval: ${evaluation > 0 ? '+' : ''}${evaluation.toFixed(1)}`}>
             <div className="absolute bottom-0 left-0 right-0 bg-white transition-all duration-500 ease-out rounded-full" style={{ height: `${evalPct}%` }} />
           </div>
-          <div className="flex-1 min-h-0 flex items-center justify-center">
-            <div className="w-full" style={{ maxHeight: '100%', aspectRatio: '1' }}>
-              <ChessBoard
-                fen={fen}
-                orientation={playerColor}
-                movable={isPlayerTurn && phase === 'playing'}
-                dests={isPlayerTurn && phase === 'playing' ? getLegalDests() : new Map()}
-                turnColor={turnColor}
-                onMove={handleMove}
-                lastMove={lastMove}
-                arrows={hintArrow || []}
-              />
-            </div>
+          <div className="h-full max-h-full board-constrained">
+            <ChessBoard
+              fen={fen}
+              orientation={playerColor}
+              movable={isPlayerTurn && phase === 'playing'}
+              dests={isPlayerTurn && phase === 'playing' ? getLegalDests() : new Map()}
+              turnColor={turnColor}
+              onMove={handleMove}
+              lastMove={lastMove}
+              arrows={hintArrow || []}
+            />
           </div>
         </div>
 

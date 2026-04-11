@@ -364,11 +364,16 @@ kbd {
 /* === CHESSGROUND === */
 .cg-wrap {
   width: 100%;
-  max-width: 100%;
   aspect-ratio: 1;
-  max-height: 100%;
   border-radius: 6px;
   overflow: hidden;
+}
+
+/* When inside a height-constrained container, size board from height */
+.board-constrained .cg-wrap {
+  width: auto;
+  height: 100%;
+  max-width: 100%;
 }
 
 .cg-wrap piece.king.white { background-image: url('/pieces/cburnett/wK.svg') !important; }
