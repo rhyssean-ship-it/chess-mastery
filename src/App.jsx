@@ -66,7 +66,7 @@ function App() {
   return (
     <div className="min-h-screen">
       <Nav />
-      <main className="lg:ml-56 pt-14 lg:pt-0 min-h-screen">
+      <main className="lg:ml-56 pt-16 lg:pt-0 min-h-screen">
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<LearningPath />} />
