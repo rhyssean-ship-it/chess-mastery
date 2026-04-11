@@ -228,29 +228,38 @@ export default function PlayComputer() {
   }
 
   return (
-    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-2 lg:py-10">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-1 lg:mb-6 shrink-0">
-        <div>
-          <h1 className="text-lg lg:text-2xl font-display text-gold mb-0.5">
-            {phase === 'ended' ? result : thinking ? 'Engine thinking...' : isPlayerTurn ? 'Your move' : ''}
-          </h1>
-          <p className="text-text-dim text-xs lg:text-sm">vs Stockfish ({preset.label} — {preset.elo} ELO)</p>
-        </div>
-        {gameRef.current?.isCheck() && phase === 'playing' && (
-          <span className="bg-incorrect/15 text-incorrect border border-incorrect/20 px-3 py-1 rounded-lg text-sm font-semibold">Check!</span>
-        )}
-      </div>
-
-      {/* Desktop: side-by-side grid / Mobile+Tablet: single column */}
-      <div className="lg:grid lg:grid-cols-[1fr_320px] lg:gap-8">
-        {/* Board — constrained to leave room for info below on mobile/tablet */}
-        <div className="lg:sticky lg:top-4 lg:self-start lg:max-w-[560px]">
-          <div className="flex gap-2">
-            <div className="w-4 rounded-full overflow-hidden bg-bg-hover flex-shrink-0 relative" title={`Eval: ${evaluation > 0 ? '+' : ''}${evaluation.toFixed(1)}`}>
-              <div className="absolute bottom-0 left-0 right-0 bg-white transition-all duration-500 ease-out rounded-full" style={{ height: `${evalPct}%` }} />
+    <>
+      {/* Mobile/Tablet: fixed viewport layout */}
+      <div className="lg:hidden page-enter flex flex-col px-3 pt-1 pb-2 overflow-hidden" style={{ height: 'calc(100dvh - 4rem)' }}>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-1 shrink-0">
+          <div className="min-w-0">
+            <h1 className="text-base font-display text-gold truncate">
+              {phase === 'ended' ? result : thinking ? 'Engine thinking...' : isPlayerTurn ? 'Your move' : ''}
+            </h1>
+            <p className="text-text-dim text-[11px]">vs Stockfish ({preset.label} — {preset.elo})</p>
+          </div>
+          {gameRef.current?.isCheck() && phase === 'playing' && (
+            <span className="bg-incorrect/15 text-incorrect border border-incorrect/20 px-2 py-0.5 rounded text-xs font-semibold shrink-0">Check!</span>
+          )}
+          {thinking && (
+            <div className="flex items-center gap-1.5 shrink-0">
+              <div className="flex gap-0.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-1.5 h-1.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '150ms' }} />
+                <div className="w-1.5 h-1.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '300ms' }} />
+              </div>
             </div>
-            <div className="flex-1 lg:max-h-none" style={{ maxHeight: 'calc(100dvh - 20rem)' }}>
+          )}
+        </div>
+
+        {/* Board — takes remaining space */}
+        <div className="flex-1 min-h-0 flex gap-1.5">
+          <div className="w-3 rounded-full overflow-hidden bg-bg-hover flex-shrink-0 relative" title={`Eval: ${evaluation > 0 ? '+' : ''}${evaluation.toFixed(1)}`}>
+            <div className="absolute bottom-0 left-0 right-0 bg-white transition-all duration-500 ease-out rounded-full" style={{ height: `${evalPct}%` }} />
+          </div>
+          <div className="flex-1 min-h-0 flex items-center justify-center">
+            <div className="w-full" style={{ maxHeight: '100%', aspectRatio: '1' }}>
               <ChessBoard
                 fen={fen}
                 orientation={playerColor}
@@ -263,48 +272,105 @@ export default function PlayComputer() {
               />
             </div>
           </div>
-          <div className="flex gap-2 mt-2 lg:mt-3">
-            {phase === 'playing' && (
-              <>
-                <button onClick={takeBack} disabled={history.length < 2 || thinking} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm lg:text-base hover:bg-bg-hover transition-all btn-press disabled:opacity-30 disabled:cursor-not-allowed">Takeback</button>
-                <button onClick={requestHint} disabled={thinking || !isPlayerTurn} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm lg:text-base hover:bg-bg-hover transition-all btn-press disabled:opacity-30 disabled:cursor-not-allowed">{hintArrow ? 'Hint shown' : 'Hint'}</button>
-                <button onClick={resign} className="flex-1 py-2 rounded-lg bg-incorrect/10 border border-incorrect/20 text-incorrect text-sm lg:text-base hover:bg-incorrect/20 transition-all btn-press">Resign</button>
-              </>
-            )}
-            {phase === 'ended' && (
-              <>
-                <button onClick={() => setPhase('setup')} className="flex-1 py-2.5 rounded-lg bg-gold text-bg font-semibold text-sm lg:text-base hover:bg-gold-dim transition-all btn-press">New Game</button>
-                <button onClick={startGame} className="flex-1 py-2.5 rounded-lg bg-bg-card border border-bg-hover text-sm lg:text-base hover:bg-bg-hover transition-all btn-press">Rematch</button>
-              </>
-            )}
-          </div>
         </div>
 
-        {/* Info panel */}
-        <div className="mt-3 lg:mt-0 space-y-3 lg:space-y-4">
-          <div className="max-h-32 lg:max-h-none overflow-y-auto">
-            <MoveList history={history} currentIndex={moveIndex} onSelectMove={() => {}} />
+        {/* Buttons */}
+        <div className="flex gap-2 mt-1.5 shrink-0">
+          {phase === 'playing' && (
+            <>
+              <button onClick={takeBack} disabled={history.length < 2 || thinking} className="flex-1 py-1.5 rounded-lg bg-bg-card border border-bg-hover text-xs hover:bg-bg-hover transition-all btn-press disabled:opacity-30">Takeback</button>
+              <button onClick={requestHint} disabled={thinking || !isPlayerTurn} className="flex-1 py-1.5 rounded-lg bg-bg-card border border-bg-hover text-xs hover:bg-bg-hover transition-all btn-press disabled:opacity-30">{hintArrow ? 'Hint shown' : 'Hint'}</button>
+              <button onClick={resign} className="flex-1 py-1.5 rounded-lg bg-incorrect/10 border border-incorrect/20 text-incorrect text-xs hover:bg-incorrect/20 transition-all btn-press">Resign</button>
+            </>
+          )}
+          {phase === 'ended' && (
+            <>
+              <button onClick={() => setPhase('setup')} className="flex-1 py-2 rounded-lg bg-gold text-bg font-semibold text-sm hover:bg-gold-dim transition-all btn-press">New Game</button>
+              <button onClick={startGame} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press">Rematch</button>
+            </>
+          )}
+        </div>
+
+        {/* Eval + moves info, then notation below */}
+        <div className="shrink-0 mt-1.5 flex gap-3 items-center text-xs card-base px-3 py-1.5">
+          <div className="flex gap-3">
+            <span><span className="text-text-dim mr-1">Moves</span><span className="tabular-nums">{Math.ceil(history.length / 2)}</span></span>
+            <span><span className="text-text-dim mr-1">Eval</span><span className={`tabular-nums font-medium ${evaluation > 0.5 ? 'text-correct' : evaluation < -0.5 ? 'text-incorrect' : 'text-text-dim'}`}>{evaluation > 0 ? '+' : ''}{evaluation.toFixed(1)}</span></span>
           </div>
-          {/* Compact info row on mobile/tablet, full card on desktop */}
-          <div className="card-base p-3 lg:p-4 flex lg:block gap-4 items-center">
-            <div className="flex lg:flex-col gap-3 lg:gap-0 flex-1">
-              <div className="flex justify-between text-sm lg:mb-2"><span className="text-text-dim mr-2">Moves</span><span className="tabular-nums">{Math.ceil(history.length / 2)}</span></div>
-              <div className="flex justify-between text-sm lg:mb-2"><span className="text-text-dim mr-2">Eval</span><span className={`tabular-nums font-medium ${evaluation > 0.5 ? 'text-correct' : evaluation < -0.5 ? 'text-incorrect' : 'text-text-dim'}`}>{evaluation > 0 ? '+' : ''}{evaluation.toFixed(1)}</span></div>
-              <div className="flex justify-between text-sm"><span className="text-text-dim mr-2 hidden lg:inline">Engine</span><span className="hidden lg:inline">{preset.label} ({preset.elo})</span></div>
+        </div>
+        <div className="shrink-0 mt-1 max-h-20 overflow-y-auto">
+          <MoveList history={history} currentIndex={moveIndex} onSelectMove={() => {}} />
+        </div>
+      </div>
+
+      {/* Desktop: side-by-side layout */}
+      <div className="hidden lg:block page-enter max-w-6xl mx-auto px-6 py-10">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-display text-gold mb-0.5">
+              {phase === 'ended' ? result : thinking ? 'Engine thinking...' : isPlayerTurn ? 'Your move' : ''}
+            </h1>
+            <p className="text-text-dim text-sm">vs Stockfish ({preset.label} — {preset.elo} ELO)</p>
+          </div>
+          {gameRef.current?.isCheck() && phase === 'playing' && (
+            <span className="bg-incorrect/15 text-incorrect border border-incorrect/20 px-3 py-1 rounded-lg text-sm font-semibold">Check!</span>
+          )}
+        </div>
+        <div className="grid grid-cols-[1fr_320px] gap-8">
+          <div className="max-w-[560px] sticky top-4 self-start">
+            <div className="flex gap-2">
+              <div className="w-4 rounded-full overflow-hidden bg-bg-hover flex-shrink-0 relative" title={`Eval: ${evaluation > 0 ? '+' : ''}${evaluation.toFixed(1)}`}>
+                <div className="absolute bottom-0 left-0 right-0 bg-white transition-all duration-500 ease-out rounded-full" style={{ height: `${evalPct}%` }} />
+              </div>
+              <div className="flex-1">
+                <ChessBoard
+                  fen={fen}
+                  orientation={playerColor}
+                  movable={isPlayerTurn && phase === 'playing'}
+                  dests={isPlayerTurn && phase === 'playing' ? getLegalDests() : new Map()}
+                  turnColor={turnColor}
+                  onMove={handleMove}
+                  lastMove={lastMove}
+                  arrows={hintArrow || []}
+                />
+              </div>
+            </div>
+            <div className="flex gap-2 mt-3">
+              {phase === 'playing' && (
+                <>
+                  <button onClick={takeBack} disabled={history.length < 2 || thinking} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press disabled:opacity-30 disabled:cursor-not-allowed">Takeback</button>
+                  <button onClick={requestHint} disabled={thinking || !isPlayerTurn} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press disabled:opacity-30 disabled:cursor-not-allowed">{hintArrow ? 'Hint shown' : 'Hint'}</button>
+                  <button onClick={resign} className="flex-1 py-2 rounded-lg bg-incorrect/10 border border-incorrect/20 text-incorrect text-base hover:bg-incorrect/20 transition-all btn-press">Resign</button>
+                </>
+              )}
+              {phase === 'ended' && (
+                <>
+                  <button onClick={() => setPhase('setup')} className="flex-1 py-2.5 rounded-lg bg-gold text-bg font-semibold text-base hover:bg-gold-dim transition-all btn-press">New Game</button>
+                  <button onClick={startGame} className="flex-1 py-2.5 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press">Rematch</button>
+                </>
+              )}
+            </div>
+          </div>
+          <div className="space-y-4">
+            <MoveList history={history} currentIndex={moveIndex} onSelectMove={() => {}} />
+            <div className="card-base p-4">
+              <div className="flex justify-between text-sm mb-2"><span className="text-text-dim">Moves</span><span className="tabular-nums">{Math.ceil(history.length / 2)}</span></div>
+              <div className="flex justify-between text-sm mb-2"><span className="text-text-dim">Evaluation</span><span className={`tabular-nums font-medium ${evaluation > 0.5 ? 'text-correct' : evaluation < -0.5 ? 'text-incorrect' : 'text-text-dim'}`}>{evaluation > 0 ? '+' : ''}{evaluation.toFixed(1)}</span></div>
+              <div className="flex justify-between text-sm"><span className="text-text-dim">Engine</span><span>{preset.label} ({preset.elo})</span></div>
             </div>
             {thinking && (
-              <div className="flex items-center gap-2 lg:mt-3 lg:pt-3 lg:border-t lg:border-bg-hover">
+              <div className="card-base p-4 flex items-center gap-3">
                 <div className="flex gap-1">
-                  <div className="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full bg-gold animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full bg-gold animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full bg-gold animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <div className="w-2 h-2 rounded-full bg-gold animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 rounded-full bg-gold animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-2 h-2 rounded-full bg-gold animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
-                <span className="text-xs lg:text-sm text-text-dim">Thinking...</span>
+                <span className="text-sm text-text-dim">Stockfish is calculating...</span>
               </div>
             )}
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
