@@ -32,8 +32,6 @@ export default function PlayComputer() {
   const [result, setResult] = useState(null);
   const [lastMove, setLastMove] = useState(null);
   const [hintArrow, setHintArrow] = useState(null);
-  const [boardSize, setBoardSize] = useState(0);
-  const boardAreaRef = useRef(null);
   const gameRef = useRef(null);
   const engineRef = useRef(null);
   const hintEngineRef = useRef(null);
@@ -47,19 +45,6 @@ export default function PlayComputer() {
       if (hintEngineRef.current) hintEngineRef.current.destroy();
     };
   }, []);
-
-  // Measure available board area height on mobile/tablet
-  useEffect(() => {
-    const el = boardAreaRef.current;
-    if (!el) return;
-    const ro = new ResizeObserver(([entry]) => {
-      const h = entry.contentRect.height;
-      const w = entry.contentRect.width - 20; // subtract eval bar + gap
-      setBoardSize(Math.floor(Math.min(h, w)));
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [phase]);
 
   function startGame() {
     if (engineRef.current) engineRef.current.destroy();
@@ -245,9 +230,10 @@ export default function PlayComputer() {
   return (
     <>
       {/* Mobile/Tablet: fixed viewport layout */}
-      <div className="lg:hidden page-enter flex flex-col px-3 pt-1 pb-2 overflow-hidden" style={{ height: 'calc(100dvh - 4rem)' }}>
+      {/* Heights: nav=4rem, header~2.5rem, buttons~2.5rem, info~2rem, moves~5rem, gaps~2rem = ~18rem */}
+      <div className="lg:hidden page-enter px-3 pt-1 pb-2">
         {/* Header */}
-        <div className="flex items-center justify-between mb-1 shrink-0">
+        <div className="flex items-center justify-between mb-1">
           <div className="min-w-0">
             <h1 className="text-base font-display text-gold truncate">
               {phase === 'ended' ? result : thinking ? 'Engine thinking...' : isPlayerTurn ? 'Your move' : ''}
@@ -255,42 +241,38 @@ export default function PlayComputer() {
             <p className="text-text-dim text-[11px]">vs Stockfish ({preset.label} — {preset.elo})</p>
           </div>
           {gameRef.current?.isCheck() && phase === 'playing' && (
-            <span className="bg-incorrect/15 text-incorrect border border-incorrect/20 px-2 py-0.5 rounded text-xs font-semibold shrink-0">Check!</span>
+            <span className="bg-incorrect/15 text-incorrect border border-incorrect/20 px-2 py-0.5 rounded text-xs font-semibold">Check!</span>
           )}
           {thinking && (
-            <div className="flex items-center gap-1.5 shrink-0">
-              <div className="flex gap-0.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '0ms' }} />
-                <div className="w-1.5 h-1.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '150ms' }} />
-                <div className="w-1.5 h-1.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '300ms' }} />
-              </div>
+            <div className="flex gap-0.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '0ms' }} />
+              <div className="w-1.5 h-1.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '150ms' }} />
+              <div className="w-1.5 h-1.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '300ms' }} />
             </div>
           )}
         </div>
 
-        {/* Board — takes remaining space */}
-        <div ref={boardAreaRef} className="flex-1 min-h-0 flex gap-1.5 items-center justify-center">
-          <div className="w-3 rounded-full overflow-hidden bg-bg-hover flex-shrink-0 relative self-stretch" title={`Eval: ${evaluation > 0 ? '+' : ''}${evaluation.toFixed(1)}`}>
+        {/* Board — fixed size from viewport calc */}
+        <div className="flex gap-1.5 items-start justify-center">
+          <div className="rounded-full overflow-hidden bg-bg-hover relative" style={{ width: 12, height: 'min(calc(100dvh - 18rem), calc(100vw - 2rem))' }} title={`Eval: ${evaluation > 0 ? '+' : ''}${evaluation.toFixed(1)}`}>
             <div className="absolute bottom-0 left-0 right-0 bg-white transition-all duration-500 ease-out rounded-full" style={{ height: `${evalPct}%` }} />
           </div>
-          {boardSize > 0 && (
-            <div style={{ width: boardSize, height: boardSize }}>
-              <ChessBoard
-                fen={fen}
-                orientation={playerColor}
-                movable={isPlayerTurn && phase === 'playing'}
-                dests={isPlayerTurn && phase === 'playing' ? getLegalDests() : new Map()}
-                turnColor={turnColor}
-                onMove={handleMove}
-                lastMove={lastMove}
-                arrows={hintArrow || []}
-              />
-            </div>
-          )}
+          <div style={{ width: 'min(calc(100dvh - 18rem), calc(100vw - 2rem))', height: 'min(calc(100dvh - 18rem), calc(100vw - 2rem))' }}>
+            <ChessBoard
+              fen={fen}
+              orientation={playerColor}
+              movable={isPlayerTurn && phase === 'playing'}
+              dests={isPlayerTurn && phase === 'playing' ? getLegalDests() : new Map()}
+              turnColor={turnColor}
+              onMove={handleMove}
+              lastMove={lastMove}
+              arrows={hintArrow || []}
+            />
+          </div>
         </div>
 
         {/* Buttons */}
-        <div className="flex gap-2 mt-1.5 shrink-0">
+        <div className="flex gap-2 mt-1.5">
           {phase === 'playing' && (
             <>
               <button onClick={takeBack} disabled={history.length < 2 || thinking} className="flex-1 py-1.5 rounded-lg bg-bg-card border border-bg-hover text-xs hover:bg-bg-hover transition-all btn-press disabled:opacity-30">Takeback</button>
@@ -306,14 +288,13 @@ export default function PlayComputer() {
           )}
         </div>
 
-        {/* Eval + moves info, then notation below */}
-        <div className="shrink-0 mt-1.5 flex gap-3 items-center text-xs card-base px-3 py-1.5">
-          <div className="flex gap-3">
-            <span><span className="text-text-dim mr-1">Moves</span><span className="tabular-nums">{Math.ceil(history.length / 2)}</span></span>
-            <span><span className="text-text-dim mr-1">Eval</span><span className={`tabular-nums font-medium ${evaluation > 0.5 ? 'text-correct' : evaluation < -0.5 ? 'text-incorrect' : 'text-text-dim'}`}>{evaluation > 0 ? '+' : ''}{evaluation.toFixed(1)}</span></span>
-          </div>
+        {/* Eval + moves info */}
+        <div className="mt-1.5 flex gap-3 items-center text-xs card-base px-3 py-1.5">
+          <span><span className="text-text-dim mr-1">Moves</span><span className="tabular-nums">{Math.ceil(history.length / 2)}</span></span>
+          <span><span className="text-text-dim mr-1">Eval</span><span className={`tabular-nums font-medium ${evaluation > 0.5 ? 'text-correct' : evaluation < -0.5 ? 'text-incorrect' : 'text-text-dim'}`}>{evaluation > 0 ? '+' : ''}{evaluation.toFixed(1)}</span></span>
         </div>
-        <div className="shrink-0 mt-1 max-h-20 overflow-y-auto">
+        {/* Notation */}
+        <div className="mt-1 max-h-20 overflow-y-auto">
           <MoveList history={history} currentIndex={moveIndex} onSelectMove={() => {}} />
         </div>
       </div>

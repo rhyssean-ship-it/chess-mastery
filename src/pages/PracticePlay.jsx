@@ -19,8 +19,6 @@ export default function PracticePlay() {
   const [thinking, setThinking] = useState(false);
   const [result, setResult] = useState(null);
   const [lastMove, setLastMove] = useState(null);
-  const [boardSize, setBoardSize] = useState(0);
-  const boardAreaRef = useRef(null);
 
   // Coach features
   const [showHints, setShowHints] = useState(true);
@@ -44,18 +42,6 @@ export default function PracticePlay() {
       if (hintEngineRef.current) hintEngineRef.current.destroy();
     };
   }, []);
-
-  useEffect(() => {
-    const el = boardAreaRef.current;
-    if (!el) return;
-    const ro = new ResizeObserver(([entry]) => {
-      const h = entry.contentRect.height;
-      const w = entry.contentRect.width - 20;
-      setBoardSize(Math.floor(Math.min(h, w)));
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [phase]);
 
   function startGame() {
     const g = new Chess();
@@ -310,10 +296,11 @@ export default function PracticePlay() {
 
   return (
     <>
-      {/* Mobile/Tablet: fixed viewport layout */}
-      <div className="lg:hidden page-enter flex flex-col px-3 pt-1 pb-2 overflow-hidden" style={{ height: 'calc(100dvh - 4rem)' }}>
+      {/* Mobile/Tablet: fixed layout with CSS-calculated board size */}
+      {/* Heights: nav=4rem, header~2.5rem, coach~2.5rem, buttons~2.5rem, info~2rem, moves~5rem, gaps~2.5rem = ~21rem */}
+      <div className="lg:hidden page-enter px-3 pt-1 pb-2">
         {/* Header */}
-        <div className="flex items-center justify-between mb-1 shrink-0">
+        <div className="flex items-center justify-between mb-1">
           <div className="min-w-0">
             <h1 className="text-base font-display text-gold truncate">
               {phase === 'ended' ? result : thinking ? 'Engine thinking...' : isPlayerTurn ? 'Your move' : ''}
@@ -321,19 +308,17 @@ export default function PracticePlay() {
             <p className="text-text-dim text-[11px]">{opening?.name} vs Stockfish ({preset.label})</p>
           </div>
           {thinking && (
-            <div className="flex items-center gap-1.5 shrink-0">
-              <div className="flex gap-0.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '0ms' }} />
-                <div className="w-1.5 h-1.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '150ms' }} />
-                <div className="w-1.5 h-1.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '300ms' }} />
-              </div>
+            <div className="flex gap-0.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '0ms' }} />
+              <div className="w-1.5 h-1.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '150ms' }} />
+              <div className="w-1.5 h-1.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '300ms' }} />
             </div>
           )}
         </div>
 
         {/* Coach message */}
         {coachMessage && (
-          <div className={`mb-1 rounded-lg px-3 py-1.5 border text-[11px] shrink-0 ${
+          <div className={`mb-1 rounded-lg px-3 py-1.5 border text-[11px] ${
             coachMessage.type === 'tip' ? 'bg-correct/10 border-correct/30 text-correct' :
             coachMessage.type === 'warning' ? 'bg-amber/10 border-amber/30 text-amber' :
             'bg-gold/10 border-gold/30 text-gold'
@@ -343,31 +328,29 @@ export default function PracticePlay() {
           </div>
         )}
 
-        {/* Board */}
-        <div ref={boardAreaRef} className="flex-1 min-h-0 flex gap-1.5 items-center justify-center">
+        {/* Board — fixed size from viewport calc */}
+        <div className="flex gap-1.5 items-start justify-center">
           {showEval && (
-            <div className="w-3 rounded-full overflow-hidden bg-bg-hover flex-shrink-0 relative self-stretch">
+            <div className="rounded-full overflow-hidden bg-bg-hover relative" style={{ width: 12, height: 'min(calc(100dvh - 21rem), calc(100vw - 2rem))' }}>
               <div className="absolute bottom-0 left-0 right-0 bg-white transition-all duration-500 ease-out rounded-full" style={{ height: `${evalPct}%` }} />
             </div>
           )}
-          {boardSize > 0 && (
-            <div style={{ width: boardSize, height: boardSize }}>
-              <ChessBoard
-                fen={fen}
-                orientation={playerColor}
-                movable={isPlayerTurn && phase === 'playing' && !thinking}
-                dests={isPlayerTurn && phase === 'playing' && !thinking ? getLegalDests() : new Map()}
-                turnColor={turnColor}
-                onMove={handleMove}
-                lastMove={lastMove}
-                arrows={hintArrows}
-              />
-            </div>
-          )}
+          <div style={{ width: 'min(calc(100dvh - 21rem), calc(100vw - 2rem))', height: 'min(calc(100dvh - 21rem), calc(100vw - 2rem))' }}>
+            <ChessBoard
+              fen={fen}
+              orientation={playerColor}
+              movable={isPlayerTurn && phase === 'playing' && !thinking}
+              dests={isPlayerTurn && phase === 'playing' && !thinking ? getLegalDests() : new Map()}
+              turnColor={turnColor}
+              onMove={handleMove}
+              lastMove={lastMove}
+              arrows={hintArrows}
+            />
+          </div>
         </div>
 
         {/* Buttons */}
-        <div className="flex gap-2 mt-1.5 shrink-0">
+        <div className="flex gap-2 mt-1.5">
           {phase === 'playing' && (
             <>
               <button onClick={requestHint} disabled={thinking || !isPlayerTurn} className="flex-1 py-1.5 rounded-lg bg-bg-card border border-bg-hover text-xs hover:bg-bg-hover transition-all btn-press disabled:opacity-30">Hint</button>
@@ -379,12 +362,13 @@ export default function PracticePlay() {
           )}
         </div>
 
-        {/* Eval info then notation */}
-        <div className="shrink-0 mt-1.5 flex gap-3 items-center text-xs card-base px-3 py-1.5">
+        {/* Eval info */}
+        <div className="mt-1.5 flex gap-3 items-center text-xs card-base px-3 py-1.5">
           <span><span className="text-text-dim mr-1">Moves</span><span className="tabular-nums">{Math.ceil(history.length / 2)}</span></span>
           {showEval && <span><span className="text-text-dim mr-1">Eval</span><span className={`tabular-nums font-medium ${evaluation > 0.5 ? 'text-correct' : evaluation < -0.5 ? 'text-incorrect' : 'text-text-dim'}`}>{evaluation > 0 ? '+' : ''}{evaluation.toFixed(1)}</span></span>}
         </div>
-        <div className="shrink-0 mt-1 max-h-20 overflow-y-auto">
+        {/* Notation */}
+        <div className="mt-1 max-h-20 overflow-y-auto">
           <MoveList history={history} currentIndex={moveIndex} onSelectMove={() => {}} />
         </div>
       </div>
