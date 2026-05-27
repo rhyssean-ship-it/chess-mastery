@@ -180,12 +180,12 @@ export default function GameAnalysis() {
   }
 
   return (
-    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-4 lg:py-5">
       {/* Header */}
-      <div className="flex flex-wrap items-baseline justify-between gap-3 mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
         <div>
-          <h1 className="text-2xl sm:text-2xl sm:text-3xl font-display">Game Review</h1>
-          <p className="text-text-dim text-sm">
+          <h1 className="text-xl sm:text-2xl font-display leading-tight">Game Review</h1>
+          <p className="text-text-dim text-xs">
             {gameData.label || 'Played game'}{gameData.result ? ` — ${gameData.result}` : ''}
           </p>
         </div>
@@ -250,9 +250,9 @@ export default function GameAnalysis() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_22rem] gap-5 lg:items-start">
         {/* Board column */}
-        <div className="max-w-[560px] mx-auto w-full lg:mx-0 board-fit-mobile">
+        <div className="max-w-[520px] mx-auto w-full lg:mx-0 board-fit-mobile">
           {tryMode && currentAnalysis ? (
             <TryModePanel
               analysis={currentAnalysis}
@@ -271,29 +271,29 @@ export default function GameAnalysis() {
           )}
 
           {/* Move controls */}
-          <div className="flex items-center gap-2 mt-3">
+          <div className="flex items-center gap-1.5 mt-2">
             <button onClick={jumpToStart} disabled={currentPly === -1}
-              className="px-3 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all disabled:opacity-30"
+              className="px-2.5 py-1.5 rounded-md bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all disabled:opacity-30"
               aria-label="Go to start" title="Home">|◀</button>
             <button onClick={goPrev} disabled={currentPly === -1}
-              className="px-3 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all disabled:opacity-30"
+              className="px-2.5 py-1.5 rounded-md bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all disabled:opacity-30"
               aria-label="Previous" title="←">◀</button>
-            <div className="flex-1 text-center text-sm text-text-dim tabular-nums">
+            <div className="flex-1 text-center text-xs text-text-dim tabular-nums">
               {currentPly === -1 ? 'Start' : `Move ${Math.floor(currentPly / 2) + 1}${currentPly % 2 === 0 ? '' : '…'}`}
             </div>
             <button onClick={goNext} disabled={currentPly >= history.length - 1}
-              className="px-3 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all disabled:opacity-30"
+              className="px-2.5 py-1.5 rounded-md bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all disabled:opacity-30"
               aria-label="Next" title="→">▶</button>
             <button onClick={jumpToEnd} disabled={currentPly >= history.length - 1}
-              className="px-3 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all disabled:opacity-30"
+              className="px-2.5 py-1.5 rounded-md bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all disabled:opacity-30"
               aria-label="Go to end" title="End">▶|</button>
             <button onClick={jumpToNextMistake} disabled={!analysisComplete}
-              className="px-3 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all disabled:opacity-30 hidden sm:block"
+              className="px-2.5 py-1.5 rounded-md bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all disabled:opacity-30 hidden sm:block"
               aria-label="Next mistake" title="↑ — jump to next mistake">↑?</button>
             {canTryMode && (
               <button
                 onClick={() => setTryMode(t => !t)}
-                className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${tryMode ? 'bg-gold text-bg' : 'bg-bg-card border border-gold/40 text-gold hover:bg-gold/10'}`}
+                className={`px-2.5 py-1.5 rounded-md text-sm font-semibold transition-all ${tryMode ? 'bg-gold text-bg' : 'bg-bg-card border border-gold/40 text-gold hover:bg-gold/10'}`}
                 title="T — try the engine's move yourself"
               >
                 {tryMode ? '✓ Trying' : 'Try it'}
@@ -301,44 +301,66 @@ export default function GameAnalysis() {
             )}
           </div>
 
-          {/* Per-move detail card */}
-          {currentAnalysis ? (
-            <MoveDetail
-              analysis={currentAnalysis}
-              showBestArrow={showBestArrow}
-              setShowBestArrow={setShowBestArrow}
-              evalPerspective={evalPerspective}
-              playerColor={orientation}
-            />
-          ) : (
-            <div className="mt-3 card-base p-4 text-sm text-text-dim">
-              Starting position. Step through with ▶ or use <kbd className="px-1.5 py-0.5 bg-bg-hover rounded text-[10px]">→</kbd> on your keyboard.
-            </div>
-          )}
+          {/* Mobile: per-move detail below board. Hidden on desktop (it lives in the sidebar). */}
+          <div className="lg:hidden">
+            {currentAnalysis ? (
+              <MoveDetail
+                analysis={currentAnalysis}
+                showBestArrow={showBestArrow}
+                setShowBestArrow={setShowBestArrow}
+                evalPerspective={evalPerspective}
+                playerColor={orientation}
+              />
+            ) : (
+              <div className="mt-3 card-base p-3 text-sm text-text-dim">
+                Starting position. Step through with ▶ or use <kbd className="px-1.5 py-0.5 bg-bg-hover rounded text-[10px]">→</kbd>.
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Sidebar */}
-        <div className="space-y-4">
+        {/* Sidebar — sticky on desktop with its own internal scroll so the page doesn't scroll */}
+        <div className="space-y-3 lg:sticky lg:top-3 lg:max-h-[calc(100dvh-1.5rem)] lg:overflow-y-auto lg:pr-1">
+          {/* Per-move detail at top on desktop — context for what's selected */}
+          <div className="hidden lg:block">
+            {currentAnalysis ? (
+              <MoveDetail
+                analysis={currentAnalysis}
+                showBestArrow={showBestArrow}
+                setShowBestArrow={setShowBestArrow}
+                evalPerspective={evalPerspective}
+                playerColor={orientation}
+                compact
+              />
+            ) : (
+              <div className="card-base p-3 text-xs text-text-dim">
+                Step through moves with ◀ ▶ or <kbd>←</kbd>/<kbd>→</kbd>.
+              </div>
+            )}
+          </div>
+
+          <EvalGraph analyses={analyses} currentPly={currentPly} onJump={jumpTo} evalPerspective={evalPerspective} playerColor={orientation} compact />
+
           {summary && <SummaryCard summary={summary} />}
+
           {analysisComplete && analyses.length > 0 && (
             <PatternCard analyses={analyses} playerColor={orientation} />
           )}
-          <EvalGraph analyses={analyses} currentPly={currentPly} onJump={jumpTo} evalPerspective={evalPerspective} playerColor={orientation} />
 
           {/* Move list with view toggle */}
           <div>
-            <div className="flex rounded-lg bg-bg-card border border-bg-hover overflow-hidden text-xs mb-2 w-fit">
+            <div className="flex rounded-md bg-bg-card overflow-hidden text-[11px] mb-1.5 w-fit">
               <button
                 onClick={() => setMoveListView('order')}
-                className={`px-3 py-1.5 transition-all ${moveListView === 'order' ? 'bg-gold text-bg font-semibold' : 'text-text-dim hover:text-text'}`}
+                className={`px-2.5 py-1 transition-all ${moveListView === 'order' ? 'bg-gold text-bg font-semibold' : 'text-text-dim hover:text-text'}`}
               >Chronological</button>
               <button
                 onClick={() => setMoveListView('worst')}
-                className={`px-3 py-1.5 transition-all ${moveListView === 'worst' ? 'bg-gold text-bg font-semibold' : 'text-text-dim hover:text-text'}`}
+                className={`px-2.5 py-1 transition-all ${moveListView === 'worst' ? 'bg-gold text-bg font-semibold' : 'text-text-dim hover:text-text'}`}
               >Worst first</button>
             </div>
             {moveListView === 'order' ? (
-              <MoveList history={history} currentIndex={currentPly} onSelectMove={jumpTo} classifications={classifications} />
+              <MoveList history={history} currentIndex={currentPly} onSelectMove={jumpTo} classifications={classifications} maxHeightClass="max-h-64 lg:max-h-72" />
             ) : (
               <WorstMovesList analyses={analyses} currentPly={currentPly} onSelect={jumpTo} />
             )}
@@ -346,7 +368,7 @@ export default function GameAnalysis() {
 
           {analysisComplete && (
             <div className="text-[10px] text-text-dim/60 leading-relaxed px-1">
-              <span className="font-semibold uppercase tracking-wide">Shortcuts:</span> <kbd>←</kbd> <kbd>→</kbd> step · <kbd>↑</kbd> next mistake · <kbd>T</kbd> try the move · <kbd>Space</kbd> toggle hint arrow
+              <kbd>←</kbd> <kbd>→</kbd> step · <kbd>↑</kbd> next mistake · <kbd>T</kbd> try · <kbd>Space</kbd> hint
             </div>
           )}
         </div>
@@ -450,7 +472,7 @@ function ManualPuzzleBoard({ fen, expectedUci, orientation }) {
   );
 }
 
-function MoveDetail({ analysis, showBestArrow, setShowBestArrow, evalPerspective, playerColor }) {
+function MoveDetail({ analysis, showBestArrow, setShowBestArrow, evalPerspective, playerColor, compact = false }) {
   const meta = CLASS_META[analysis.classification];
   const moveColorLabel = analysis.color === 'white' ? 'White' : 'Black';
   const moveNumber = Math.floor(analysis.ply / 2) + 1;
@@ -465,35 +487,35 @@ function MoveDetail({ analysis, showBestArrow, setShowBestArrow, evalPerspective
   }
 
   return (
-    <div className="mt-3 card-base p-4">
-      <div className="flex items-baseline justify-between mb-2">
-        <div className="flex items-baseline gap-2">
-          <span className={`text-2xl font-bold ${meta?.color}`}>{meta?.symbol}</span>
-          <span className={`text-base font-semibold ${meta?.color}`}>{meta?.label}</span>
+    <div className={`card-base ${compact ? 'p-3 mt-0' : 'p-4 mt-3'}`}>
+      <div className={`flex items-baseline justify-between ${compact ? 'mb-1.5' : 'mb-2'}`}>
+        <div className="flex items-baseline gap-1.5">
+          <span className={`${compact ? 'text-lg' : 'text-2xl'} font-bold ${meta?.color}`}>{meta?.symbol}</span>
+          <span className={`${compact ? 'text-sm' : 'text-base'} font-semibold ${meta?.color}`}>{meta?.label}</span>
         </div>
-        <span className="text-xs text-text-dim tabular-nums">
-          {moveColorLabel} · move {moveNumber}
+        <span className="text-[11px] text-text-dim tabular-nums">
+          {moveColorLabel} · {moveNumber}
         </span>
       </div>
 
-      <p className="text-sm text-text mb-2">
+      <p className={`text-text ${compact ? 'text-[13px] mb-1.5 leading-snug' : 'text-sm mb-2'}`}>
         <span className="font-semibold">{analysis.san}</span>
         {playedExplanation && <> — {playedExplanation}</>}
       </p>
 
       {bestExplanation && !analysis.isBest && (
-        <div className="mb-3 text-sm text-text-dim bg-bg-hover/30 rounded-md px-3 py-2">
+        <div className={`text-text-dim bg-bg-hover/30 rounded-md ${compact ? 'text-[12px] mb-2 px-2.5 py-1.5 leading-snug' : 'text-sm mb-3 px-3 py-2'}`}>
           <span className="text-gold font-semibold">{analysis.bestMoveSan}:</span> {bestExplanation.replace(`${analysis.bestMoveSan} `, '').replace(`${analysis.bestMoveSan}—`, '—')}
         </div>
       )}
 
-      <div className="grid grid-cols-3 gap-2 text-xs">
-        <Stat label="CPL" value={analysis.cpl.toFixed(0)} />
-        <Stat label={evalPerspective === 'your' ? 'Eval (you)' : 'Eval (W)'} value={formatEval(evalCp)} />
-        <Stat label="Accuracy" value={analysis.moveAccuracy != null ? `${analysis.moveAccuracy.toFixed(0)}%` : '—'} />
+      <div className={`grid grid-cols-3 gap-1.5 ${compact ? 'text-[10px]' : 'text-xs'}`}>
+        <Stat label="CPL" value={analysis.cpl.toFixed(0)} compact={compact} />
+        <Stat label={evalPerspective === 'your' ? 'Eval (you)' : 'Eval (W)'} value={formatEval(evalCp)} compact={compact} />
+        <Stat label="Accuracy" value={analysis.moveAccuracy != null ? `${analysis.moveAccuracy.toFixed(0)}%` : '—'} compact={compact} />
       </div>
 
-      {analysis.bestMove && !analysis.isBest && (
+      {analysis.bestMove && !analysis.isBest && !compact && (
         <label className="mt-3 flex items-center gap-2 text-xs text-text-dim cursor-pointer">
           <input
             type="checkbox"
@@ -512,18 +534,18 @@ function PatternCard({ analyses, playerColor }) {
   const { observations, avgMistakeCpl } = patternsFromAnalyses(analyses, playerColor);
   if (observations.length === 0) return null;
   return (
-    <div className="card-base p-4">
-      <div className="text-xs text-text-dim uppercase tracking-wide mb-2">Your pattern this game</div>
-      <ul className="space-y-1 text-sm">
-        {observations.slice(0, 4).map((o, i) => (
-          <li key={i} className="flex items-start gap-2">
+    <div className="card-base p-3">
+      <div className="text-[10px] text-text-dim uppercase tracking-wide mb-1.5 font-semibold">Pattern this game</div>
+      <ul className="space-y-1 text-[12px] leading-snug">
+        {observations.slice(0, 3).map((o, i) => (
+          <li key={i} className="flex items-start gap-1.5">
             <span className="text-gold mt-0.5">·</span>
             <span>{o}</span>
           </li>
         ))}
       </ul>
       {avgMistakeCpl > 0 && (
-        <div className="text-xs text-text-dim mt-3">Average mistake severity: {(avgMistakeCpl / 100).toFixed(1)} pawns.</div>
+        <div className="text-[11px] text-text-dim mt-2">Avg mistake severity: {(avgMistakeCpl / 100).toFixed(1)} pawns.</div>
       )}
     </div>
   );
@@ -538,7 +560,7 @@ function WorstMovesList({ analyses, currentPly, onSelect }) {
     return <div className="card-base p-4 text-sm text-text-dim text-center">No significant mistakes in this game. 🙌</div>;
   }
   return (
-    <div className="card-base p-2 max-h-[28rem] overflow-y-auto">
+    <div className="card-base p-2 max-h-64 lg:max-h-72 overflow-y-auto">
       {sorted.map(a => {
         const meta = CLASS_META[a.classification];
         const isActive = a.ply === currentPly;
@@ -569,11 +591,11 @@ function WorstMovesList({ analyses, currentPly, onSelect }) {
   );
 }
 
-function Stat({ label, value }) {
+function Stat({ label, value, compact = false }) {
   return (
-    <div className="bg-bg-hover/40 rounded-md px-2 py-1.5">
-      <div className="text-[10px] text-text-dim uppercase tracking-wide">{label}</div>
-      <div className="text-sm tabular-nums font-medium">{value}</div>
+    <div className={`bg-bg-hover/40 rounded-md ${compact ? 'px-1.5 py-1' : 'px-2 py-1.5'}`}>
+      <div className={`text-text-dim uppercase tracking-wide ${compact ? 'text-[9px]' : 'text-[10px]'}`}>{label}</div>
+      <div className={`tabular-nums font-medium ${compact ? 'text-[11px]' : 'text-sm'}`}>{value}</div>
     </div>
   );
 }
@@ -587,41 +609,43 @@ function formatEval(cp) {
 
 function SummaryCard({ summary }) {
   const rows = [
-    { key: CLASS.BRILLIANT, label: 'Brilliant', icon: '!!' },
-    { key: CLASS.GREAT, label: 'Great', icon: '!' },
-    { key: CLASS.BEST, label: 'Best', icon: '★' },
-    { key: CLASS.EXCELLENT, label: 'Excellent', icon: '◆' },
-    { key: CLASS.GOOD, label: 'Good', icon: '·' },
-    { key: CLASS.BOOK, label: 'Book', icon: '⨂' },
-    { key: CLASS.INACCURACY, label: 'Inaccuracy', icon: '?!' },
-    { key: CLASS.MISTAKE, label: 'Mistake', icon: '?' },
-    { key: CLASS.BLUNDER, label: 'Blunder', icon: '??' },
+    { key: CLASS.BRILLIANT, icon: '!!' },
+    { key: CLASS.GREAT, icon: '!' },
+    { key: CLASS.BEST, icon: '★' },
+    { key: CLASS.EXCELLENT, icon: '◆' },
+    { key: CLASS.GOOD, icon: '·' },
+    { key: CLASS.BOOK, icon: '⨂' },
+    { key: CLASS.INACCURACY, icon: '?!' },
+    { key: CLASS.MISTAKE, icon: '?' },
+    { key: CLASS.BLUNDER, icon: '??' },
   ];
   return (
-    <div className="card-base p-4">
-      <div className="grid grid-cols-3 gap-3 mb-4 text-center">
-        <div />
-        <div className="text-[11px] text-text-dim font-semibold uppercase tracking-wide">White</div>
-        <div className="text-[11px] text-text-dim font-semibold uppercase tracking-wide">Black</div>
-        <div className="text-xs text-text-dim font-medium text-left">Accuracy</div>
-        <div className="text-base font-bold text-gold tabular-nums">
-          {summary.white.accuracy != null ? `${summary.white.accuracy.toFixed(1)}%` : '—'}
+    <div className="card-base p-3">
+      {/* Accuracy header */}
+      <div className="grid grid-cols-3 gap-2 mb-2 items-baseline">
+        <div className="text-[10px] text-text-dim uppercase tracking-wide font-semibold">Accuracy</div>
+        <div className="text-center text-base font-bold text-gold tabular-nums">
+          {summary.white.accuracy != null ? `${summary.white.accuracy.toFixed(0)}%` : '—'}
         </div>
-        <div className="text-base font-bold text-gold tabular-nums">
-          {summary.black.accuracy != null ? `${summary.black.accuracy.toFixed(1)}%` : '—'}
+        <div className="text-center text-base font-bold text-gold tabular-nums">
+          {summary.black.accuracy != null ? `${summary.black.accuracy.toFixed(0)}%` : '—'}
         </div>
+        <div className="text-[10px] text-text-dim/70"></div>
+        <div className="text-[10px] text-text-dim/70 text-center uppercase tracking-wide">W</div>
+        <div className="text-[10px] text-text-dim/70 text-center uppercase tracking-wide">B</div>
       </div>
-      <div className="space-y-1">
+      {/* Classification rows */}
+      <div className="space-y-0.5">
         {rows.map(r => {
           const meta = CLASS_META[r.key];
           return (
-            <div key={r.key} className="grid grid-cols-3 gap-3 items-center py-1 px-1 rounded hover:bg-bg-hover/40">
-              <div className={`text-xs font-medium ${meta.color} flex items-center gap-1.5`}>
-                <span className="font-bold">{r.icon}</span>
-                <span>{r.label}</span>
+            <div key={r.key} className="grid grid-cols-3 gap-2 items-center py-0.5 px-1 rounded hover:bg-bg-hover/40">
+              <div className={`text-[11px] ${meta.color} flex items-center gap-1.5 truncate`}>
+                <span className="font-bold w-5 text-center">{r.icon}</span>
+                <span className="truncate">{meta.label}</span>
               </div>
-              <div className="text-sm tabular-nums text-center">{summary.white[r.key] || 0}</div>
-              <div className="text-sm tabular-nums text-center">{summary.black[r.key] || 0}</div>
+              <div className="text-xs tabular-nums text-center">{summary.white[r.key] || 0}</div>
+              <div className="text-xs tabular-nums text-center">{summary.black[r.key] || 0}</div>
             </div>
           );
         })}

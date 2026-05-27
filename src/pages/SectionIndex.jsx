@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 function Section({ title, items }) {
   return (
     <div className="mb-6">
-      <h2 className="text-sm text-text-dim uppercase tracking-wide font-semibold mb-2">{title}</h2>
+      {/* sentence-case label rendered as a div so the global h2 serif rule doesn't apply */}
+      <div className="text-sm font-semibold text-text-dim/80 mb-2">{title}</div>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {items.map(it => (
           <Link

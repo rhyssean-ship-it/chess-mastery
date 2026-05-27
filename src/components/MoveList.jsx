@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { CLASS_META } from '../services/moveClassification';
 
-export default function MoveList({ history, currentIndex, onSelectMove, classifications = null }) {
+export default function MoveList({ history, currentIndex, onSelectMove, classifications = null, maxHeightClass = 'max-h-[28rem]' }) {
   const activeRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -45,7 +45,7 @@ export default function MoveList({ history, currentIndex, onSelectMove, classifi
   };
 
   return (
-    <div ref={containerRef} className="bg-bg-card rounded-xl p-3 max-h-[28rem] overflow-y-auto overflow-x-hidden border border-bg-hover">
+    <div ref={containerRef} className={`bg-bg-card rounded-xl p-3 ${maxHeightClass} overflow-y-auto overflow-x-hidden`}>
       <table className="w-full text-base">
         <tbody>
           {ordered.map(p => (

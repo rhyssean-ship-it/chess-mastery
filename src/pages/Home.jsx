@@ -73,7 +73,7 @@ export default function Home() {
       {activity && (
         <Link to={activity.path} className="block mb-5 group">
           <div className="card-base p-5 hover:bg-bg-hover/30 transition-all">
-            <div className="text-xs text-text-dim mb-1 uppercase tracking-wide">Continue where you left off</div>
+            <div className="text-xs text-text-dim mb-1">Continue where you left off</div>
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <div className="text-xl font-display truncate">{activity.label}</div>
@@ -89,7 +89,7 @@ export default function Home() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
         <Link to="/daily" className="card-base p-4 hover:bg-bg-hover/30 transition-all flex flex-col justify-between min-h-[100px]">
           <div>
-            <div className="text-xs text-text-dim uppercase tracking-wide mb-1">Daily Challenge</div>
+            <div className="text-xs text-text-dim mb-1">Daily Challenge</div>
             <div className="text-base font-semibold">{dailyChallengeDone ? 'Solved today' : 'Today\'s tactical puzzle'}</div>
           </div>
           <div className={`text-sm mt-2 ${dailyChallengeDone ? 'text-correct' : 'text-gold'}`}>
@@ -99,7 +99,7 @@ export default function Home() {
 
         <Link to="/daily-calculation" className="card-base p-4 hover:bg-bg-hover/30 transition-all flex flex-col justify-between min-h-[100px]">
           <div>
-            <div className="text-xs text-text-dim uppercase tracking-wide mb-1">Daily Calculation</div>
+            <div className="text-xs text-text-dim mb-1">Daily Calculation</div>
             <div className="text-base font-semibold">{dailyCalcDone ? 'Solved today' : '5-min clock starts now'}</div>
             {dailyCalc.streak > 0 && <div className="text-xs text-text-dim mt-1">🔥 {dailyCalc.streak} day streak</div>}
           </div>
@@ -110,7 +110,7 @@ export default function Home() {
 
         <Link to="/puzzle-rush" className="card-base p-4 hover:bg-bg-hover/30 transition-all flex flex-col justify-between min-h-[100px]">
           <div>
-            <div className="text-xs text-text-dim uppercase tracking-wide mb-1">Puzzle Rush</div>
+            <div className="text-xs text-text-dim mb-1">Puzzle Rush</div>
             <div className="text-base font-semibold">Rating <span className="text-gold tabular-nums">{rush.rating}</span></div>
             <div className="text-xs text-text-dim mt-1">Best score {rush.bestSolved || 0}</div>
           </div>
@@ -119,7 +119,7 @@ export default function Home() {
 
         <Link to="/my-mistakes" className="card-base p-4 hover:bg-bg-hover/30 transition-all flex flex-col justify-between min-h-[100px]">
           <div>
-            <div className="text-xs text-text-dim uppercase tracking-wide mb-1">Your Mistakes</div>
+            <div className="text-xs text-text-dim mb-1">Your Mistakes</div>
             <div className="text-base font-semibold">
               {mistakes > 0 ? <><span className="text-gold tabular-nums">{mistakes}</span> due for review</> : totalMistakes > 0 ? 'All reviewed' : 'No mistakes yet'}
             </div>
@@ -134,14 +134,14 @@ export default function Home() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
           {repDue > 0 && (
             <Link to="/repertoire" className="card-base p-4 hover:bg-bg-hover/30 transition-all">
-              <div className="text-xs text-text-dim uppercase tracking-wide mb-1">Repertoire</div>
+              <div className="text-xs text-text-dim mb-1">Repertoire</div>
               <div className="text-base font-semibold"><span className="text-gold tabular-nums">{repDue}</span> line{repDue === 1 ? '' : 's'} due for drill</div>
               <div className="text-sm mt-2 text-gold">Drill →</div>
             </Link>
           )}
           {savedGames.length > 0 && (
             <Link to="/profile" className="card-base p-4 hover:bg-bg-hover/30 transition-all">
-              <div className="text-xs text-text-dim uppercase tracking-wide mb-1">Reviewed games</div>
+              <div className="text-xs text-text-dim mb-1">Reviewed games</div>
               <div className="text-base font-semibold">{savedGames.length} on file</div>
               <div className="text-xs text-text-dim mt-1">Latest: {savedGames[0].label}</div>
             </Link>
@@ -151,7 +151,7 @@ export default function Home() {
 
       {/* Quick start */}
       <div className="mb-5">
-        <div className="text-xs text-text-dim uppercase tracking-wide mb-2">Quick start</div>
+        <div className="text-sm font-semibold text-text-dim/80 mb-2">Quick start</div>
         <div className="flex flex-wrap gap-2">
           <Link to="/play" className="btn btn-primary">▶ Play a game</Link>
           <Link to="/tactics" className="btn btn-secondary">10 tactics</Link>
@@ -163,7 +163,7 @@ export default function Home() {
       {/* Recent activity — dividers, no card */}
       {recent.length > 1 && (
         <div>
-          <div className="text-xs text-text-dim uppercase tracking-wide mb-2">Recent activity</div>
+          <div className="text-sm font-semibold text-text-dim/80 mb-2">Recent activity</div>
           <div className="list-dividers">
             {recent.slice(0, 5).map((r, i) => (
               <Link key={i} to={r.path} className="flex justify-between items-center px-1 py-2.5 hover:bg-bg-hover/30 rounded transition-all -mx-1">

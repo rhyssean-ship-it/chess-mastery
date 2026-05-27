@@ -12,11 +12,11 @@ const DOT_HEX = {
 // Sparkline graph of win-percentage over the game.
 // `analyses` is the (possibly sparse) array from gameAnalysisService — entries may be null during streaming.
 // onJump(plyIndex) makes nodes clickable.
-export default function EvalGraph({ analyses, currentPly = -1, onJump, evalPerspective = 'objective', playerColor = 'white' }) {
+export default function EvalGraph({ analyses, currentPly = -1, onJump, evalPerspective = 'objective', playerColor = 'white', compact = false }) {
   if (!analyses || analyses.length === 0) return null;
 
   const W = 320;
-  const H = 80;
+  const H = compact ? 50 : 80;
   const pad = 4;
   const totalLen = analyses.length;
   const flipForPlayer = evalPerspective === 'your' && playerColor === 'black';
@@ -43,11 +43,11 @@ export default function EvalGraph({ analyses, currentPly = -1, onJump, evalPersp
     c === CLASS.BRILLIANT || c === CLASS.GREAT;
 
   return (
-    <div className="card-base p-3">
-      <div className="flex justify-between items-center mb-2">
-        <span className="text-xs text-text-dim font-medium">Evaluation</span>
+    <div className={`card-base ${compact ? 'p-2' : 'p-3'}`}>
+      <div className={`flex justify-between items-center ${compact ? 'mb-1' : 'mb-2'}`}>
+        <span className={`text-text-dim font-medium ${compact ? 'text-[10px] uppercase tracking-wide' : 'text-xs'}`}>Evaluation</span>
         <span className="text-[10px] text-text-dim">
-          {evalPerspective === 'your' ? 'You ↑ / Opponent ↓' : 'White ↑ / Black ↓'}
+          {evalPerspective === 'your' ? 'You ↑' : 'White ↑'}
         </span>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} preserveAspectRatio="none" className="block">

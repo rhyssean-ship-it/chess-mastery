@@ -62,7 +62,7 @@ export default function MyMistakes() {
     <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <div className="flex flex-wrap items-baseline justify-between gap-3 mb-4">
         <div>
-          <h1 className="text-2xl sm:text-2xl sm:text-3xl font-display">My Mistakes</h1>
+          <h1 className="text-2xl sm:text-3xl font-display">My Mistakes</h1>
           <p className="text-text-dim text-sm">
             {entries.length} saved, <span className="text-gold font-medium">{dueCount} due</span> for review.
           </p>
