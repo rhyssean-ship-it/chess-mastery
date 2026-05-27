@@ -31,7 +31,7 @@ export default function BottomNav() {
   return (
     <nav
       className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-bg-card/95 backdrop-blur-md border-t border-bg-hover"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 0.75rem)', paddingTop: '0.25rem' }}
       role="navigation"
       aria-label="Primary"
     >

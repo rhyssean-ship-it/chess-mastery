@@ -88,7 +88,7 @@ function App() {
     <div className="min-h-screen">
       <Nav />
       <RouteTracker />
-      <main className="lg:ml-56 pt-16 lg:pt-0 pb-16 lg:pb-0 min-h-screen">
+      <main className="lg:ml-56 pt-16 lg:pt-0 pb-24 lg:pb-0 min-h-screen">
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<Home />} />
