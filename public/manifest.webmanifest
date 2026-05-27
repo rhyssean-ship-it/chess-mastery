@@ -9,15 +9,15 @@
   "theme_color": "#0f1117",
   "icons": [
     {
-      "src": "/apple-touch-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/apple-touch-icon.jpeg",
+      "sizes": "1024x1024",
+      "type": "image/jpeg",
       "purpose": "any"
     },
     {
-      "src": "/apple-touch-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/apple-touch-icon.jpeg",
+      "sizes": "1024x1024",
+      "type": "image/jpeg",
       "purpose": "maskable"
     }
   ]
