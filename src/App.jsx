@@ -33,6 +33,13 @@ const Settings = lazy(() => import('./pages/Settings'))
 const PlayComputer = lazy(() => import('./pages/PlayComputer'))
 const PracticePlay = lazy(() => import('./pages/PracticePlay'))
 const GameAnalysis = lazy(() => import('./pages/GameAnalysis'))
+const PuzzleRush = lazy(() => import('./pages/PuzzleRush'))
+const MyMistakes = lazy(() => import('./pages/MyMistakes'))
+const EndgameDrills = lazy(() => import('./pages/EndgameDrills'))
+const DailyCalculation = lazy(() => import('./pages/DailyCalculation'))
+const BlindfoldLadder = lazy(() => import('./pages/BlindfoldLadder'))
+const PatternDojo = lazy(() => import('./pages/PatternDojo'))
+const RatingEstimator = lazy(() => import('./pages/RatingEstimator'))
 
 const BoardNotation = lazy(() => import('./pages/BoardNotation'))
 const CheckmatePatterns = lazy(() => import('./pages/CheckmatePatterns'))
@@ -100,6 +107,13 @@ function App() {
             <Route path="/play" element={<PlayComputer />} />
             <Route path="/practice-play" element={<PracticePlay />} />
             <Route path="/play/analysis" element={<GameAnalysis />} />
+            <Route path="/puzzle-rush" element={<PuzzleRush />} />
+            <Route path="/my-mistakes" element={<MyMistakes />} />
+            <Route path="/endgame-drills" element={<EndgameDrills />} />
+            <Route path="/daily-calculation" element={<DailyCalculation />} />
+            <Route path="/blindfold-ladder" element={<BlindfoldLadder />} />
+            <Route path="/pattern-dojo" element={<PatternDojo />} />
+            <Route path="/rating-estimator" element={<RatingEstimator />} />
             <Route path="/progress" element={<ProgressDashboard />} />
             <Route path="/notation" element={<BoardNotation />} />
           <Route path="/checkmate-patterns" element={<CheckmatePatterns />} />

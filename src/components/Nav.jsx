@@ -30,9 +30,13 @@ const sections = [
   { id: 'tactics', label: 'Tactics', icon: I('M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z'),
     children: [
       { to: '/daily', label: 'Daily Challenge' },
+      { to: '/daily-calculation', label: 'Daily Calculation' },
       { to: '/tactics', label: 'Puzzle Queue' },
+      { to: '/puzzle-rush', label: 'Puzzle Rush' },
+      { to: '/pattern-dojo', label: 'Pattern Dojo' },
       { to: '/calculation', label: 'Calculation' },
       { to: '/visualisation', label: 'Visualisation' },
+      { to: '/blindfold-ladder', label: 'Blindfold Ladder' },
     ]},
   { id: 'openings', label: 'Openings', icon: I('M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25'),
     children: [
@@ -57,6 +61,7 @@ const sections = [
       { to: '/endgames', label: 'Endgame Lessons' },
       { to: '/theoretical-endgames', label: 'Key Positions' },
       { to: '/practical-endgames', label: 'Practical Puzzles' },
+      { to: '/endgame-drills', label: 'Drills' },
     ]},
 
   // === APPLY ===
@@ -70,6 +75,8 @@ const sections = [
   { id: 'tools', label: 'Tools', icon: I('M11.42 15.17l-5.658 3.286a.893.893 0 01-1.298-.949l1.08-6.305L.825 6.657a.893.893 0 01.494-1.524l6.328-.92L10.47.37a.893.893 0 011.061 0l2.822 3.843 6.329.92a.893.893 0 01.494 1.524l-4.72 4.545 1.08 6.305a.893.893 0 01-1.299.949l-5.658-3.286z'),
     children: [
       { to: '/game-review', label: 'Game Review' },
+      { to: '/my-mistakes', label: 'My Mistakes' },
+      { to: '/rating-estimator', label: 'Rating Estimator' },
       { to: '/weakness', label: 'Weakness Analyzer' },
       { to: '/flashcards', label: 'Concept Cards' },
       { to: '/glossary', label: 'Glossary' },

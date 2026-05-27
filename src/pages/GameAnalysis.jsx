@@ -6,6 +6,7 @@ import MoveList from '../components/MoveList';
 import EvalGraph from '../components/EvalGraph';
 import { analyzeGame } from '../services/gameAnalysisService';
 import { CLASS, CLASS_META } from '../services/moveClassification';
+import { saveAnalysisMistakes } from '../services/mistakeStore';
 
 const SESSION_KEY = 'enpassant:reviewGame';
 const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
@@ -18,6 +19,7 @@ export default function GameAnalysis() {
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [analysisComplete, setAnalysisComplete] = useState(false);
   const [summary, setSummary] = useState(null);
+  const [mistakesSaved, setMistakesSaved] = useState(0);
   const [currentPly, setCurrentPly] = useState(-1); // -1 = starting position
   const [showBestArrow, setShowBestArrow] = useState(true);
   const abortRef = useRef(false);
@@ -60,6 +62,12 @@ export default function GameAnalysis() {
           setSummary(result.summary);
           setAnalysisComplete(true);
           setCurrentPly(0);
+          const added = saveAnalysisMistakes(result.analyses, {
+            label: gameData.label,
+            result: gameData.result,
+            date: Date.now(),
+          });
+          setMistakesSaved(added);
         }
       } catch (e) {
         if (e.message !== 'aborted') console.error(e);
@@ -141,6 +149,16 @@ export default function GameAnalysis() {
           </button>
         </div>
       </div>
+
+      {/* Mistakes saved toast */}
+      {analysisComplete && mistakesSaved > 0 && (
+        <div className="mb-4 card-base p-3 border-l-4 border-gold flex items-center justify-between gap-3 flex-wrap">
+          <div className="text-sm">
+            <span className="font-semibold text-gold">{mistakesSaved}</span> {mistakesSaved === 1 ? 'mistake' : 'mistakes'} saved to your trainer.
+          </div>
+          <button onClick={() => navigate('/my-mistakes')} className="text-xs px-3 py-1.5 rounded-lg bg-bg-card border border-bg-hover hover:bg-bg-hover">Open My Mistakes →</button>
+        </div>
+      )}
 
       {/* Progress bar */}
       {!analysisComplete && (

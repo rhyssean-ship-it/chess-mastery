@@ -8,12 +8,34 @@ import LessonCard from '../components/LessonCard';
 import masterGames from '../data/masterGames';
 
 function GamesIndex() {
+  const [filter, setFilter] = useState('all');
+  const allThemes = Array.from(new Set(masterGames.flatMap(g => g.themes || []))).sort();
+  const filtered = filter === 'all' ? masterGames : masterGames.filter(g => (g.themes || []).includes(filter));
+
   return (
     <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-10">
       <h1 className="text-3xl font-display text-gold mb-1">Annotated Master Games</h1>
-      <p className="text-text-dim text-base mb-8">Study how the greatest players navigated complex positions.</p>
+      <p className="text-text-dim text-base mb-6">Study how the greatest players navigated complex positions.</p>
+      {allThemes.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-6">
+          <button
+            onClick={() => setFilter('all')}
+            className={`px-3 py-1.5 rounded-full text-xs transition-all ${filter === 'all' ? 'bg-gold text-bg font-semibold' : 'bg-bg-card border border-bg-hover hover:bg-bg-hover'}`}
+          >All ({masterGames.length})</button>
+          {allThemes.map(t => {
+            const count = masterGames.filter(g => (g.themes || []).includes(t)).length;
+            return (
+              <button
+                key={t}
+                onClick={() => setFilter(t)}
+                className={`px-3 py-1.5 rounded-full text-xs transition-all ${filter === t ? 'bg-gold text-bg font-semibold' : 'bg-bg-card border border-bg-hover hover:bg-bg-hover'}`}
+              >{t} ({count})</button>
+            );
+          })}
+        </div>
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {masterGames.map(game => (
+        {filtered.map(game => (
           <LessonCard
             key={game.id}
             to={`/master-games/${game.id}`}

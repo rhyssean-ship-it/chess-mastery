@@ -1,8 +1,9 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Chess } from 'chess.js';
 import ChessBoard from '../components/ChessBoard';
 import openings from '../data/openings';
 import { progressService } from '../services/progressService';
+import { recordDrill, listTracked, listDue, pickNext } from '../services/repertoireSRS';
 
 export default function RepertoireBuilder() {
   const [selectedOpening, setSelectedOpening] = useState(openings[0]?.id || '');
@@ -15,8 +16,12 @@ export default function RepertoireBuilder() {
   const [total, setTotal] = useState(0);
   const [feedback, setFeedback] = useState(null);
   const [finished, setFinished] = useState(false);
+  const [tracked, setTracked] = useState([]);
+
+  useEffect(() => { setTracked(listTracked()); }, []);
 
   const opening = openings.find(o => o.id === selectedOpening);
+  const dueCount = listDue().length;
 
   function start() {
     const g = new Chess();
@@ -131,7 +136,49 @@ export default function RepertoireBuilder() {
       <p className="text-text-dim text-base mb-8">Build and drill your opening lines.</p>
 
       {!started ? (
-        <div className="max-w-md mx-auto bg-bg-card border border-bg-hover rounded-xl p-6 space-y-4">
+        <div className="max-w-md mx-auto space-y-4">
+          {tracked.length > 0 && (
+            <div className="bg-bg-card border border-bg-hover rounded-xl p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <div className="text-sm font-semibold">Your repertoire</div>
+                  <div className="text-xs text-text-dim">{tracked.length} lines tracked · <span className="text-gold">{dueCount} due</span></div>
+                </div>
+                {dueCount > 0 && (
+                  <button onClick={() => {
+                    const next = pickNext();
+                    if (!next) return;
+                    setSelectedOpening(next.openingId);
+                    setSelectedSide(next.side);
+                    setTimeout(start, 0);
+                  }} className="px-3 py-1.5 rounded-lg bg-gold text-bg text-xs font-semibold hover:bg-gold-dim btn-press">
+                    Drill due ({dueCount})
+                  </button>
+                )}
+              </div>
+              <div className="space-y-1 max-h-48 overflow-y-auto">
+                {tracked
+                  .sort((a, b) => a.nextReview - b.nextReview)
+                  .slice(0, 6)
+                  .map(t => {
+                    const op = openings.find(o => o.id === t.openingId);
+                    const due = t.nextReview <= Date.now();
+                    const avg = Math.round((t.totalAccuracy / t.attempts) * 100);
+                    return (
+                      <div key={`${t.openingId}-${t.side}`} className="flex items-center justify-between text-xs py-1 px-2 rounded hover:bg-bg-hover/40">
+                        <div className="truncate flex-1">
+                          <span className={due ? 'text-gold' : 'text-text-dim'}>{due ? '●' : '○'}</span>
+                          <span className="ml-2">{op?.name || t.openingId}</span>
+                          <span className="text-text-dim/70 ml-1">({t.side})</span>
+                        </div>
+                        <span className="text-text-dim tabular-nums">{avg}% · {t.reps}r</span>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+          )}
+          <div className="bg-bg-card border border-bg-hover rounded-xl p-6 space-y-4">
           <div>
             <label className="text-sm text-text-dim block mb-1">Opening</label>
             <select
@@ -162,6 +209,7 @@ export default function RepertoireBuilder() {
           <button onClick={start} className="w-full bg-gold text-bg py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
             Start Drill
           </button>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-[1fr_280px] lg:grid-cols-[1fr_320px] gap-6">
@@ -194,11 +242,31 @@ export default function RepertoireBuilder() {
                 <p className="text-text-dim text-base leading-relaxed mb-3">Accuracy: {accuracy}%</p>
                 <button onClick={() => {
                   progressService.recordOpeningDrill(selectedOpening, selectedSide, accuracy);
+                  recordDrill(selectedOpening, selectedSide, accuracy / 100);
+                  setTracked(listTracked());
                   start();
                 }} className="bg-gold text-bg px-5 py-2 rounded-lg font-semibold text-base hover:bg-gold-dim transition-all btn-press mr-2">
                   Try Again
                 </button>
-                <button onClick={() => setStarted(false)} className="bg-bg-hover px-5 py-2 rounded-lg text-base transition-all btn-press">
+                <button onClick={() => {
+                  recordDrill(selectedOpening, selectedSide, accuracy / 100);
+                  setTracked(listTracked());
+                  const next = pickNext();
+                  if (next) {
+                    setSelectedOpening(next.openingId);
+                    setSelectedSide(next.side);
+                    setTimeout(start, 0);
+                  } else {
+                    setStarted(false);
+                  }
+                }} className="bg-bg-card border border-gold/30 text-gold px-5 py-2 rounded-lg text-base transition-all btn-press mr-2">
+                  Drill next due
+                </button>
+                <button onClick={() => {
+                  recordDrill(selectedOpening, selectedSide, accuracy / 100);
+                  setTracked(listTracked());
+                  setStarted(false);
+                }} className="bg-bg-hover px-5 py-2 rounded-lg text-base transition-all btn-press">
                   Change Opening
                 </button>
               </div>

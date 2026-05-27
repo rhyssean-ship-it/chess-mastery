@@ -6,6 +6,9 @@ const masterGames = [
     event: 'Paris Opera House 1858',
     result: '1-0',
     theme: 'Development & Sacrifice',
+    themes: ['development', 'sacrifice', 'king-attack', 'classical'],
+    era: 'Romantic',
+    eco: 'C41',
     description: 'The most famous chess game ever — Morphy demonstrates the power of rapid development and piece sacrifice.',
     moves: [
       { move: 'e4', fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1', annotation: '' },
@@ -50,6 +53,9 @@ const masterGames = [
     event: 'Rosenwald Memorial 1956',
     result: '0-1',
     theme: 'The Game of the Century',
+    themes: ['sacrifice', 'queen-sacrifice', 'tactics', 'modern'],
+    era: 'Modern',
+    eco: 'D92',
     description: 'A 13-year-old Bobby Fischer stuns the chess world with a brilliant queen sacrifice against a master.',
     moves: [
       { move: 'Nf3', fen: 'rnbqkbnr/pppppppp/8/8/8/5N2/PPPPPPPP/RNBQKB1R b KQkq - 1 1', annotation: '' },
