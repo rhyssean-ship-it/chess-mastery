@@ -19,13 +19,33 @@ function getInitialLevel(searchParams) {
   return best;
 }
 
+// Time-control presets. `initial` and `increment` are in seconds. `null` for no clock.
+const TIME_CONTROLS = [
+  { id: 'untimed', label: 'No clock', initial: null, increment: null },
+  { id: '3+0',  label: '3+0',  initial: 180,  increment: 0  },
+  { id: '5+0',  label: '5+0',  initial: 300,  increment: 0  },
+  { id: '10+5', label: '10+5', initial: 600,  increment: 5  },
+  { id: '15+10',label: '15+10', initial: 900,  increment: 10 },
+  { id: '30+0', label: '30+0', initial: 1800, increment: 0  },
+];
+const DEFAULT_TC_ID = '10+5';
+
+function fmtClock(ms) {
+  if (ms == null) return '—';
+  const s = Math.max(0, Math.ceil(ms / 1000));
+  const mm = Math.floor(s / 60);
+  const ss = s % 60;
+  return `${mm}:${ss.toString().padStart(2, '0')}`;
+}
+
 export default function PlayComputer() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [phase, setPhase] = useState('setup');
-  const [colorChoice, setColorChoice] = useState('white'); // user's selection: white | black | random
-  const [playerColor, setPlayerColor] = useState('white'); // resolved colour for the current game
+  const [colorChoice, setColorChoice] = useState('white');
+  const [playerColor, setPlayerColor] = useState('white');
   const [levelIndex, setLevelIndex] = useState(() => getInitialLevel(searchParams));
+  const [tcId, setTcId] = useState(DEFAULT_TC_ID);
   const [fen, setFen] = useState('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
   const [history, setHistory] = useState([]);
   const [moveIndex, setMoveIndex] = useState(-1);
@@ -34,19 +54,64 @@ export default function PlayComputer() {
   const [result, setResult] = useState(null);
   const [lastMove, setLastMove] = useState(null);
   const [hintArrow, setHintArrow] = useState(null);
+  const [whiteTime, setWhiteTime] = useState(null);
+  const [blackTime, setBlackTime] = useState(null);
   const gameRef = useRef(null);
   const engineRef = useRef(null);
   const hintEngineRef = useRef(null);
   const waitingForHint = useRef(false);
+  const tickRef = useRef(null);
+  const lastTickRef = useRef(null);
 
   const preset = ELO_PRESETS[levelIndex];
+  const timeControl = TIME_CONTROLS.find(t => t.id === tcId) || TIME_CONTROLS[0];
+  const isTimed = timeControl.initial != null;
 
   useEffect(() => {
     return () => {
       if (engineRef.current) engineRef.current.destroy();
       if (hintEngineRef.current) hintEngineRef.current.destroy();
+      if (tickRef.current) clearInterval(tickRef.current);
     };
   }, []);
+
+  // Tick the active player's clock during gameplay
+  useEffect(() => {
+    if (phase !== 'playing' || !isTimed) {
+      if (tickRef.current) { clearInterval(tickRef.current); tickRef.current = null; }
+      return;
+    }
+    lastTickRef.current = performance.now();
+    tickRef.current = setInterval(() => {
+      const now = performance.now();
+      const dt = now - (lastTickRef.current || now);
+      lastTickRef.current = now;
+      const g = gameRef.current;
+      if (!g) return;
+      const turn = g.turn() === 'w' ? 'white' : 'black';
+      if (turn === 'white') {
+        setWhiteTime(t => {
+          const nx = Math.max(0, (t ?? 0) - dt);
+          if (nx === 0) onFlag('white');
+          return nx;
+        });
+      } else {
+        setBlackTime(t => {
+          const nx = Math.max(0, (t ?? 0) - dt);
+          if (nx === 0) onFlag('black');
+          return nx;
+        });
+      }
+    }, 100);
+    return () => { if (tickRef.current) { clearInterval(tickRef.current); tickRef.current = null; } };
+  }, [phase, isTimed]);
+
+  function onFlag(loserColor) {
+    if (phase !== 'playing') return;
+    setResult(loserColor === playerColor ? 'Lost on time' : 'Computer lost on time');
+    setPhase('ended');
+    progressService.logActivity?.(`Played vs computer (${preset.label}) — ${loserColor === playerColor ? 'Lost on time' : 'Won on time'}`);
+  }
 
   function startGame() {
     if (engineRef.current) engineRef.current.destroy();
@@ -68,6 +133,13 @@ export default function PlayComputer() {
     setLastMove(null);
     setHintArrow(null);
     setThinking(false);
+    if (isTimed) {
+      setWhiteTime(timeControl.initial * 1000);
+      setBlackTime(timeControl.initial * 1000);
+    } else {
+      setWhiteTime(null);
+      setBlackTime(null);
+    }
     setPhase('playing');
 
     const engine = new StockfishService();
@@ -88,6 +160,12 @@ export default function PlayComputer() {
           setLastMove([from, to]);
           setHistory(h => [...h, { move: m, fen: g2.fen(), san: m.san }]);
           setMoveIndex(i => i + 1);
+          // Add increment to the engine's clock (it just moved)
+          if (isTimed && timeControl.increment) {
+            const engineIsWhite = resolvedColor === 'black';
+            if (engineIsWhite) setWhiteTime(t => (t ?? 0) + timeControl.increment * 1000);
+            else setBlackTime(t => (t ?? 0) + timeControl.increment * 1000);
+          }
           checkEnd(g2);
         }
         setThinking(false);
@@ -148,6 +226,12 @@ export default function PlayComputer() {
     setHintArrow(null);
     setHistory(h => [...h, { move: m, fen: g2.fen(), san: m.san }]);
     setMoveIndex(i => i + 1);
+
+    // Add increment to the player's clock (they just moved)
+    if (isTimed && timeControl.increment) {
+      if (playerColor === 'white') setWhiteTime(t => (t ?? 0) + timeControl.increment * 1000);
+      else setBlackTime(t => (t ?? 0) + timeControl.increment * 1000);
+    }
 
     if (g2.isGameOver()) { checkEnd(g2); return; }
 
@@ -242,6 +326,17 @@ export default function PlayComputer() {
               <span className="text-xs text-text-dim">2600</span>
             </div>
           </div>
+          <div>
+            <label className="text-sm text-text-dim block mb-3 font-medium">Time control</label>
+            <div className="grid grid-cols-3 gap-2">
+              {TIME_CONTROLS.map(tc => (
+                <button key={tc.id} onClick={() => setTcId(tc.id)}
+                  className={`py-2 rounded-lg text-sm font-medium transition-all btn-press ${tcId === tc.id ? 'bg-gold text-bg' : 'bg-bg-hover text-text-dim hover:text-text'}`}>
+                  {tc.label}
+                </button>
+              ))}
+            </div>
+          </div>
           <button onClick={startGame} className="w-full bg-gold text-bg py-3 rounded-lg font-semibold text-lg hover:bg-gold-dim transition-all btn-press shadow-lg shadow-gold/10">
             Start Game
           </button>
@@ -283,8 +378,18 @@ export default function PlayComputer() {
           />
         </div>
 
+        {/* Opponent clock (above board) */}
+        {isTimed && (
+          <ClockChip
+            label="Engine"
+            ms={playerColor === 'white' ? blackTime : whiteTime}
+            active={turnColor !== playerColor && phase === 'playing'}
+            className="mb-1"
+          />
+        )}
+
         {/* Board — edge-to-edge */}
-        <div style={{ width: 'min(calc(100dvh - 23rem), calc(100vw - 1rem))', height: 'min(calc(100dvh - 23rem), calc(100vw - 1rem))' }} className="mx-auto">
+        <div style={{ width: `min(calc(100dvh - ${isTimed ? '26rem' : '23rem'}), calc(100vw - 1rem))`, height: `min(calc(100dvh - ${isTimed ? '26rem' : '23rem'}), calc(100vw - 1rem))` }} className="mx-auto">
           <ChessBoard
             fen={fen}
             orientation={playerColor}
@@ -296,6 +401,16 @@ export default function PlayComputer() {
             arrows={hintArrow || []}
           />
         </div>
+
+        {/* Player clock (below board) */}
+        {isTimed && (
+          <ClockChip
+            label="You"
+            ms={playerColor === 'white' ? whiteTime : blackTime}
+            active={turnColor === playerColor && phase === 'playing'}
+            className="mt-1"
+          />
+        )}
 
         {/* Buttons — bigger, fill space */}
         <div className="flex gap-2 mt-2">
@@ -340,6 +455,15 @@ export default function PlayComputer() {
         </div>
         <div className="grid grid-cols-[1fr_320px] gap-8">
           <div className="max-w-[560px] sticky top-4 self-start">
+            {/* Opponent clock above board */}
+            {isTimed && (
+              <ClockChip
+                label={`Stockfish (${preset.label})`}
+                ms={playerColor === 'white' ? blackTime : whiteTime}
+                active={turnColor !== playerColor && phase === 'playing'}
+                className="mb-2"
+              />
+            )}
             <div className="flex gap-2">
               <div className="w-4 rounded-full overflow-hidden bg-bg-hover flex-shrink-0 relative" title={`Eval: ${evaluation > 0 ? '+' : ''}${evaluation.toFixed(1)}`}>
                 <div className="absolute bottom-0 left-0 right-0 bg-white transition-all duration-500 ease-out rounded-full" style={{ height: `${evalPct}%` }} />
@@ -357,6 +481,15 @@ export default function PlayComputer() {
                 />
               </div>
             </div>
+            {/* Player clock below board */}
+            {isTimed && (
+              <ClockChip
+                label="You"
+                ms={playerColor === 'white' ? whiteTime : blackTime}
+                active={turnColor === playerColor && phase === 'playing'}
+                className="mt-2"
+              />
+            )}
             <div className="flex gap-2 mt-3">
               {phase === 'playing' && (
                 <>
@@ -395,5 +528,22 @@ export default function PlayComputer() {
         </div>
       </div>
     </>
+  );
+}
+
+function ClockChip({ label, ms, active, className = '' }) {
+  const seconds = Math.ceil((ms ?? 0) / 1000);
+  const low = seconds < 30;
+  return (
+    <div
+      className={`flex items-center justify-between rounded-lg px-3 py-1.5 transition-colors ${
+        active ? 'bg-gold/15 ring-1 ring-gold/40' : 'bg-bg-card'
+      } ${className}`}
+    >
+      <span className={`text-xs ${active ? 'text-gold' : 'text-text-dim'}`}>{label}</span>
+      <span className={`tabular-nums font-display text-2xl ${low ? 'text-incorrect' : active ? 'text-gold' : 'text-text'}`}>
+        {fmtClock(ms)}
+      </span>
+    </div>
   );
 }

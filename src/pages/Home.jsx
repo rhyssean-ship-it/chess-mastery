@@ -4,6 +4,7 @@ import { lastActivity, dayStreak, recentRoutes } from '../services/activityTrack
 import { dueCount as mistakesDueCount, listMistakes } from '../services/mistakeStore';
 import { listSavedGames } from '../services/savedGames';
 import { listDue as repertoireDue } from '../services/repertoireSRS';
+import DailyPlanCard from '../components/DailyPlanCard';
 
 function loadJson(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
@@ -68,6 +69,9 @@ export default function Home() {
           {lastRating && <>Est. rating <span className="text-gold font-semibold">{lastRating.estimated}</span></>}
         </p>
       </div>
+
+      {/* Today's plan */}
+      <DailyPlanCard />
 
       {/* Hero: continue */}
       {activity && (

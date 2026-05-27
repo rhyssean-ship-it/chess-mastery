@@ -50,6 +50,7 @@ const sections = [
       { to: '/play', label: 'vs Computer' },
       { to: '/practice-play', label: 'Practice Play' },
       { to: '/game-review', label: 'Game Review (PGN)' },
+      { to: '/lab', label: 'Position Lab' },
     ]},
 
   // === TRAIN ===
