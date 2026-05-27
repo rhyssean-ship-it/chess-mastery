@@ -10,13 +10,13 @@
   "icons": [
     {
       "src": "/apple-touch-icon.jpeg",
-      "sizes": "1024x1024",
+      "sizes": "860x860",
       "type": "image/jpeg",
       "purpose": "any"
     },
     {
       "src": "/apple-touch-icon.jpeg",
-      "sizes": "1024x1024",
+      "sizes": "860x860",
       "type": "image/jpeg",
       "purpose": "maskable"
     }
