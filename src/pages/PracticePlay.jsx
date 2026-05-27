@@ -26,10 +26,12 @@ export default function PracticePlay() {
   const [showHints, setShowHints] = useState(true);
   const [showEval, setShowEval] = useState(true);
   const [showTactics, setShowTactics] = useState(true);
+  const [showMoves, setShowMoves] = useState(false);
   const [coachMessage, setCoachMessage] = useState(null);
   const [hintArrows, setHintArrows] = useState([]);
   const [openingPhase, setOpeningPhase] = useState(true);
   const [openingMoveIdx, setOpeningMoveIdx] = useState(0);
+  const [previewSquare, setPreviewSquare] = useState(null);
 
   const engineRef = useRef(null);
   const hintEngineRef = useRef(null);
@@ -171,10 +173,42 @@ export default function PracticePlay() {
     return dests;
   }
 
+  // Compute the squares a piece on `square` could move to (pseudo-legal — ignores own-king-in-check).
+  // Works for pieces of either colour by temporarily flipping the side-to-move in a FEN clone.
+  function previewTargets(square) {
+    const g = gameRef.current;
+    if (!g) return [];
+    const piece = g.get(square);
+    if (!piece) return [];
+    if (g.turn() === piece.color) {
+      return g.moves({ square, verbose: true }).map(m => m.to);
+    }
+    const parts = g.fen().split(' ');
+    parts[1] = piece.color;
+    parts[3] = '-';
+    try {
+      const probe = new Chess(parts.join(' '));
+      return probe.moves({ square, verbose: true }).map(m => m.to);
+    } catch {
+      return [];
+    }
+  }
+
+  function handlePreviewSelect(square) {
+    if (!showMoves || phase !== 'playing') return;
+    if (square === previewSquare) { setPreviewSquare(null); return; }
+    const g = gameRef.current;
+    if (!g) return;
+    if (g.get(square)) setPreviewSquare(square);
+    else setPreviewSquare(null);
+  }
+
   function handleMove(from, to) {
     const g = gameRef.current;
     if (!g || thinking || phase !== 'playing') return;
     if ((g.turn() === 'w' ? 'white' : 'black') !== playerColor) return;
+
+    setPreviewSquare(null);  // clear preview when a real move starts
 
     const g2 = new Chess(g.fen());
     const m = g2.move({ from, to, promotion: 'q' });
@@ -284,6 +318,7 @@ export default function PracticePlay() {
                 { key: 'hints', label: 'Opening move hints', desc: 'Show recommended opening moves', value: showHints, set: setShowHints },
                 { key: 'eval', label: 'Evaluation bar', desc: 'Show who\'s winning', value: showEval, set: setShowEval },
                 { key: 'tactics', label: 'Tactical alerts', desc: 'Warn about advantages and blunders', value: showTactics, set: setShowTactics },
+                { key: 'moves', label: 'Show piece moves', desc: 'Tap any piece to see where it can go (trains threat-scanning)', value: showMoves, set: setShowMoves },
               ].map(toggle => (
                 <div key={toggle.key} className="flex items-center justify-between bg-bg-hover/30 rounded-lg px-4 py-3">
                   <div>
@@ -360,8 +395,10 @@ export default function PracticePlay() {
             dests={isPlayerTurn && phase === 'playing' && !thinking ? getLegalDests() : new Map()}
             turnColor={turnColor}
             onMove={handleMove}
+            onSelect={showMoves ? handlePreviewSelect : undefined}
             lastMove={lastMove}
             arrows={hintArrows}
+            highlights={previewSquare ? previewTargets(previewSquare) : []}
           />
         </div>
 
@@ -428,8 +465,10 @@ export default function PracticePlay() {
                   dests={isPlayerTurn && phase === 'playing' && !thinking ? getLegalDests() : new Map()}
                   turnColor={turnColor}
                   onMove={handleMove}
+                  onSelect={showMoves ? handlePreviewSelect : undefined}
                   lastMove={lastMove}
                   arrows={hintArrows}
+                  highlights={previewSquare ? previewTargets(previewSquare) : []}
                 />
               </div>
             </div>

@@ -8,6 +8,7 @@ export default function ChessBoard({
   dests = null,
   turnColor = 'white',
   onMove,
+  onSelect,
   lastMove,
   check = false,
   arrows = [],
@@ -19,10 +20,12 @@ export default function ChessBoard({
   const boardRef = useRef(null);
   const cgRef = useRef(null);
   const onMoveRef = useRef(onMove);
+  const onSelectRef = useRef(onSelect);
   const [loaded, setLoaded] = useState(false);
 
-  // Always keep the latest onMove callback
+  // Always keep the latest callbacks
   onMoveRef.current = onMove;
+  onSelectRef.current = onSelect;
 
   // Destroy and recreate on key prop changes
   useEffect(() => {
@@ -55,7 +58,10 @@ export default function ChessBoard({
         },
       },
       draggable: { enabled: movable },
-      selectable: { enabled: movable },
+      selectable: { enabled: movable || !!onSelectRef.current },
+      events: {
+        select: (key) => { if (onSelectRef.current) onSelectRef.current(key); },
+      },
     };
 
     if (lastMove) config.lastMove = lastMove;
@@ -75,7 +81,7 @@ export default function ChessBoard({
         cgRef.current = null;
       }
     };
-  }, [fen, orientation, movable, turnColor, coordinates, lastMove, JSON.stringify(arrows)]);
+  }, [fen, orientation, movable, turnColor, coordinates, lastMove, JSON.stringify(arrows), JSON.stringify(highlights)]);
 
   const frameClass = framed
     ? `board-frame ${movable ? 'board-frame--interactive' : ''}`
