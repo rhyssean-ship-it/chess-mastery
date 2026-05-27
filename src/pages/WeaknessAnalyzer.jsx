@@ -65,7 +65,7 @@ export default function WeaknessAnalyzer() {
             {weakest.map(c => {
               const rec = studyRecommendations[c.cat];
               return (
-                <div key={c.cat} className="card-base p-5 accent-border-left" style={{ borderLeftColor: 'var(--color-incorrect)' }}>
+                <div key={c.cat} className="card-base p-5">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-semibold text-sm">{c.cat}</h3>
                     <span className="text-incorrect font-bold tabular-nums">{c.accuracy}%</span>

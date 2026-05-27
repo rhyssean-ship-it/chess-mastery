@@ -72,7 +72,7 @@ export default function Home() {
       {/* Hero: continue */}
       {activity && (
         <Link to={activity.path} className="block mb-5 group">
-          <div className="card-base p-5 hover:bg-bg-hover/30 transition-all border-l-4 border-gold">
+          <div className="card-base p-5 hover:bg-bg-hover/30 transition-all">
             <div className="text-xs text-text-dim mb-1 uppercase tracking-wide">Continue where you left off</div>
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">

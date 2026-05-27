@@ -191,7 +191,7 @@ export default function EndgameDrills() {
               </div>
             </div>
             {phase === 'success' && (
-              <div className="card-base p-4 border-l-4 border-correct">
+              <div className="card-base p-4 bg-correct/5">
                 <div className="text-correct font-semibold mb-1">Solved!</div>
                 <div className="text-xs text-text-dim">
                   {progress + 1 >= selected.wins
@@ -201,7 +201,7 @@ export default function EndgameDrills() {
               </div>
             )}
             {phase === 'failed' && (
-              <div className="card-base p-4 border-l-4 border-incorrect">
+              <div className="card-base p-4 bg-incorrect/5">
                 <div className="text-incorrect font-semibold mb-1">Not this time.</div>
                 <div className="text-xs text-text-dim">Streak resets to 0. Try again.</div>
               </div>

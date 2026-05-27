@@ -90,7 +90,8 @@ body::before {
   background: rgba(77, 69, 56, 0.04);
 }
 
-[data-theme="light"] .accent-border-left {
+[data-theme="light"] .accent-border-left-removed-noop {
+  /* kept slot for the previous override; rule is intentionally inert */
   border-left-color: #4d4538;
 }
 
@@ -123,22 +124,19 @@ p { line-height: 1.65; }
   font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
 }
 
-/* === CALLOUT BOXES === */
+/* === CALLOUT BOXES (no left-border accent — tinted bg only) === */
 .callout {
-  border-left: 3px solid var(--color-gold);
   background: rgba(201, 168, 76, 0.05);
-  border-radius: 0 8px 8px 0;
+  border-radius: 8px;
   padding: 1rem 1.25rem;
   margin: 1.5rem 0;
 }
 
 .callout-warning {
-  border-left-color: var(--color-incorrect);
   background: rgba(229, 115, 115, 0.05);
 }
 
 .callout-tip {
-  border-left-color: var(--color-correct);
   background: rgba(76, 175, 80, 0.05);
 }
 
@@ -395,10 +393,8 @@ textarea:focus-visible {
   }
 }
 
-/* === ACCENT LEFT BORDER === */
-.accent-border-left {
-  border-left: 3px solid var(--color-gold);
-}
+/* .accent-border-left — kept as a no-op so older markup using it remains valid */
+.accent-border-left { }
 
 /* === SECTION DIVIDER === */
 .section-divider {

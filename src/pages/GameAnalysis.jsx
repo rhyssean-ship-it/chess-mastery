@@ -222,7 +222,7 @@ export default function GameAnalysis() {
 
       {/* Mistakes saved toast */}
       {analysisComplete && mistakesSaved > 0 && (
-        <div className="mb-4 card-base p-3 border-l-4 border-gold flex items-center justify-between gap-3 flex-wrap">
+        <div className="mb-4 card-base p-3 flex items-center justify-between gap-3 flex-wrap">
           <div className="text-sm">
             <span className="font-semibold text-gold">{mistakesSaved}</span> {mistakesSaved === 1 ? 'mistake' : 'mistakes'} saved to your trainer.
           </div>
@@ -465,7 +465,7 @@ function MoveDetail({ analysis, showBestArrow, setShowBestArrow, evalPerspective
   }
 
   return (
-    <div className={`mt-3 card-base p-4 border-l-4 ${meta?.ring?.replace('ring-', 'border-') || 'border-bg-hover'}`}>
+    <div className="mt-3 card-base p-4">
       <div className="flex items-baseline justify-between mb-2">
         <div className="flex items-baseline gap-2">
           <span className={`text-2xl font-bold ${meta?.color}`}>{meta?.symbol}</span>
@@ -482,7 +482,7 @@ function MoveDetail({ analysis, showBestArrow, setShowBestArrow, evalPerspective
       </p>
 
       {bestExplanation && !analysis.isBest && (
-        <div className="mb-3 text-sm text-text-dim border-l-2 border-gold/40 pl-2.5">
+        <div className="mb-3 text-sm text-text-dim bg-bg-hover/30 rounded-md px-3 py-2">
           <span className="text-gold font-semibold">{analysis.bestMoveSan}:</span> {bestExplanation.replace(`${analysis.bestMoveSan} `, '').replace(`${analysis.bestMoveSan}—`, '—')}
         </div>
       )}

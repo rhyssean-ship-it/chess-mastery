@@ -129,8 +129,8 @@ export default function Nav() {
         </Link>
       </div>
 
-      {/* Accordion nav */}
-      <nav className="flex-1 px-3 py-1 space-y-0.5" role="navigation">
+      {/* Accordion nav — scrolls when its content exceeds viewport height */}
+      <nav className="flex-1 min-h-0 overflow-y-auto px-3 py-1 space-y-0.5" role="navigation">
         {sections.map(section => {
           const isOpen = expanded === section.id;
           const sectionActive = activeSection === section.id;
@@ -206,7 +206,7 @@ export default function Nav() {
       <style>{`
         @keyframes expandIn {
           from { opacity: 0; max-height: 0; }
-          to { opacity: 1; max-height: 300px; }
+          to { opacity: 1; max-height: 800px; }
         }
       `}</style>
     </>

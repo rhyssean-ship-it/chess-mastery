@@ -73,7 +73,7 @@ export default function ProgressDashboard() {
             { value: streak, label: 'Day Streak', accent: true },
             { value: getDueCount(puzzles.map(p => p.id)), label: 'Due Today', accent: true },
           ].map((s, i) => (
-            <div key={i} className={`card-base p-5 text-center card-stagger ${s.accent ? 'accent-border-left' : ''}`}>
+            <div key={i} className="card-base p-5 text-center card-stagger">
               <div className={`text-2xl font-bold stat-animate tabular-nums ${s.accent ? 'text-gold' : ''}`}>{s.value}</div>
               <div className="text-xs text-text-dim mt-1.5 uppercase tracking-wider">{s.label}</div>
             </div>

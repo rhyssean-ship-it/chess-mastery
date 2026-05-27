@@ -137,13 +137,13 @@ export default function DailyCalculation() {
           </div>
           <div className="space-y-3">
             {phase === 'solved' && (
-              <div className="card-base p-4 border-l-4 border-correct">
+              <div className="card-base p-4 bg-correct/5">
                 <div className="text-correct font-semibold mb-1">Solved in {Math.floor((TIME_LIMIT - timeLeft) / 60)}:{((TIME_LIMIT - timeLeft) % 60).toString().padStart(2, '0')}</div>
                 <div className="text-xs text-text-dim">Streak now {store.streak}. Come back tomorrow.</div>
               </div>
             )}
             {phase === 'failed' && (
-              <div className="card-base p-4 border-l-4 border-incorrect">
+              <div className="card-base p-4 bg-incorrect/5">
                 <div className="text-incorrect font-semibold mb-1">{timeLeft === 0 ? 'Time\'s up.' : 'Wrong move.'}</div>
                 <div className="text-xs text-text-dim">Streak reset.</div>
               </div>
