@@ -213,7 +213,7 @@ export default function RepertoireBuilder() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-[1fr_280px] lg:grid-cols-[1fr_320px] gap-6">
-          <div className="w-full max-w-[560px]">
+          <div className="w-full max-w-[560px] board-fit-mobile">
             <ChessBoard
               fen={fen}
               orientation={selectedSide}

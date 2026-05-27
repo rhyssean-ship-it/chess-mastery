@@ -92,7 +92,7 @@ function GameViewer() {
       <p className="text-text text-sm mb-8">{game.description}</p>
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_320px] lg:grid-cols-[1fr_380px] gap-8">
-        <div className="w-full max-w-[560px]">
+        <div className="w-full max-w-[560px] board-fit-mobile">
           <ChessBoard fen={currentFen} movable={false} lastMove={lastMove} />
 
           <div className="flex gap-2 mt-3">

@@ -114,7 +114,7 @@ export default function OpeningTrainer() {
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] lg:grid-cols-[1fr_360px] gap-8">
         {/* Board */}
-        <div className="w-full max-w-[560px]">
+        <div className="w-full max-w-[560px] board-fit-mobile">
           {testMode ? (
             <ChessBoard fen={testFen} movable={!testFinished} dests={getLegalDestsForTest()} turnColor={turnColor} onMove={handleTestMove} />
           ) : (

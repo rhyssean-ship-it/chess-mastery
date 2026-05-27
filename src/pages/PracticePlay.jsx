@@ -309,9 +309,9 @@ export default function PracticePlay() {
 
   return (
     <>
-      {/* Mobile/Tablet: fixed layout with CSS-calculated board size */}
-      {/* Heights: nav=4rem, header~2.5rem, coach~2.5rem, buttons~2.5rem, info~2rem, moves~5rem, gaps~2.5rem = ~21rem */}
-      <div className="lg:hidden page-enter px-3 pt-1 pb-2">
+      {/* Mobile/Tablet: edge-to-edge board with horizontal eval bar */}
+      {/* Heights: nav=4rem, header~2rem, coach~2.5rem, eval-strip~0.75rem, buttons~3rem, info~2rem, moves~5rem, gaps~2.5rem, bottom-nav~4.5rem = ~26rem */}
+      <div className="lg:hidden page-enter px-2 pt-1 pb-2">
         {/* Header */}
         <div className="flex items-center justify-between mb-1">
           <div className="min-w-0">
@@ -341,45 +341,48 @@ export default function PracticePlay() {
           </div>
         )}
 
-        {/* Board — fixed size from viewport calc */}
-        <div className="flex gap-1.5 items-start justify-center">
-          {showEval && (
-            <div className="rounded-full overflow-hidden bg-bg-hover relative" style={{ width: 12, height: 'min(calc(100dvh - 26rem), calc(100vw - 2rem))' }}>
-              <div className="absolute bottom-0 left-0 right-0 bg-white transition-all duration-500 ease-out rounded-full" style={{ height: `${evalPct}%` }} />
-            </div>
-          )}
-          <div style={{ width: 'min(calc(100dvh - 26rem), calc(100vw - 2rem))', height: 'min(calc(100dvh - 26rem), calc(100vw - 2rem))' }}>
-            <ChessBoard
-              fen={fen}
-              orientation={playerColor}
-              movable={isPlayerTurn && phase === 'playing' && !thinking}
-              dests={isPlayerTurn && phase === 'playing' && !thinking ? getLegalDests() : new Map()}
-              turnColor={turnColor}
-              onMove={handleMove}
-              lastMove={lastMove}
-              arrows={hintArrows}
+        {/* Horizontal eval bar (player side at the left) */}
+        {showEval && (
+          <div className="h-2 rounded-full overflow-hidden bg-bg-hover relative mb-1">
+            <div
+              className="absolute top-0 bottom-0 left-0 bg-white transition-all duration-500 ease-out rounded-full"
+              style={{ width: `${playerColor === 'white' ? evalPct : (100 - evalPct)}%` }}
             />
           </div>
+        )}
+
+        {/* Board — edge-to-edge */}
+        <div style={{ width: 'min(calc(100dvh - 26rem), calc(100vw - 1rem))', height: 'min(calc(100dvh - 26rem), calc(100vw - 1rem))' }} className="mx-auto">
+          <ChessBoard
+            fen={fen}
+            orientation={playerColor}
+            movable={isPlayerTurn && phase === 'playing' && !thinking}
+            dests={isPlayerTurn && phase === 'playing' && !thinking ? getLegalDests() : new Map()}
+            turnColor={turnColor}
+            onMove={handleMove}
+            lastMove={lastMove}
+            arrows={hintArrows}
+          />
         </div>
 
-        {/* Buttons */}
-        <div className="flex gap-2 mt-1.5">
+        {/* Buttons — bigger */}
+        <div className="flex gap-2 mt-2">
           {phase === 'playing' && (
             <>
-              <button onClick={requestHint} disabled={thinking || !isPlayerTurn} className="flex-1 py-1.5 rounded-lg bg-bg-card border border-bg-hover text-xs hover:bg-bg-hover transition-all btn-press disabled:opacity-30">Hint</button>
-              <button onClick={() => { setResult('You resigned'); setPhase('ended'); }} className="flex-1 py-1.5 rounded-lg bg-incorrect/10 border border-incorrect/20 text-incorrect text-xs hover:bg-incorrect/20 transition-all btn-press">Resign</button>
+              <button onClick={requestHint} disabled={thinking || !isPlayerTurn} className="flex-1 py-2.5 rounded-lg bg-bg-card border border-bg-hover text-sm font-medium hover:bg-bg-hover transition-all btn-press disabled:opacity-30">Hint</button>
+              <button onClick={() => { setResult('You resigned'); setPhase('ended'); }} className="flex-1 py-2.5 rounded-lg bg-incorrect/10 border border-incorrect/20 text-incorrect text-sm font-medium hover:bg-incorrect/20 transition-all btn-press">Resign</button>
             </>
           )}
           {phase === 'ended' && (
             <>
-              <button onClick={handleAnalyze} disabled={history.length === 0} className="flex-1 py-2 rounded-lg bg-gold text-bg font-semibold text-sm hover:bg-gold-dim transition-all btn-press disabled:opacity-40">Analyse</button>
-              <button onClick={() => setPhase('setup')} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press">New Game</button>
+              <button onClick={handleAnalyze} disabled={history.length === 0} className="flex-1 py-3 rounded-lg bg-gold text-bg font-semibold text-base hover:bg-gold-dim transition-all btn-press disabled:opacity-40">Analyse</button>
+              <button onClick={() => setPhase('setup')} className="flex-1 py-3 rounded-lg bg-bg-card border border-bg-hover text-sm font-medium hover:bg-bg-hover transition-all btn-press">New Game</button>
             </>
           )}
         </div>
 
         {/* Eval info */}
-        <div className="mt-1.5 flex gap-3 items-center text-xs card-base px-3 py-1.5">
+        <div className="mt-2 flex gap-3 items-center text-xs card-base px-3 py-2">
           <span><span className="text-text-dim mr-1">Moves</span><span className="tabular-nums">{Math.ceil(history.length / 2)}</span></span>
           {showEval && <span><span className="text-text-dim mr-1">Eval</span><span className={`tabular-nums font-medium ${evaluation > 0.5 ? 'text-correct' : evaluation < -0.5 ? 'text-incorrect' : 'text-text-dim'}`}>{evaluation > 0 ? '+' : ''}{evaluation.toFixed(1)}</span></span>}
         </div>

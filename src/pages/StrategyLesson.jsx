@@ -34,7 +34,7 @@ export default function StrategyLesson() {
           if (section.type === 'position') {
             return (
               <div key={i} className="my-8">
-                <div className="max-w-[440px] mx-auto">
+                <div className="max-w-[440px] mx-auto board-fit-mobile">
                   <ChessBoard
                     fen={section.fen}
                     movable={false}

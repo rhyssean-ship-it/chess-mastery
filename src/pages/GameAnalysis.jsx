@@ -252,7 +252,7 @@ export default function GameAnalysis() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
         {/* Board column */}
-        <div className="max-w-[560px] mx-auto w-full lg:mx-0">
+        <div className="max-w-[560px] mx-auto w-full lg:mx-0 board-fit-mobile">
           {tryMode && currentAnalysis ? (
             <TryModePanel
               analysis={currentAnalysis}

@@ -145,7 +145,7 @@ export default function GameReview() {
       <p className="text-text-dim text-base mb-8">Annotate and study your games move by move.</p>
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] lg:grid-cols-[1fr_360px] gap-6">
-        <div className="w-full max-w-[560px]">
+        <div className="w-full max-w-[560px] board-fit-mobile">
           <ChessBoard fen={currentFen} movable={false} lastMove={lastMove} />
 
           {/* Navigation */}

@@ -99,7 +99,7 @@ export default function EndgameLesson() {
 
       {drillMode ? (
         <div className="space-y-4">
-          <div className="max-w-[480px] mx-auto">
+          <div className="max-w-[480px] mx-auto board-fit-mobile">
             <ChessBoard
               fen={drillFen}
               movable={!drillDone}
@@ -129,7 +129,7 @@ export default function EndgameLesson() {
               if (section.type === 'text') return <p key={i} className="text-text">{section.content}</p>;
               if (section.type === 'position') return (
                 <div key={i} className="my-6">
-                  <div className="max-w-[400px] mx-auto">
+                  <div className="max-w-[400px] mx-auto board-fit-mobile">
                     <ChessBoard fen={section.fen} movable={false} arrows={section.arrows || []} highlights={section.highlights || []} />
                   </div>
                   {section.caption && <p className="text-base text-text-dim text-center mt-2 italic">{section.caption}</p>}

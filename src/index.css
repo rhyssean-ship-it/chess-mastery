@@ -304,6 +304,26 @@ textarea:focus-visible {
   box-shadow: var(--shadow-card), 0 0 0 1px rgba(201, 168, 76, 0.08);
 }
 
+/* Mobile: shrink the frame so the board can take more of the screen */
+@media (max-width: 640px) {
+  .board-frame {
+    padding: 2px;
+    border-radius: 6px;
+  }
+}
+
+/* Opt-in: let a board absorb its parent's horizontal padding on small screens */
+@media (max-width: 640px) {
+  .board-fit-mobile {
+    margin-left: -1rem;
+    margin-right: -1rem;
+  }
+  .board-fit-mobile-tight {
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+  }
+}
+
 /* === ACCENT LEFT BORDER === */
 .accent-border-left {
   border-left: 3px solid var(--color-gold);
