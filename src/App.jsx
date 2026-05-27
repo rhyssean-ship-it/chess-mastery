@@ -1,9 +1,12 @@
-import { lazy, Suspense } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { lazy, Suspense, useEffect } from 'react'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import Nav from './components/Nav'
+import BottomNav from './components/BottomNav'
+import Home from './pages/Home'
 import { useTheme } from './hooks/useTheme'
+import { recordVisit } from './services/activityTracker'
 
-// Eagerly load the landing page
+// Eagerly load the learning-path landing
 import LearningPath from './pages/LearningPath'
 
 // Lazy load everything else
@@ -40,6 +43,10 @@ const DailyCalculation = lazy(() => import('./pages/DailyCalculation'))
 const BlindfoldLadder = lazy(() => import('./pages/BlindfoldLadder'))
 const PatternDojo = lazy(() => import('./pages/PatternDojo'))
 const RatingEstimator = lazy(() => import('./pages/RatingEstimator'))
+const SavedReviews = lazy(() => import('./pages/SavedReviews'))
+const LearnIndex = lazy(() => import('./pages/SectionIndex').then(m => ({ default: m.LearnIndex })))
+const TrainIndex = lazy(() => import('./pages/SectionIndex').then(m => ({ default: m.TrainIndex })))
+const ProfileIndex = lazy(() => import('./pages/SectionIndex').then(m => ({ default: m.ProfileIndex })))
 
 const BoardNotation = lazy(() => import('./pages/BoardNotation'))
 const CheckmatePatterns = lazy(() => import('./pages/CheckmatePatterns'))
@@ -69,15 +76,27 @@ function Loading() {
   )
 }
 
+function RouteTracker() {
+  const location = useLocation();
+  useEffect(() => { recordVisit(location.pathname); }, [location.pathname]);
+  return null;
+}
+
 function App() {
   useTheme();
   return (
     <div className="min-h-screen">
       <Nav />
-      <main className="lg:ml-56 pt-16 lg:pt-0 min-h-screen">
+      <RouteTracker />
+      <main className="lg:ml-56 pt-16 lg:pt-0 pb-16 lg:pb-0 min-h-screen">
         <Suspense fallback={<Loading />}>
           <Routes>
-            <Route path="/" element={<LearningPath />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/learning-path" element={<LearningPath />} />
+            <Route path="/learn" element={<LearnIndex />} />
+            <Route path="/train" element={<TrainIndex />} />
+            <Route path="/profile" element={<ProfileIndex />} />
+            <Route path="/profile/reviews" element={<SavedReviews />} />
             <Route path="/daily" element={<DailyChallenge />} />
             <Route path="/openings" element={<OpeningsIndex />} />
             <Route path="/openings/:id" element={<OpeningTrainer />} />
@@ -128,6 +147,7 @@ function App() {
           </Routes>
         </Suspense>
       </main>
+      <BottomNav />
     </div>
   )
 }

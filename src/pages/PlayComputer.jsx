@@ -266,10 +266,10 @@ export default function PlayComputer() {
 
         {/* Board — fixed size from viewport calc */}
         <div className="flex gap-1.5 items-start justify-center">
-          <div className="rounded-full overflow-hidden bg-bg-hover relative" style={{ width: 12, height: 'min(calc(100dvh - 18rem), calc(100vw - 2rem))' }} title={`Eval: ${evaluation > 0 ? '+' : ''}${evaluation.toFixed(1)}`}>
+          <div className="rounded-full overflow-hidden bg-bg-hover relative" style={{ width: 12, height: 'min(calc(100dvh - 22rem), calc(100vw - 2rem))' }} title={`Eval: ${evaluation > 0 ? '+' : ''}${evaluation.toFixed(1)}`}>
             <div className="absolute bottom-0 left-0 right-0 bg-white transition-all duration-500 ease-out rounded-full" style={{ height: `${evalPct}%` }} />
           </div>
-          <div style={{ width: 'min(calc(100dvh - 18rem), calc(100vw - 2rem))', height: 'min(calc(100dvh - 18rem), calc(100vw - 2rem))' }}>
+          <div style={{ width: 'min(calc(100dvh - 22rem), calc(100vw - 2rem))', height: 'min(calc(100dvh - 22rem), calc(100vw - 2rem))' }}>
             <ChessBoard
               fen={fen}
               orientation={playerColor}

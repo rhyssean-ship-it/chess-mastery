@@ -12,13 +12,14 @@ const DOT_HEX = {
 // Sparkline graph of win-percentage over the game.
 // `analyses` is the (possibly sparse) array from gameAnalysisService — entries may be null during streaming.
 // onJump(plyIndex) makes nodes clickable.
-export default function EvalGraph({ analyses, currentPly = -1, onJump }) {
+export default function EvalGraph({ analyses, currentPly = -1, onJump, evalPerspective = 'objective', playerColor = 'white' }) {
   if (!analyses || analyses.length === 0) return null;
 
   const W = 320;
   const H = 80;
   const pad = 4;
   const totalLen = analyses.length;
+  const flipForPlayer = evalPerspective === 'your' && playerColor === 'black';
 
   // Only plot entries that have arrived. Map by ply index so X-position reflects the move number.
   const points = [];
@@ -26,9 +27,10 @@ export default function EvalGraph({ analyses, currentPly = -1, onJump }) {
     const a = analyses[i];
     if (!a) continue;
     const whiteWp = a.color === 'white' ? a.wpAfter : 100 - a.wpAfter;
+    const wpForDisplay = flipForPlayer ? 100 - whiteWp : whiteWp;
     const x = pad + (i / Math.max(1, totalLen - 1)) * (W - pad * 2);
-    const y = pad + (1 - whiteWp / 100) * (H - pad * 2);
-    points.push({ x, y, whiteWp, i, classification: a.classification });
+    const y = pad + (1 - wpForDisplay / 100) * (H - pad * 2);
+    points.push({ x, y, whiteWp: wpForDisplay, i, classification: a.classification });
   }
   if (points.length === 0) return null;
 
@@ -44,7 +46,9 @@ export default function EvalGraph({ analyses, currentPly = -1, onJump }) {
     <div className="card-base p-3">
       <div className="flex justify-between items-center mb-2">
         <span className="text-xs text-text-dim font-medium">Evaluation</span>
-        <span className="text-[10px] text-text-dim">White ↑ / Black ↓</span>
+        <span className="text-[10px] text-text-dim">
+          {evalPerspective === 'your' ? 'You ↑ / Opponent ↓' : 'White ↑ / Black ↓'}
+        </span>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} preserveAspectRatio="none" className="block">
         <defs>

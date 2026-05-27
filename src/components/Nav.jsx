@@ -4,85 +4,82 @@ import { Link, useLocation } from 'react-router-dom';
 const I = (d) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-[18px] h-[18px]"><path d={d} strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 const sections = [
-  // === JOURNEY ===
-  { id: 'path', label: 'Learning Path', icon: I('M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6'),
+  // === HOME ===
+  { id: 'home', label: 'Home', icon: I('M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75'),
     link: '/' },
 
-  // === LEARN: FUNDAMENTALS ===
-  { id: 'fundamentals', label: 'Fundamentals', icon: I('M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18'),
+  // === LEARN ===
+  { id: 'learn', label: 'Learn', icon: I('M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25'),
     children: [
+      { to: '/learn', label: 'Learn Overview' },
+      { to: '/learning-path', label: 'Learning Path' },
+      { divider: 'Fundamentals' },
       { to: '/game-phases', label: 'Game Phases' },
       { to: '/piece-values', label: 'Piece Values' },
       { to: '/notation', label: 'Board Notation' },
       { to: '/checkmate-patterns', label: 'Checkmate Patterns' },
-    ]},
-
-  // === LEARN: AVOID MISTAKES ===
-  { id: 'mistakes', label: 'Avoid Mistakes', icon: I('M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z'),
-    children: [
+      { divider: 'Avoid Mistakes' },
       { to: '/hanging-pieces', label: 'Hanging Pieces' },
       { to: '/pre-move-checklist', label: 'Pre-Move Checklist' },
       { to: '/common-mistakes', label: 'Common Mistakes' },
       { to: '/blunder-detection', label: 'Blunder Detection' },
-    ]},
-
-  // === CORE SKILLS ===
-  { id: 'tactics', label: 'Tactics', icon: I('M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z'),
-    children: [
-      { to: '/daily', label: 'Daily Challenge' },
-      { to: '/daily-calculation', label: 'Daily Calculation' },
-      { to: '/tactics', label: 'Puzzle Queue' },
-      { to: '/puzzle-rush', label: 'Puzzle Rush' },
-      { to: '/pattern-dojo', label: 'Pattern Dojo' },
-      { to: '/calculation', label: 'Calculation' },
-      { to: '/visualisation', label: 'Visualisation' },
-      { to: '/blindfold-ladder', label: 'Blindfold Ladder' },
-    ]},
-  { id: 'openings', label: 'Openings', icon: I('M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25'),
-    children: [
+      { divider: 'Openings' },
       { to: '/openings', label: 'Library' },
       { to: '/opening-traps', label: 'Traps' },
       { to: '/move-order', label: 'Move Order Quiz' },
       { to: '/repertoire', label: 'Repertoire Builder' },
-    ]},
-
-  // === DEEPER KNOWLEDGE ===
-  { id: 'strategy', label: 'Strategy', icon: I('M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z'),
-    children: [
+      { divider: 'Strategy' },
       { to: '/strategy', label: 'Strategy Lessons' },
       { to: '/middlegame', label: 'Plans by Structure' },
       { to: '/critical-moments', label: 'Critical Moments' },
       { to: '/pattern-recognition', label: 'Pattern Recognition' },
       { to: '/pawn-structures', label: 'Pawn Structures' },
       { to: '/master-games', label: 'Master Games' },
-    ]},
-  { id: 'endgames', label: 'Endgames', icon: I('M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84'),
-    children: [
+      { divider: 'Endgames' },
       { to: '/endgames', label: 'Endgame Lessons' },
       { to: '/theoretical-endgames', label: 'Key Positions' },
       { to: '/practical-endgames', label: 'Practical Puzzles' },
-      { to: '/endgame-drills', label: 'Drills' },
+      { divider: 'Reference' },
+      { to: '/flashcards', label: 'Concept Cards' },
+      { to: '/glossary', label: 'Glossary' },
     ]},
 
-  // === APPLY ===
+  // === PLAY ===
   { id: 'play', label: 'Play', icon: I('M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z'),
     children: [
       { to: '/play', label: 'vs Computer' },
       { to: '/practice-play', label: 'Practice Play' },
+      { to: '/game-review', label: 'Game Review (PGN)' },
     ]},
 
-  // === TRACK & TOOLS ===
-  { id: 'tools', label: 'Tools', icon: I('M11.42 15.17l-5.658 3.286a.893.893 0 01-1.298-.949l1.08-6.305L.825 6.657a.893.893 0 01.494-1.524l6.328-.92L10.47.37a.893.893 0 011.061 0l2.822 3.843 6.329.92a.893.893 0 01.494 1.524l-4.72 4.545 1.08 6.305a.893.893 0 01-1.299.949l-5.658-3.286z'),
+  // === TRAIN ===
+  { id: 'train', label: 'Train', icon: I('M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z'),
     children: [
-      { to: '/game-review', label: 'Game Review' },
+      { to: '/train', label: 'Train Overview' },
+      { divider: 'Daily' },
+      { to: '/daily', label: 'Daily Challenge' },
+      { to: '/daily-calculation', label: 'Daily Calculation' },
+      { divider: 'Tactics' },
+      { to: '/tactics', label: 'Puzzle Queue' },
+      { to: '/puzzle-rush', label: 'Puzzle Rush' },
+      { to: '/pattern-dojo', label: 'Pattern Dojo' },
       { to: '/my-mistakes', label: 'My Mistakes' },
+      { divider: 'Calculation' },
+      { to: '/calculation', label: 'Calculation Trainer' },
+      { to: '/visualisation', label: 'Visualisation' },
+      { to: '/blindfold-ladder', label: 'Blindfold Ladder' },
+      { divider: 'Endgame' },
+      { to: '/endgame-drills', label: 'Endgame Drills' },
+    ]},
+
+  // === PROFILE ===
+  { id: 'profile', label: 'Profile', icon: I('M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z'),
+    children: [
+      { to: '/progress', label: 'Progress' },
       { to: '/rating-estimator', label: 'Rating Estimator' },
       { to: '/weakness', label: 'Weakness Analyzer' },
-      { to: '/flashcards', label: 'Concept Cards' },
-      { to: '/glossary', label: 'Glossary' },
+      { to: '/profile/reviews', label: 'Reviewed Games' },
     ]},
-  { id: 'progress', label: 'Progress', icon: I('M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625z'),
-    link: '/progress' },
 ];
 
 function getActiveSection(pathname) {
@@ -90,6 +87,7 @@ function getActiveSection(pathname) {
     if (s.link && pathname === s.link) return s.id;
     if (s.children) {
       for (const c of s.children) {
+        if (c.divider) continue;
         if (pathname === c.to || pathname.startsWith(c.to + '/')) return s.id;
       }
     }
@@ -168,16 +166,25 @@ export default function Nav() {
 
               {isOpen && (
                 <div className="ml-[26px] pl-3 border-l border-bg-hover/60 mt-0.5 mb-1 space-y-0.5" style={{ animation: 'expandIn 150ms ease-out' }}>
-                  {section.children.map(child => (
-                    <Link key={child.to} to={child.to} onClick={() => setMobileOpen(false)}
-                      className={`block px-3 py-2.5 rounded-md text-sm no-underline transition-all duration-150 ${
-                        isActive(child.to)
-                          ? 'text-gold bg-gold/8 font-medium'
-                          : 'text-text-dim hover:text-text hover:bg-bg-hover/50'
-                      }`}>
-                      {child.label}
-                    </Link>
-                  ))}
+                  {section.children.map((child, idx) => {
+                    if (child.divider) {
+                      return (
+                        <div key={`d-${idx}`} className="text-[10px] uppercase tracking-wider text-text-dim/40 px-3 pt-2.5 pb-1 font-semibold">
+                          {child.divider}
+                        </div>
+                      );
+                    }
+                    return (
+                      <Link key={child.to} to={child.to} onClick={() => setMobileOpen(false)}
+                        className={`block px-3 py-2.5 rounded-md text-sm no-underline transition-all duration-150 ${
+                          isActive(child.to)
+                            ? 'text-gold bg-gold/8 font-medium'
+                            : 'text-text-dim hover:text-text hover:bg-bg-hover/50'
+                        }`}>
+                        {child.label}
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </div>
