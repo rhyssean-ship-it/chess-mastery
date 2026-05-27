@@ -23,7 +23,8 @@ export default function PlayComputer() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [phase, setPhase] = useState('setup');
-  const [playerColor, setPlayerColor] = useState('white');
+  const [colorChoice, setColorChoice] = useState('white'); // user's selection: white | black | random
+  const [playerColor, setPlayerColor] = useState('white'); // resolved colour for the current game
   const [levelIndex, setLevelIndex] = useState(() => getInitialLevel(searchParams));
   const [fen, setFen] = useState('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
   const [history, setHistory] = useState([]);
@@ -50,6 +51,12 @@ export default function PlayComputer() {
   function startGame() {
     if (engineRef.current) engineRef.current.destroy();
     if (hintEngineRef.current) hintEngineRef.current.destroy();
+
+    // Resolve the colour choice now so rematch with "random" re-rolls each time.
+    const resolvedColor = colorChoice === 'random'
+      ? (Math.random() < 0.5 ? 'white' : 'black')
+      : colorChoice;
+    setPlayerColor(resolvedColor);
 
     const g = new Chess();
     gameRef.current = g;
@@ -90,7 +97,7 @@ export default function PlayComputer() {
     engine.onEval = (score) => {
       // Stockfish score is from the side to move (engine's turn).
       // Convert to White's perspective for objective display.
-      setEvaluation(playerColor === 'white' ? -score : score);
+      setEvaluation(resolvedColor === 'white' ? -score : score);
     };
 
     engine.init().then(() => {
@@ -106,7 +113,7 @@ export default function PlayComputer() {
       };
       hintEng.init();
 
-      if (playerColor === 'black') {
+      if (resolvedColor === 'black') {
         setThinking(true);
         engine.getBestMove(g.fen());
       }
@@ -210,11 +217,15 @@ export default function PlayComputer() {
         <div className="card-base p-6 space-y-8">
           <div>
             <label className="text-sm text-text-dim block mb-3 font-medium">Play as</label>
-            <div className="flex gap-3">
-              {['white', 'black'].map(color => (
-                <button key={color} onClick={() => setPlayerColor(color)}
-                  className={`flex-1 py-3 rounded-lg text-base font-semibold transition-all btn-press ${playerColor === color ? 'bg-gold text-bg' : 'bg-bg-hover text-text-dim hover:text-text'}`}>
-                  {color === 'white' ? '\u2654 White' : '\u265A Black'}
+            <div className="flex gap-2 sm:gap-3">
+              {[
+                { id: 'white', label: '\u2654 White' },
+                { id: 'random', label: '\u2684 Random' },
+                { id: 'black', label: '\u265A Black' },
+              ].map(opt => (
+                <button key={opt.id} onClick={() => setColorChoice(opt.id)}
+                  className={`flex-1 py-3 rounded-lg text-base font-semibold transition-all btn-press ${colorChoice === opt.id ? 'bg-gold text-bg' : 'bg-bg-hover text-text-dim hover:text-text'}`}>
+                  {opt.label}
                 </button>
               ))}
             </div>
