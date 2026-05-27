@@ -16,13 +16,14 @@ export default function GameAnalysis() {
   const [gameData, setGameData] = useState(null);
   const [depth, setDepth] = useState(14);
   const [analyses, setAnalyses] = useState([]);
-  const [progress, setProgress] = useState({ current: 0, total: 0 });
+  const [progress, setProgress] = useState({ current: 0, total: 0, phase: 'pass1' });
   const [analysisComplete, setAnalysisComplete] = useState(false);
   const [summary, setSummary] = useState(null);
   const [mistakesSaved, setMistakesSaved] = useState(0);
   const [currentPly, setCurrentPly] = useState(-1); // -1 = starting position
   const [showBestArrow, setShowBestArrow] = useState(true);
   const abortRef = useRef(false);
+  const pass2DepthFor = { 14: 14, 18: 18 }; // map UI choice → pass2Depth
 
   // Load game from sessionStorage on mount
   useEffect(() => {
@@ -43,19 +44,29 @@ export default function GameAnalysis() {
   useEffect(() => {
     if (!gameData) return;
     abortRef.current = false;
-    setAnalyses([]);
+    setAnalyses(new Array(gameData.history.length).fill(null));
     setSummary(null);
     setAnalysisComplete(false);
-    setProgress({ current: 0, total: gameData.history.length + 1 });
+    setProgress({ current: 0, total: gameData.history.length + 1, phase: 'pass1' });
 
     (async () => {
       try {
         const result = await analyzeGame({
           history: gameData.history,
           startingFen: gameData.startingFen || STARTING_FEN,
-          depth,
-          onProgress: (current, total) => { if (!abortRef.current) setProgress({ current, total }); },
-          onMoveAnalyzed: (a) => { if (!abortRef.current) setAnalyses(prev => [...prev, a]); },
+          pass2Depth: pass2DepthFor[depth] ?? 14,
+          onProgress: (current, total, phase) => {
+            if (!abortRef.current) setProgress({ current, total, phase });
+          },
+          onMoveAnalyzed: (a) => {
+            if (abortRef.current) return;
+            setAnalyses(prev => {
+              // Replace by ply index — handles out-of-order + preliminary→final updates
+              const next = prev.slice();
+              next[a.ply] = a;
+              return next;
+            });
+          },
           shouldAbort: () => abortRef.current,
         });
         if (!abortRef.current) {
@@ -77,7 +88,7 @@ export default function GameAnalysis() {
     return () => { abortRef.current = true; };
   }, [gameData, depth]);
 
-  const classifications = useMemo(() => analyses.map(a => a.classification), [analyses]);
+  const classifications = useMemo(() => analyses.map(a => a?.classification || null), [analyses]);
 
   if (!gameData) {
     return (
@@ -164,12 +175,19 @@ export default function GameAnalysis() {
       {!analysisComplete && (
         <div className="mb-4 card-base p-3">
           <div className="flex justify-between text-xs text-text-dim mb-1.5">
-            <span>Analysing… {progress.current} / {progress.total}</span>
-            <span>{Math.round(progressPct)}%</span>
+            <span>
+              {progress.phase === 'pass2' ? 'Deep analysis on candidates' : 'Quick scan'}
+              {' · '}
+              <span className="tabular-nums">{progress.current} / {progress.total}</span>
+            </span>
+            <span className="tabular-nums">{Math.round(progressPct)}%</span>
           </div>
           <div className="h-1.5 bg-bg-hover rounded-full overflow-hidden">
             <div className="h-full bg-gold transition-all duration-200" style={{ width: `${progressPct}%` }} />
           </div>
+          {progress.phase === 'pass1' && progress.current > 0 && (
+            <div className="text-[10px] text-text-dim/70 mt-1">Classifications appear as moves are scanned. Critical positions get a second deeper pass.</div>
+          )}
         </div>
       )}
 

@@ -31,21 +31,17 @@ function isBookSequence(sanSeq) {
   return BOOK_INDEX.has(sanSeq.join(' '));
 }
 
-// Detect if a piece on `square` (in the FEN after the move) is attacked by an
-// opponent piece of LOWER value — i.e., the player apparently gave up material.
-// Used as a coarse "Brilliant" sacrifice heuristic.
+// Coarse "Brilliant" sacrifice heuristic.
 function isPieceSacrificed(fenAfter, square) {
   const g = new Chess(fenAfter);
   const piece = g.get(square);
   if (!piece) return false;
-  // Opponent is now to move. List their captures landing on `square`.
   const attackers = g.moves({ verbose: true }).filter(m => m.to === square && m.captured);
   if (!attackers.length) return false;
   const movedValue = PIECE_VALUE[piece.type];
   return attackers.some(a => PIECE_VALUE[a.piece] < movedValue);
 }
 
-// Generate { color, fenBefore, fenAfter, san, uci } for each ply by replaying from startingFen.
 export function replayMoves(history, startingFen = STARTING_FEN) {
   const plies = [];
   const game = new Chess(startingFen);
@@ -67,133 +63,230 @@ export function replayMoves(history, startingFen = STARTING_FEN) {
   return plies;
 }
 
-// Run engine analysis on every distinct position (N+1 for N moves), then classify each move.
-// Streams progress via onProgress(current, total) and onMoveAnalyzed(analysis) callbacks.
+// Build a fully-classified analysis object for one ply from raw engine outputs.
+function buildAnalysis(ply, plyIdx, before, after, isBookMove) {
+  if (!before || !after) return null;
+
+  const cpBefore = toCpScore(before, false);   // engine reports STM POV = mover's POV
+  const cpAfter = toCpScore(after, true);      // engine reports opponent POV after; flip
+
+  let secondBestCpGap = null;
+  if (before?.lines?.length >= 2) {
+    const top = before.lines.find(l => l.multipv === 1);
+    const second = before.lines.find(l => l.multipv === 2);
+    if (top && second) {
+      secondBestCpGap = toCpScore(top, false) - toCpScore(second, false);
+    }
+  }
+
+  const isBest = before?.bestMove && before.bestMove === ply.uci;
+  const isOnlyMove = new Chess(ply.fenBefore).moves().length === 1;
+  const isSacrifice = isBest ? isPieceSacrificed(ply.fenAfter, ply.to) : false;
+
+  const classification = classifyMove({
+    cpBefore, cpAfter, isBest, isOnlyMove, isBookMove, secondBestCpGap, isSacrifice,
+  });
+
+  const wpDrop = Math.max(0, winPercent(cpBefore) - winPercent(cpAfter));
+  const acc = moveAccuracy(wpDrop);
+
+  let bestSan = null;
+  if (before?.bestMove) {
+    try {
+      const g = new Chess(ply.fenBefore);
+      const m = g.move({
+        from: before.bestMove.slice(0, 2),
+        to: before.bestMove.slice(2, 4),
+        promotion: before.bestMove[4] || undefined,
+      });
+      if (m) bestSan = m.san;
+    } catch { /* invalid bestMove — leave null */ }
+  }
+
+  return {
+    ply: plyIdx,
+    color: ply.color,
+    san: ply.san,
+    uci: ply.uci,
+    fenBefore: ply.fenBefore,
+    fenAfter: ply.fenAfter,
+    from: ply.from,
+    to: ply.to,
+    cpBefore,
+    cpAfter,
+    cpl: Math.max(0, cpBefore - cpAfter),
+    wpBefore: winPercent(cpBefore),
+    wpAfter: winPercent(cpAfter),
+    moveAccuracy: acc,
+    classification,
+    isBest,
+    bestMove: before?.bestMove || null,
+    bestMoveSan: bestSan,
+    bestMovePv: before?.pv || [],
+    secondBestCpGap,
+    preliminary: false,
+  };
+}
+
+// Worker pool: spin up N Stockfish engines in parallel.
+async function initPool(size, shouldAbort) {
+  const workers = await Promise.all(
+    Array.from({ length: size }, async () => {
+      const w = new StockfishService();
+      await w.init();
+      return w;
+    })
+  );
+  if (shouldAbort()) {
+    workers.forEach(w => w.destroy());
+    throw new Error('aborted');
+  }
+  return workers;
+}
+
+// Distribute tasks across workers; each worker pulls the next task when free.
+async function runPool(workers, tasks, runTask, onTaskComplete, shouldAbort) {
+  let nextIdx = 0;
+  await Promise.all(workers.map(async (w) => {
+    while (true) {
+      if (shouldAbort()) return;
+      const idx = nextIdx++;
+      if (idx >= tasks.length) return;
+      const result = await runTask(w, tasks[idx]);
+      if (shouldAbort()) return;
+      onTaskComplete(idx, tasks[idx], result);
+    }
+  }));
+}
+
+// Pre-compute book-move flags sequentially (only consecutive opening moves from move 1 count).
+function computeBookFlags(plies) {
+  const flags = new Array(plies.length).fill(false);
+  const seq = [];
+  let stillBook = true;
+  for (let i = 0; i < plies.length; i++) {
+    seq.push(plies[i].san);
+    if (stillBook) {
+      if (isBookSequence(seq)) flags[i] = true;
+      else stillBook = false;
+    }
+  }
+  return flags;
+}
+
 export async function analyzeGame({
   history,
   startingFen = STARTING_FEN,
-  depth = 14,
+  poolSize,
+  pass1Depth = 10,
+  pass2Depth = 16,
   multiPv = 2,
   onProgress = () => {},
   onMoveAnalyzed = () => {},
   shouldAbort = () => false,
 } = {}) {
   const plies = replayMoves(history, startingFen);
-  const total = plies.length + 1; // need eval before move 1 + after each move
+  const fens = [startingFen, ...plies.map(p => p.fenAfter)];
+  const bookFlags = computeBookFlags(plies);
 
-  const engine = new StockfishService();
+  // Cap pool size to CPU cores; minimum 1.
+  const resolvedPoolSize = Math.max(1, Math.min(
+    poolSize ?? Math.min(4, (typeof navigator !== 'undefined' && navigator.hardwareConcurrency) || 4),
+    4
+  ));
+
+  const workers = await initPool(resolvedPoolSize, shouldAbort);
+  const rawAnalyses = new Array(fens.length);
+  const positionDone = new Array(fens.length).fill(false);
+  const lastEmitted = new Array(plies.length).fill(null); // last emitted classification per ply
+
+  function emitPly(plyIdx, preliminary) {
+    if (plyIdx < 0 || plyIdx >= plies.length) return;
+    if (!positionDone[plyIdx] || !positionDone[plyIdx + 1]) return;
+    const analysis = buildAnalysis(
+      plies[plyIdx], plyIdx,
+      rawAnalyses[plyIdx], rawAnalyses[plyIdx + 1],
+      bookFlags[plyIdx]
+    );
+    if (!analysis) return;
+    analysis.preliminary = preliminary;
+    // Skip emit if we've already emitted final for this ply and this would be preliminary
+    if (lastEmitted[plyIdx] === 'final' && preliminary) return;
+    lastEmitted[plyIdx] = preliminary ? 'preliminary' : 'final';
+    onMoveAnalyzed(analysis);
+  }
+
   try {
-    await engine.init();
+    // ---- Pass 1: shallow eval (depth 10, MultiPV 1) on every position ----
+    const pass1Tasks = fens.map((fen, idx) => ({ fen, idx }));
+    let pass1Done = 0;
+    await runPool(workers, pass1Tasks,
+      (w, task) => w.analyzePosition(task.fen, { depth: pass1Depth, multiPv: 1 }),
+      (_, task, result) => {
+        rawAnalyses[task.idx] = result;
+        positionDone[task.idx] = true;
+        pass1Done++;
+        onProgress(pass1Done, pass1Tasks.length, 'pass1');
+        // Try emit the ply that ends here, and the ply that starts here
+        emitPly(task.idx - 1, true);
+        emitPly(task.idx, true);
+      },
+      shouldAbort
+    );
+    if (shouldAbort()) throw new Error('aborted');
 
-    // Step 1: analyze every position (replayed FENs in order)
-    const fens = [startingFen, ...plies.map(p => p.fenAfter)];
-    const rawAnalyses = new Array(fens.length);
-    for (let i = 0; i < fens.length; i++) {
-      if (shouldAbort()) throw new Error('aborted');
-      rawAnalyses[i] = await engine.analyzePosition(fens[i], { depth, multiPv });
-      onProgress(i + 1, total);
-    }
-
-    // Step 2: classify each ply using rawAnalyses[i] (before) and rawAnalyses[i+1] (after)
-    const analyses = [];
-    const sanSeq = [];
-    let bookStillMatching = true;
-
+    // ---- Identify positions needing deeper analysis ----
+    // A position needs pass 2 if the player's move from it was the engine's pass-1 best move
+    // (so we need MultiPV=2 to distinguish Best vs Great vs Brilliant).
+    // We refine the BEFORE position of those plies.
+    const refinePositionIdxs = new Set();
     for (let i = 0; i < plies.length; i++) {
-      const ply = plies[i];
+      if (bookFlags[i]) continue;
       const before = rawAnalyses[i];
-      const after = rawAnalyses[i + 1];
-      sanSeq.push(ply.san);
-
-      // The engine eval at `before` is from the side-to-move POV = the player making this move.
-      const cpBefore = toCpScore(before, false);
-      // The engine eval at `after` is from the OPPONENT's POV. Flip to get player POV.
-      const cpAfter = toCpScore(after, true);
-
-      // Second-best gap for "Great" detection (player POV)
-      let secondBestCpGap = null;
-      if (before?.lines?.length >= 2) {
-        const top = before.lines.find(l => l.multipv === 1);
-        const second = before.lines.find(l => l.multipv === 2);
-        if (top && second) {
-          const topCp = toCpScore(top, false);
-          const secondCp = toCpScore(second, false);
-          secondBestCpGap = topCp - secondCp;
-        }
+      if (before?.bestMove && before.bestMove === plies[i].uci) {
+        refinePositionIdxs.add(i);
       }
+    }
+    const pass2Tasks = Array.from(refinePositionIdxs).map(posIdx => ({
+      fen: fens[posIdx], posIdx,
+    }));
 
-      const isBest = before?.bestMove && before.bestMove === ply.uci;
-
-      // Forced move detection
-      const positionBefore = new Chess(ply.fenBefore);
-      const isOnlyMove = positionBefore.moves().length === 1;
-
-      // Book detection: only counts if sequence is matching from move 1
-      let isBookMove = false;
-      if (bookStillMatching) {
-        if (isBookSequence(sanSeq)) isBookMove = true;
-        else bookStillMatching = false;
-      }
-
-      // Sacrifice heuristic for Brilliant
-      const isSacrifice = isBest ? isPieceSacrificed(ply.fenAfter, ply.to) : false;
-
-      const classification = classifyMove({
-        cpBefore,
-        cpAfter,
-        isBest,
-        isOnlyMove,
-        isBookMove,
-        secondBestCpGap,
-        isSacrifice,
-      });
-
-      const wpDrop = Math.max(0, winPercent(cpBefore) - winPercent(cpAfter));
-      const acc = moveAccuracy(wpDrop);
-
-      // Decode engine's best move into SAN for human display
-      let bestSan = null;
-      if (before?.bestMove) {
-        const g = new Chess(ply.fenBefore);
-        const m = g.move({
-          from: before.bestMove.slice(0, 2),
-          to: before.bestMove.slice(2, 4),
-          promotion: before.bestMove[4] || undefined,
-        });
-        if (m) bestSan = m.san;
-      }
-
-      const analysis = {
-        ply: i,
-        color: ply.color,
-        san: ply.san,
-        uci: ply.uci,
-        fenBefore: ply.fenBefore,
-        fenAfter: ply.fenAfter,
-        from: ply.from,
-        to: ply.to,
-        cpBefore,
-        cpAfter,
-        cpl: Math.max(0, cpBefore - cpAfter),
-        wpBefore: winPercent(cpBefore),
-        wpAfter: winPercent(cpAfter),
-        moveAccuracy: acc,
-        classification,
-        isBest,
-        bestMove: before?.bestMove || null,
-        bestMoveSan: bestSan,
-        bestMovePv: before?.pv || [],
-        secondBestCpGap,
-      };
-
-      analyses.push(analysis);
-      onMoveAnalyzed(analysis);
+    // Mark plies that don't need refinement as final now
+    for (let i = 0; i < plies.length; i++) {
+      const needsRefine = refinePositionIdxs.has(i) || refinePositionIdxs.has(i + 1);
+      if (!needsRefine) emitPly(i, false);
     }
 
-    const summary = summarize(analyses);
-    return { analyses, summary };
+    // ---- Pass 2: deeper eval with MultiPV on flagged positions ----
+    if (pass2Tasks.length > 0 && multiPv > 1) {
+      let pass2Done = 0;
+      await runPool(workers, pass2Tasks,
+        (w, task) => w.analyzePosition(task.fen, { depth: pass2Depth, multiPv }),
+        (_, task, result) => {
+          rawAnalyses[task.posIdx] = result;
+          pass2Done++;
+          onProgress(pass2Done, pass2Tasks.length, 'pass2');
+          // This position is `before` for ply task.posIdx and `after` for ply task.posIdx - 1
+          emitPly(task.posIdx, false);
+          emitPly(task.posIdx - 1, false);
+        },
+        shouldAbort
+      );
+    }
+
+    if (shouldAbort()) throw new Error('aborted');
+
+    // Final emit for any ply still marked preliminary (defensive)
+    const analyses = [];
+    for (let i = 0; i < plies.length; i++) {
+      if (lastEmitted[i] !== 'final') emitPly(i, false);
+      const a = buildAnalysis(plies[i], i, rawAnalyses[i], rawAnalyses[i + 1], bookFlags[i]);
+      if (a) analyses.push(a);
+    }
+
+    return { analyses, summary: summarize(analyses) };
   } finally {
-    engine.destroy();
+    workers.forEach(w => w.destroy());
   }
 }
 

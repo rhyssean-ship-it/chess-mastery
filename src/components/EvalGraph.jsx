@@ -10,7 +10,7 @@ const DOT_HEX = {
 };
 
 // Sparkline graph of win-percentage over the game.
-// `analyses` is the array returned by gameAnalysisService.
+// `analyses` is the (possibly sparse) array from gameAnalysisService — entries may be null during streaming.
 // onJump(plyIndex) makes nodes clickable.
 export default function EvalGraph({ analyses, currentPly = -1, onJump }) {
   if (!analyses || analyses.length === 0) return null;
@@ -18,15 +18,19 @@ export default function EvalGraph({ analyses, currentPly = -1, onJump }) {
   const W = 320;
   const H = 80;
   const pad = 4;
+  const totalLen = analyses.length;
 
-  // Convert each ply's wpAfter into Y coord. White's POV: 100 = white winning, 0 = black winning.
-  // wpAfter is from the mover's POV — flip when black moved.
-  const points = analyses.map((a, i) => {
+  // Only plot entries that have arrived. Map by ply index so X-position reflects the move number.
+  const points = [];
+  for (let i = 0; i < analyses.length; i++) {
+    const a = analyses[i];
+    if (!a) continue;
     const whiteWp = a.color === 'white' ? a.wpAfter : 100 - a.wpAfter;
-    const x = pad + (i / Math.max(1, analyses.length - 1)) * (W - pad * 2);
+    const x = pad + (i / Math.max(1, totalLen - 1)) * (W - pad * 2);
     const y = pad + (1 - whiteWp / 100) * (H - pad * 2);
-    return { x, y, whiteWp, i, classification: a.classification };
-  });
+    points.push({ x, y, whiteWp, i, classification: a.classification });
+  }
+  if (points.length === 0) return null;
 
   const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
   const areaPath = `${linePath} L ${points[points.length - 1].x.toFixed(1)} ${H - pad} L ${pad} ${H - pad} Z`;
