@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Chess } from 'chess.js';
 import ChessBoard from '../components/ChessBoard';
 import MoveList from '../components/MoveList';
@@ -21,6 +21,7 @@ function getInitialLevel(searchParams) {
 
 export default function PlayComputer() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [phase, setPhase] = useState('setup');
   const [playerColor, setPlayerColor] = useState('white');
   const [levelIndex, setLevelIndex] = useState(() => getInitialLevel(searchParams));
@@ -184,6 +185,17 @@ export default function PlayComputer() {
     hintEngineRef.current.getQuickHint(gameRef.current.fen());
   }
 
+  function handleAnalyze() {
+    sessionStorage.setItem('enpassant:reviewGame', JSON.stringify({
+      history: history.map(h => ({ san: h.san, fen: h.fen })),
+      playerColor,
+      result,
+      label: `vs Stockfish (${preset.label}, ${preset.elo} ELO)`,
+      startingFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+    }));
+    navigate('/play/analysis');
+  }
+
   const turnColor = gameRef.current ? (gameRef.current.turn() === 'w' ? 'white' : 'black') : 'white';
   const isPlayerTurn = turnColor === playerColor && !thinking;
   // evaluation is stored from White's perspective
@@ -282,8 +294,9 @@ export default function PlayComputer() {
           )}
           {phase === 'ended' && (
             <>
-              <button onClick={() => setPhase('setup')} className="flex-1 py-2 rounded-lg bg-gold text-bg font-semibold text-sm hover:bg-gold-dim transition-all btn-press">New Game</button>
+              <button onClick={handleAnalyze} disabled={history.length === 0} className="flex-1 py-2 rounded-lg bg-gold text-bg font-semibold text-sm hover:bg-gold-dim transition-all btn-press disabled:opacity-40">Analyse</button>
               <button onClick={startGame} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press">Rematch</button>
+              <button onClick={() => setPhase('setup')} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press">New</button>
             </>
           )}
         </div>
@@ -341,8 +354,9 @@ export default function PlayComputer() {
               )}
               {phase === 'ended' && (
                 <>
-                  <button onClick={() => setPhase('setup')} className="flex-1 py-2.5 rounded-lg bg-gold text-bg font-semibold text-base hover:bg-gold-dim transition-all btn-press">New Game</button>
+                  <button onClick={handleAnalyze} disabled={history.length === 0} className="flex-1 py-2.5 rounded-lg bg-gold text-bg font-semibold text-base hover:bg-gold-dim transition-all btn-press disabled:opacity-40">Analyse Game</button>
                   <button onClick={startGame} className="flex-1 py-2.5 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press">Rematch</button>
+                  <button onClick={() => setPhase('setup')} className="flex-1 py-2.5 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press">New Game</button>
                 </>
               )}
             </div>

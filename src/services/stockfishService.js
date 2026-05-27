@@ -136,6 +136,65 @@ class StockfishService {
     this.send('stop');
   }
 
+  // Full-strength analysis with MultiPV. Returns a Promise that resolves with
+  // { bestMove, scoreCp, mate, pv, lines } once the engine finishes the depth-N search.
+  // lines is an array sorted by multipv index: [{ multipv, scoreCp, mate, pv, depth }].
+  // Serialises against itself — caller should await sequentially.
+  analyzePosition(fen, { depth = 14, multiPv = 1, movetime = null } = {}) {
+    return new Promise((resolve) => {
+      if (!this.ready || !this.worker) { resolve(null); return; }
+
+      const linesByPv = {};
+      const prevOnMessage = this.worker.onmessage;
+
+      this.worker.onmessage = (e) => {
+        const msg = typeof e.data === 'string' ? e.data : '';
+        if (!msg) return;
+
+        if (msg.startsWith('info ') && msg.includes(' pv ')) {
+          const pvIdxMatch = msg.match(/ multipv (\d+)/);
+          const pvIdx = pvIdxMatch ? parseInt(pvIdxMatch[1]) : 1;
+          const depthMatch = msg.match(/ depth (\d+)/);
+          const cpMatch = msg.match(/ score cp (-?\d+)/);
+          const mateMatch = msg.match(/ score mate (-?\d+)/);
+          const lineMatch = msg.match(/ pv (.+)$/);
+          if (lineMatch) {
+            linesByPv[pvIdx] = {
+              depth: depthMatch ? parseInt(depthMatch[1]) : 0,
+              scoreCp: cpMatch ? parseInt(cpMatch[1]) : null,
+              mate: mateMatch ? parseInt(mateMatch[1]) : null,
+              pv: lineMatch[1].trim().split(/\s+/),
+            };
+          }
+        }
+
+        if (msg.startsWith('bestmove')) {
+          const move = msg.split(' ')[1];
+          const bestMove = (move && move !== '(none)') ? move : null;
+          const primary = linesByPv[1] || {};
+          const result = {
+            bestMove,
+            scoreCp: primary.scoreCp ?? null,
+            mate: primary.mate ?? null,
+            pv: primary.pv || [],
+            lines: Object.entries(linesByPv)
+              .map(([k, v]) => ({ multipv: parseInt(k), ...v }))
+              .sort((a, b) => a.multipv - b.multipv),
+          };
+          this.worker.onmessage = prevOnMessage;
+          resolve(result);
+        }
+      };
+
+      // Full strength, configurable MultiPV
+      this.send(`setoption name Skill Level value 20`);
+      this.send(`setoption name MultiPV value ${multiPv}`);
+      this.send(`position fen ${fen}`);
+      if (movetime) this.send(`go depth ${depth} movetime ${movetime}`);
+      else this.send(`go depth ${depth}`);
+    });
+  }
+
   destroy() {
     if (this.worker) {
       this.send('stop');

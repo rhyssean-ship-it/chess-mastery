@@ -32,6 +32,7 @@ const Glossary = lazy(() => import('./pages/Glossary'))
 const Settings = lazy(() => import('./pages/Settings'))
 const PlayComputer = lazy(() => import('./pages/PlayComputer'))
 const PracticePlay = lazy(() => import('./pages/PracticePlay'))
+const GameAnalysis = lazy(() => import('./pages/GameAnalysis'))
 
 const BoardNotation = lazy(() => import('./pages/BoardNotation'))
 const CheckmatePatterns = lazy(() => import('./pages/CheckmatePatterns'))
@@ -98,6 +99,7 @@ function App() {
             <Route path="/weakness" element={<WeaknessAnalyzer />} />
             <Route path="/play" element={<PlayComputer />} />
             <Route path="/practice-play" element={<PracticePlay />} />
+            <Route path="/play/analysis" element={<GameAnalysis />} />
             <Route path="/progress" element={<ProgressDashboard />} />
             <Route path="/notation" element={<BoardNotation />} />
           <Route path="/checkmate-patterns" element={<CheckmatePatterns />} />

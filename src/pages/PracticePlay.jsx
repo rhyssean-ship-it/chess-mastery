@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Chess } from 'chess.js';
 import ChessBoard from '../components/ChessBoard';
 import MoveList from '../components/MoveList';
@@ -7,6 +8,7 @@ import openings from '../data/openings';
 import { progressService } from '../services/progressService';
 
 export default function PracticePlay() {
+  const navigate = useNavigate();
   const [phase, setPhase] = useState('setup');
   const [playerColor, setPlayerColor] = useState('white');
   const [levelIndex, setLevelIndex] = useState(4);
@@ -216,6 +218,17 @@ export default function PracticePlay() {
     hintEngineRef.current.getQuickHint(gameRef.current.fen());
   }
 
+  function handleAnalyze() {
+    sessionStorage.setItem('enpassant:reviewGame', JSON.stringify({
+      history: history.map(h => ({ san: h.san, fen: h.fen })),
+      playerColor,
+      result,
+      label: `${opening?.name || 'Practice game'} vs Stockfish (${preset.label})`,
+      startingFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+    }));
+    navigate('/play/analysis');
+  }
+
   const turnColor = gameRef.current ? (gameRef.current.turn() === 'w' ? 'white' : 'black') : 'white';
   const isPlayerTurn = turnColor === playerColor;
   const evalClamped = Math.max(-5, Math.min(5, evaluation));
@@ -358,7 +371,10 @@ export default function PracticePlay() {
             </>
           )}
           {phase === 'ended' && (
-            <button onClick={() => setPhase('setup')} className="flex-1 py-2 rounded-lg bg-gold text-bg font-semibold text-sm hover:bg-gold-dim transition-all btn-press">New Game</button>
+            <>
+              <button onClick={handleAnalyze} disabled={history.length === 0} className="flex-1 py-2 rounded-lg bg-gold text-bg font-semibold text-sm hover:bg-gold-dim transition-all btn-press disabled:opacity-40">Analyse</button>
+              <button onClick={() => setPhase('setup')} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all btn-press">New Game</button>
+            </>
           )}
         </div>
 
@@ -422,7 +438,10 @@ export default function PracticePlay() {
                 </>
               )}
               {phase === 'ended' && (
-                <button onClick={() => setPhase('setup')} className="flex-1 py-2.5 rounded-lg bg-gold text-bg font-semibold text-base hover:bg-gold-dim transition-all btn-press">New Game</button>
+                <>
+                  <button onClick={handleAnalyze} disabled={history.length === 0} className="flex-1 py-2.5 rounded-lg bg-gold text-bg font-semibold text-base hover:bg-gold-dim transition-all btn-press disabled:opacity-40">Analyse Game</button>
+                  <button onClick={() => setPhase('setup')} className="flex-1 py-2.5 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press">New Game</button>
+                </>
               )}
             </div>
           </div>

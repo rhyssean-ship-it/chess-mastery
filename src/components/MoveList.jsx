@@ -1,15 +1,21 @@
 import { useEffect, useRef } from 'react';
+import { CLASS_META } from '../services/moveClassification';
 
-export default function MoveList({ history, currentIndex, onSelectMove }) {
+export default function MoveList({ history, currentIndex, onSelectMove, classifications = null }) {
   const activeRef = useRef(null);
   const containerRef = useRef(null);
 
   useEffect(() => {
-    // With reverse order, scroll to top to show latest move
-    if (containerRef.current) {
+    // When in analysis mode, scroll to the active row instead of pinning to top
+    if (classifications && activeRef.current && containerRef.current) {
+      const c = containerRef.current;
+      const a = activeRef.current;
+      const top = a.offsetTop - c.offsetTop - c.clientHeight / 2 + a.clientHeight / 2;
+      c.scrollTop = Math.max(0, top);
+    } else if (containerRef.current) {
       containerRef.current.scrollTop = 0;
     }
-  }, [currentIndex]);
+  }, [currentIndex, classifications]);
 
   const pairs = [];
   for (let i = 0; i < history.length; i += 2) {
@@ -22,11 +28,27 @@ export default function MoveList({ history, currentIndex, onSelectMove }) {
     });
   }
 
+  // In analysis mode, oldest first (top-down reading). In live play mode, latest first.
+  const ordered = classifications ? pairs : [...pairs].reverse();
+
+  const renderTag = (idx) => {
+    if (!classifications) return null;
+    const c = classifications[idx];
+    if (!c) return null;
+    const meta = CLASS_META[c];
+    if (!meta) return null;
+    return (
+      <span className={`ml-1.5 inline-flex items-center text-[10px] font-bold ${meta.color}`} title={meta.label}>
+        {meta.symbol}
+      </span>
+    );
+  };
+
   return (
-    <div ref={containerRef} className="bg-bg-card rounded-xl p-3 max-h-72 overflow-y-auto overflow-x-hidden border border-bg-hover">
+    <div ref={containerRef} className="bg-bg-card rounded-xl p-3 max-h-[28rem] overflow-y-auto overflow-x-hidden border border-bg-hover">
       <table className="w-full text-base">
         <tbody>
-          {[...pairs].reverse().map(p => (
+          {ordered.map(p => (
             <tr key={p.number}>
               <td className="text-text-dim/50 w-8 pr-2 text-right text-xs tabular-nums">{p.number}.</td>
               <td
@@ -36,7 +58,8 @@ export default function MoveList({ history, currentIndex, onSelectMove }) {
                 }`}
                 onClick={() => onSelectMove(p.whiteIdx)}
               >
-                {p.white?.move?.san || p.white?.san || ''}
+                <span>{p.white?.move?.san || p.white?.san || ''}</span>
+                {renderTag(p.whiteIdx)}
               </td>
               <td
                 ref={p.black && currentIndex === p.blackIdx ? activeRef : null}
@@ -45,7 +68,8 @@ export default function MoveList({ history, currentIndex, onSelectMove }) {
                 }`}
                 onClick={() => p.black && onSelectMove(p.blackIdx)}
               >
-                {p.black?.move?.san || p.black?.san || ''}
+                <span>{p.black?.move?.san || p.black?.san || ''}</span>
+                {p.black && renderTag(p.blackIdx)}
               </td>
             </tr>
           ))}
