@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { listMistakes, recordAttempt, deleteMistake } from '../services/mistakeStore';
 import PuzzleSolver from '../components/PuzzleSolver';
+import EmptyState from '../components/EmptyState';
 import { CLASS_META } from '../services/moveClassification';
 
 export default function MyMistakes() {
@@ -42,12 +43,15 @@ export default function MyMistakes() {
 
   if (entries.length === 0) {
     return (
-      <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-12 text-center">
-        <h1 className="text-3xl font-display text-gold mb-3">My Mistakes</h1>
-        <p className="text-text-dim mb-6">
-          Your mistakes and blunders from analysed games will appear here as solvable puzzles.<br />
-          Play a game, click <span className="text-gold">Analyse Game</span>, and they'll be saved automatically.
-        </p>
+      <div className="page page-narrow">
+        <h1 className="text-2xl sm:text-3xl font-display mb-1">My Mistakes</h1>
+        <EmptyState
+          icon="?"
+          title="No saved mistakes yet"
+          body="Your blunders and mistakes from analysed games will appear here as solvable puzzles. Play a game, then tap Analyse on the end screen."
+          ctaLabel="Play a game"
+          ctaTo="/play"
+        />
       </div>
     );
   }
@@ -58,7 +62,7 @@ export default function MyMistakes() {
     <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <div className="flex flex-wrap items-baseline justify-between gap-3 mb-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-display text-gold">My Mistakes</h1>
+          <h1 className="text-2xl sm:text-2xl sm:text-3xl font-display">My Mistakes</h1>
           <p className="text-text-dim text-sm">
             {entries.length} saved, <span className="text-gold font-medium">{dueCount} due</span> for review.
           </p>

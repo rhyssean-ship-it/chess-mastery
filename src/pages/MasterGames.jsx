@@ -13,9 +13,9 @@ function GamesIndex() {
   const filtered = filter === 'all' ? masterGames : masterGames.filter(g => (g.themes || []).includes(filter));
 
   return (
-    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Annotated Master Games</h1>
-      <p className="text-text-dim text-base mb-6">Study how the greatest players navigated complex positions.</p>
+    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Annotated Master Games</h1>
+      <p className="text-text-dim text-sm mb-5">Study how the greatest players navigated complex positions.</p>
       {allThemes.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-6">
           <button
@@ -65,7 +65,7 @@ function GameViewer() {
   }, [game]);
 
   if (!game) return (
-    <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-10">
+    <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <p className="text-text-dim">Game not found.</p>
     </div>
   );
@@ -85,7 +85,7 @@ function GameViewer() {
   const history = game.moves.map(m => ({ san: m.move, annotation: m.annotation }));
 
   return (
-    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-10">
+    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <Breadcrumb to="/master-games" label="Back to Master Games" />
       <h1 className="text-2xl font-display text-gold mb-1">{game.white} vs {game.black}</h1>
       <p className="text-text-dim text-base mb-1">{game.event} &middot; Result: {game.result}</p>

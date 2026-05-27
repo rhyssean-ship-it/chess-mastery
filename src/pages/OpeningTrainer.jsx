@@ -30,7 +30,7 @@ export default function OpeningTrainer() {
   }, [testMode, currentMove]);
 
   if (!opening) {
-    return <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-10">
+    return <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <p className="text-text-dim">Opening not found. <Link to="/openings" className="text-gold">Back to openings</Link></p>
     </div>;
   }
@@ -106,7 +106,7 @@ export default function OpeningTrainer() {
   const studyHistory = moves.slice(0, currentMove + 1).map(m => ({ san: m.move }));
 
   return (
-    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-10">
+    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <Breadcrumb to="/openings" label="Back to Openings" />
       <h1 className="text-2xl font-display text-gold mb-1">{opening.name}</h1>
       <p className="text-text-dim text-sm mb-2">{opening.eco} &middot; {opening.difficulty}</p>

@@ -17,9 +17,9 @@ export default function Glossary() {
   }, [search, filter]);
 
   return (
-    <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Chess Glossary</h1>
-      <p className="text-text-dim text-base mb-6">Every chess term explained with examples.</p>
+    <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Chess Glossary</h1>
+      <p className="text-text-dim text-sm mb-5">Every chess term explained with examples.</p>
 
       {/* Search & filter */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">

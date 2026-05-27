@@ -30,8 +30,8 @@ export default function MoveOrderQuiz() {
 
   if (finished) {
     return (
-      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center">
-        <h1 className="text-3xl font-display text-gold mb-4">Quiz Complete</h1>
+      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-10 lg:py-16 text-center">
+        <h1 className="text-2xl sm:text-3xl font-display mb-4">Quiz Complete</h1>
         <p className="text-2xl font-bold mb-2 tabular-nums">{score}/{shuffled.length}</p>
         <p className="text-text-dim mb-6">{score === shuffled.length ? 'Perfect move order knowledge!' : 'Review the openings to improve.'}</p>
         <button onClick={() => { setIdx(0); setSelected(null); setScore(0); setFinished(false); }} className="bg-gold text-bg px-4 sm:px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">Retry</button>
@@ -40,9 +40,9 @@ export default function MoveOrderQuiz() {
   }
 
   return (
-    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Move Order Quiz</h1>
-      <p className="text-text-dim text-base mb-8">Test your knowledge of opening move orders.</p>
+    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Move Order Quiz</h1>
+      <p className="text-text-dim text-sm mb-5">Test your knowledge of opening move orders.</p>
 
       <div className="text-sm text-text-dim mb-6">Question {idx + 1}/{shuffled.length} &middot; Score: {score}</div>
 

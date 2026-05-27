@@ -56,9 +56,9 @@ export default function CalculationTrainer() {
 
   if (filtered.length === 0) {
     return (
-      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-10">
-        <h1 className="text-3xl font-display text-gold mb-1">Calculation Trainer</h1>
-        <p className="text-text-dim text-base mb-8">Calculate sequences without moving pieces on the board.</p>
+      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+        <h1 className="text-2xl sm:text-3xl font-display mb-1">Calculation Trainer</h1>
+        <p className="text-text-dim text-sm mb-5">Calculate sequences without moving pieces on the board.</p>
         <DifficultyToggle difficulty={difficulty} onChange={changeDifficulty} />
         <div className="card-base p-8 text-center mt-8">
           <p className="text-text-dim">No exercises available for this level yet.</p>
@@ -69,8 +69,8 @@ export default function CalculationTrainer() {
 
   if (finished) {
     return (
-      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center">
-        <h1 className="text-3xl font-display text-gold mb-4">Session Complete</h1>
+      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-10 lg:py-16 text-center">
+        <h1 className="text-2xl sm:text-3xl font-display mb-4">Session Complete</h1>
         <p className="text-2xl font-bold mb-2 tabular-nums">{selfScore.correct}/{selfScore.total}</p>
         <p className="text-text-dim mb-6">{selfScore.correct === selfScore.total ? 'Perfect calculation!' : 'Keep training to see deeper.'}</p>
         <button onClick={() => { setCurrentIdx(0); setPhase('thinking'); setSelfScore({ correct: 0, total: 0 }); setFinished(false); }} className="bg-gold text-bg px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
@@ -81,9 +81,9 @@ export default function CalculationTrainer() {
   }
 
   return (
-    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Calculation Trainer</h1>
-      <p className="text-text-dim text-base mb-6">Calculate sequences without moving pieces on the board.</p>
+    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Calculation Trainer</h1>
+      <p className="text-text-dim text-sm mb-5">Calculate sequences without moving pieces on the board.</p>
 
       <DifficultyToggle difficulty={difficulty} onChange={changeDifficulty} />
 

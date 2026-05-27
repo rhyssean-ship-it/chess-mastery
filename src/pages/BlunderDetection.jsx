@@ -33,9 +33,9 @@ export default function BlunderDetection() {
   if (!puzzle) return null;
 
   return (
-    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Blunder Detection</h1>
-      <p className="text-text-dim text-base mb-6">A move was just played. What did they blunder?</p>
+    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Blunder Detection</h1>
+      <p className="text-text-dim text-sm mb-5">A move was just played. What did they blunder?</p>
 
       <div className="flex gap-2 mb-6">
         {levels.map(level => (

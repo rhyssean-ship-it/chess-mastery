@@ -211,9 +211,9 @@ export default function PlayComputer() {
 
   if (phase === 'setup') {
     return (
-      <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-10">
-        <h1 className="text-3xl font-display text-gold mb-1">Play vs Computer</h1>
-        <p className="text-text-dim text-base mb-10">Challenge Stockfish at any level.</p>
+      <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+        <h1 className="text-2xl sm:text-3xl font-display mb-1">Play vs Computer</h1>
+        <p className="text-text-dim text-sm mb-6">Challenge Stockfish at any level.</p>
         <div className="card-base p-6 space-y-8">
           <div>
             <label className="text-sm text-text-dim block mb-3 font-medium">Play as</label>

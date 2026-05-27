@@ -236,9 +236,9 @@ export default function PracticePlay() {
 
   if (phase === 'setup') {
     return (
-      <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-10">
-        <h1 className="text-3xl font-display text-gold mb-1">Practice Play</h1>
-        <p className="text-text-dim text-base mb-10">Play a guided game with opening support, hints, and tactical alerts.</p>
+      <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+        <h1 className="text-2xl sm:text-3xl font-display mb-1">Practice Play</h1>
+        <p className="text-text-dim text-sm mb-6">Play a guided game with opening support, hints, and tactical alerts.</p>
 
         <div className="card-base p-6 space-y-8">
           {/* Opening */}

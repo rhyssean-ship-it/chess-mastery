@@ -32,12 +32,12 @@ export default function HangingPieces() {
     setTotal(0);
   }
 
-  if (!puzzle) return <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-10"><p className="text-text-dim">No exercises at this level.</p></div>;
+  if (!puzzle) return <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-6 lg:py-10"><p className="text-text-dim">No exercises at this level.</p></div>;
 
   return (
-    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Hanging Pieces</h1>
-      <p className="text-text-dim text-base mb-6">Spot undefended pieces — the #1 skill for beginners.</p>
+    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Hanging Pieces</h1>
+      <p className="text-text-dim text-sm mb-5">Spot undefended pieces — the #1 skill for beginners.</p>
 
       <div className="flex gap-2 mb-6">
         {levels.map(level => (

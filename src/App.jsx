@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import Nav from './components/Nav'
 import BottomNav from './components/BottomNav'
+import LoadingSkeleton from './components/LoadingSkeleton'
 import Home from './pages/Home'
 import { useTheme } from './hooks/useTheme'
 import { recordVisit } from './services/activityTracker'
@@ -64,17 +65,7 @@ const MiddlegamePlanDetail = lazy(() => import('./pages/MiddlegamePlans').then(m
 const MasterGamesIndex = lazy(() => import('./pages/MasterGames').then(m => ({ default: m.GamesIndex })))
 const MasterGameViewer = lazy(() => import('./pages/MasterGames').then(m => ({ default: m.GameViewer })))
 
-function Loading() {
-  return (
-    <div className="flex items-center justify-center min-h-[50vh]">
-      <div className="flex gap-1.5">
-        <div className="w-2.5 h-2.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '0ms' }} />
-        <div className="w-2.5 h-2.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '150ms' }} />
-        <div className="w-2.5 h-2.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '300ms' }} />
-      </div>
-    </div>
-  )
-}
+function Loading() { return <LoadingSkeleton />; }
 
 function RouteTracker() {
   const location = useLocation();
@@ -88,7 +79,7 @@ function App() {
     <div className="min-h-screen">
       <Nav />
       <RouteTracker />
-      <main className="lg:ml-56 pt-16 lg:pt-0 pb-24 lg:pb-0 min-h-screen">
+      <main className="lg:ml-52 pt-16 lg:pt-0 pb-24 lg:pb-0 min-h-screen">
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<Home />} />

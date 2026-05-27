@@ -43,8 +43,8 @@ export default function CriticalMoments() {
 
   if (finished) {
     return (
-      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center">
-        <h1 className="text-3xl font-display text-gold mb-4">Session Complete</h1>
+      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-10 lg:py-16 text-center">
+        <h1 className="text-2xl sm:text-3xl font-display mb-4">Session Complete</h1>
         <p className="text-2xl font-bold mb-2 tabular-nums">{score}/{total}</p>
         <p className="text-text-dim mb-6">{score === total ? 'Perfect positional judgment!' : 'Keep studying to sharpen your evaluation skills.'}</p>
         <button onClick={() => { setCurrentIndex(0); setSelected(null); setScore(0); setTotal(0); setFinished(false); }} className="bg-gold text-bg px-4 sm:px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
@@ -55,9 +55,9 @@ export default function CriticalMoments() {
   }
 
   return (
-    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Critical Moments</h1>
-      <p className="text-text-dim text-base mb-8">What's the best plan? Test your positional evaluation.</p>
+    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Critical Moments</h1>
+      <p className="text-text-dim text-sm mb-5">What's the best plan? Test your positional evaluation.</p>
 
       <div className="flex items-center gap-3 mb-6 text-sm text-text-dim">
         <span>Question {currentIndex + 1}/{shuffled.length}</span>

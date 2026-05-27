@@ -118,9 +118,9 @@ const stages = [
 
 export default function LearningPath() {
   return (
-    <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Learning Path</h1>
-      <p className="text-text-dim text-base mb-10">Your roadmap from 500 to 2000 ELO. Follow each stage in order.</p>
+    <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Learning Path</h1>
+      <p className="text-text-dim text-sm mb-6">Your roadmap from 500 to 2000 ELO. Follow each stage in order.</p>
 
       <div className="relative">
         {/* Vertical line */}

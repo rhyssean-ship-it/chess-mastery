@@ -213,9 +213,9 @@ export default function EndgameDrills() {
   }
 
   return (
-    <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Endgame Drills</h1>
-      <p className="text-text-dim text-base mb-8">Play these endings vs Stockfish at full strength. Three wins in a row earns mastery.</p>
+    <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Endgame Drills</h1>
+      <p className="text-text-dim text-sm mb-5">Play these endings vs Stockfish at full strength. Three wins in a row earns mastery.</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {drills.map(d => {
           const progress = progressFor(d);

@@ -184,7 +184,7 @@ export default function GameAnalysis() {
       {/* Header */}
       <div className="flex flex-wrap items-baseline justify-between gap-3 mb-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-display text-gold">Game Review</h1>
+          <h1 className="text-2xl sm:text-2xl sm:text-3xl font-display">Game Review</h1>
           <p className="text-text-dim text-sm">
             {gameData.label || 'Played game'}{gameData.result ? ` — ${gameData.result}` : ''}
           </p>

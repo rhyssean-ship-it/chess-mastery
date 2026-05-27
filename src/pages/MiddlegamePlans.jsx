@@ -9,9 +9,9 @@ import { progressService } from '../services/progressService';
 function PlanIndex() {
   const completed = progressService.getCompletedLessons('middlegame');
   return (
-    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Middlegame Plans</h1>
-      <p className="text-text-dim text-base mb-8">Learn the right plans for every pawn structure.</p>
+    <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Middlegame Plans</h1>
+      <p className="text-text-dim text-sm mb-5">Learn the right plans for every pawn structure.</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {middlegamePlans.map(plan => (
           <LessonCard
@@ -34,16 +34,16 @@ function PlanDetail() {
   const isComplete = progressService.isLessonComplete('middlegame', id);
 
   if (!plan) return (
-    <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-10">
+    <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <p className="text-text-dim">Plan not found. <Link to="/middlegame" className="text-gold">Back</Link></p>
     </div>
   );
 
   return (
-    <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-10">
+    <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <Breadcrumb to="/middlegame" label="Back to Middlegame Plans" />
       <h1 className="text-2xl font-display text-gold mb-1">{plan.title}</h1>
-      <p className="text-text-dim text-base mb-8">{plan.structure} &middot; {plan.difficulty}</p>
+      <p className="text-text-dim text-sm mb-5">{plan.structure} &middot; {plan.difficulty}</p>
 
       <div className="space-y-6 leading-relaxed">
         {plan.content.map((section, i) => {

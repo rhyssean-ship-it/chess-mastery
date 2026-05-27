@@ -139,7 +139,7 @@ export default function Nav() {
           if (section.link) {
             return (
               <Link key={section.id} to={section.link} onClick={() => setMobileOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base no-underline transition-all duration-150 ${
+                className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm no-underline transition-all duration-150 ${
                   sectionActive ? 'bg-gold/10 text-gold border border-gold/20' : 'text-text-dim hover:text-text hover:bg-bg-hover border border-transparent'
                 }`}>
                 <span className={sectionActive ? 'text-gold' : 'text-text-dim'}>{section.icon}</span>
@@ -154,7 +154,7 @@ export default function Nav() {
             <div key={section.id}>
               <button
                 onClick={() => toggleSection(section.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base transition-all duration-150 ${
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-all duration-150 ${
                   sectionActive ? 'text-gold' : 'text-text-dim hover:text-text hover:bg-bg-hover'
                 }`}
               >
@@ -195,7 +195,7 @@ export default function Nav() {
       {/* Settings footer */}
       <div className="px-3 py-3 border-t border-bg-hover/50">
         <Link to="/settings" onClick={() => setMobileOpen(false)}
-          className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base no-underline transition-all duration-150 ${
+          className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm no-underline transition-all duration-150 ${
             location.pathname === '/settings' ? 'bg-gold/10 text-gold border border-gold/20' : 'text-text-dim hover:text-text hover:bg-bg-hover border border-transparent'
           }`}>
           {I('M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z')}
@@ -215,7 +215,7 @@ export default function Nav() {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex flex-col w-56 h-screen bg-bg-card border-r border-bg-hover fixed left-0 top-0 z-40">
+      <aside className="hidden lg:flex flex-col w-52 h-screen bg-bg-card border-r border-bg-hover fixed left-0 top-0 z-40">
         {navContent}
       </aside>
 

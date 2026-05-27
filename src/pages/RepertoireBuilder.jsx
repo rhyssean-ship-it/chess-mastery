@@ -131,9 +131,9 @@ export default function RepertoireBuilder() {
   const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
 
   return (
-    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Opening Repertoire Builder</h1>
-      <p className="text-text-dim text-base mb-8">Build and drill your opening lines.</p>
+    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Opening Repertoire Builder</h1>
+      <p className="text-text-dim text-sm mb-5">Build and drill your opening lines.</p>
 
       {!started ? (
         <div className="max-w-md mx-auto space-y-4">

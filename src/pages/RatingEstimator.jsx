@@ -63,8 +63,8 @@ export default function RatingEstimator() {
 
   if (phase === 'idle') {
     return (
-      <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-10 text-center">
-        <h1 className="text-3xl font-display text-gold mb-1">Rating Estimator</h1>
+      <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-6 lg:py-10 text-center">
+        <h1 className="text-2xl sm:text-3xl font-display mb-1">Rating Estimator</h1>
         <p className="text-text-dim mb-6">An adaptive battery of {BATTERY_SIZE} puzzles. Difficulty rises and falls to home in on your level.</p>
         {latest && (
           <div className="card-base p-5 mb-6">
@@ -80,8 +80,8 @@ export default function RatingEstimator() {
 
   if (phase === 'done') {
     return (
-      <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-10 text-center">
-        <h1 className="text-3xl font-display text-gold mb-1">Assessment complete</h1>
+      <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-6 lg:py-10 text-center">
+        <h1 className="text-2xl sm:text-3xl font-display mb-1">Assessment complete</h1>
         <p className="text-text-dim mb-6">Based on {BATTERY_SIZE} puzzles your estimated tactical rating is:</p>
         <div className="card-base p-6 mb-6">
           <div className="text-6xl font-display text-gold tabular-nums">{latest.estimated}</div>

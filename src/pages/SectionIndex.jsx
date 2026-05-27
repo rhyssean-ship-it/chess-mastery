@@ -22,8 +22,8 @@ function Section({ title, items }) {
 
 export function LearnIndex() {
   return (
-    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Learn</h1>
+    <div className="page-enter page page-wide">
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Learn</h1>
       <p className="text-text-dim text-sm mb-6">Absorb chess knowledge — concepts, openings, master games.</p>
 
       <Section title="Start here" items={[
@@ -76,8 +76,8 @@ export function LearnIndex() {
 
 export function TrainIndex() {
   return (
-    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Train</h1>
+    <div className="page-enter page page-wide">
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Train</h1>
       <p className="text-text-dim text-sm mb-6">Sharpen your edge — high-volume tactics, calculation, pattern drills.</p>
 
       <Section title="Daily" items={[
@@ -108,7 +108,7 @@ export function TrainIndex() {
 export function PlayIndex() {
   return (
     <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Play</h1>
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Play</h1>
       <p className="text-text-dim text-sm mb-6">Real games — vs Stockfish at any strength.</p>
 
       <Section title="Game modes" items={[
@@ -125,8 +125,8 @@ export function PlayIndex() {
 
 export function ProfileIndex() {
   return (
-    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Profile</h1>
+    <div className="page-enter page page-wide">
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Profile</h1>
       <p className="text-text-dim text-sm mb-6">Your progress, ratings, and saved work.</p>
 
       <Section title="Progress" items={[

@@ -58,9 +58,9 @@ export default function Home() {
   const lastRating = rater.history?.[rater.history.length - 1];
 
   return (
-    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
-      <div className="mb-6">
-        <h1 className="text-3xl sm:text-4xl font-display text-gold">{timeGreeting()}.</h1>
+    <div className="page-enter page page-wide">
+      <div className="mb-5">
+        <h1 className="text-2xl sm:text-3xl font-display">{timeGreeting()}.</h1>
         <p className="text-text-dim text-sm mt-1">
           {streak > 0 ? <>Day <span className="text-gold font-semibold">{streak}</span> streak · </> : null}
           {totalMistakes > 0 && <>{totalMistakes} saved mistakes</>}
@@ -153,20 +153,20 @@ export default function Home() {
       <div className="mb-5">
         <div className="text-xs text-text-dim uppercase tracking-wide mb-2">Quick start</div>
         <div className="flex flex-wrap gap-2">
-          <Link to="/play" className="px-4 py-2 rounded-lg bg-gold text-bg text-sm font-semibold hover:bg-gold-dim transition-all">▶ Play a game</Link>
-          <Link to="/tactics" className="px-4 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all">10 tactics</Link>
-          <Link to="/pattern-dojo" className="px-4 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all">Pattern flash</Link>
-          <Link to="/learning-path" className="px-4 py-2 rounded-lg bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all">Learning path</Link>
+          <Link to="/play" className="btn btn-primary">▶ Play a game</Link>
+          <Link to="/tactics" className="btn btn-secondary">10 tactics</Link>
+          <Link to="/pattern-dojo" className="btn btn-secondary">Pattern flash</Link>
+          <Link to="/learning-path" className="btn btn-secondary">Learning path</Link>
         </div>
       </div>
 
-      {/* Recent activity */}
+      {/* Recent activity — dividers, no card */}
       {recent.length > 1 && (
         <div>
           <div className="text-xs text-text-dim uppercase tracking-wide mb-2">Recent activity</div>
-          <div className="card-base divide-y divide-bg-hover/40">
+          <div className="list-dividers">
             {recent.slice(0, 5).map((r, i) => (
-              <Link key={i} to={r.path} className="flex justify-between items-center px-4 py-2.5 hover:bg-bg-hover/30 transition-all">
+              <Link key={i} to={r.path} className="flex justify-between items-center px-1 py-2.5 hover:bg-bg-hover/30 rounded transition-all -mx-1">
                 <span className="text-sm">{r.label}</span>
                 <span className="text-xs text-text-dim">{timeSince(r.at)}</span>
               </Link>

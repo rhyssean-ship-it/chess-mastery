@@ -52,8 +52,8 @@ export default function PatternRecognition() {
 
   if (phase === 'done') {
     return (
-      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center">
-        <h1 className="text-3xl font-display text-gold mb-4">Results</h1>
+      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-10 lg:py-16 text-center">
+        <h1 className="text-2xl sm:text-3xl font-display mb-4">Results</h1>
         <p className="text-2xl font-bold mb-2 tabular-nums">{score}/{shuffled.length}</p>
         <p className="text-text-dim mb-6">{score >= 5 ? 'Excellent positional intuition!' : score >= 3 ? 'Good eye! Keep practicing.' : 'Study more positions to improve your evaluation.'}</p>
         <button onClick={() => { setCurrentIdx(0); setAnswer(null); setScore(0); setTimer(8); setPhase('viewing'); }} className="bg-gold text-bg px-4 sm:px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
@@ -64,9 +64,9 @@ export default function PatternRecognition() {
   }
 
   return (
-    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Pattern Recognition</h1>
-      <p className="text-text-dim text-base mb-8">Evaluate the position quickly — who stands better?</p>
+    <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Pattern Recognition</h1>
+      <p className="text-text-dim text-sm mb-5">Evaluate the position quickly — who stands better?</p>
 
       <div className="flex items-center gap-3 mb-6 text-sm text-text-dim">
         <span>Position {currentIdx + 1}/{shuffled.length}</span>

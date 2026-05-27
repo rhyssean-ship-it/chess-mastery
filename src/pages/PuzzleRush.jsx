@@ -144,14 +144,14 @@ export default function PuzzleRush() {
 
   if (phase === 'setup') {
     return (
-      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-10">
-        <h1 className="text-3xl font-display text-gold mb-1">Puzzle Rush</h1>
-        <p className="text-text-dim text-base mb-8">High-volume tactical training. Your rating adjusts after every puzzle.</p>
+      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+        <h1 className="text-2xl sm:text-3xl font-display mb-1">Puzzle Rush</h1>
+        <p className="text-text-dim text-sm mb-5">High-volume tactical training. Your rating adjusts after every puzzle.</p>
 
         <div className="card-base p-4 mb-6 flex flex-wrap gap-4 justify-between items-center">
           <div>
             <div className="text-xs text-text-dim uppercase tracking-wide">Current rating</div>
-            <div className="text-3xl font-display text-gold tabular-nums">{rating}</div>
+            <div className="text-2xl sm:text-3xl font-display tabular-nums">{rating}</div>
           </div>
           <div>
             <div className="text-xs text-text-dim uppercase tracking-wide">Best score</div>
@@ -202,8 +202,8 @@ export default function PuzzleRush() {
 
   if (phase === 'done') {
     return (
-      <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-10 text-center">
-        <h1 className="text-3xl font-display text-gold mb-3">Time's up</h1>
+      <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-6 lg:py-10 text-center">
+        <h1 className="text-2xl sm:text-3xl font-display mb-3">Time's up</h1>
         <div className="card-base p-6 mb-6">
           <div className="grid grid-cols-3 gap-4 mb-4">
             <Stat label="Solved" value={solved} accent />

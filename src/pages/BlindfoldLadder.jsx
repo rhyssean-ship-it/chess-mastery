@@ -129,15 +129,15 @@ export default function BlindfoldLadder() {
 
   if (phase === 'idle' || phase === 'success' || phase === 'failed') {
     return (
-      <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-10 text-center">
-        <h1 className="text-3xl font-display text-gold mb-1">Blindfold Ladder</h1>
+      <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-6 lg:py-10 text-center">
+        <h1 className="text-2xl sm:text-3xl font-display mb-1">Blindfold Ladder</h1>
         <p className="text-text-dim mb-6">Study a position for 5 seconds, then play the moves in your head. Identify what's on a target square.</p>
 
         <div className="card-base p-6 mb-6">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <div className="text-xs text-text-dim">Best level reached</div>
-              <div className="text-3xl font-display text-gold tabular-nums">{store.best}</div>
+              <div className="text-2xl sm:text-3xl font-display tabular-nums">{store.best}</div>
             </div>
             <div>
               <div className="text-xs text-text-dim">Attempts</div>

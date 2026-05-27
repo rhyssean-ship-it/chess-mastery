@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { listSavedGames, deleteSavedGame } from '../services/savedGames';
+import EmptyState from '../components/EmptyState';
 
 function formatDate(ts) {
   return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
@@ -34,18 +35,22 @@ export default function SavedReviews() {
 
   if (entries.length === 0) {
     return (
-      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-12 text-center">
-        <h1 className="text-3xl font-display text-gold mb-3">Reviewed Games</h1>
-        <p className="text-text-dim mb-6">
-          Games you analyse get saved here automatically. Play a game and tap <span className="text-gold">Analyse</span> on the end screen.
-        </p>
+      <div className="page page-narrow">
+        <h1 className="text-2xl sm:text-3xl font-display mb-1">Reviewed Games</h1>
+        <EmptyState
+          icon="♞"
+          title="No reviewed games yet"
+          body="Games you analyse get saved here automatically. Play a game and tap Analyse on the end screen."
+          ctaLabel="Play a game"
+          ctaTo="/play"
+        />
       </div>
     );
   }
 
   return (
     <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Reviewed Games</h1>
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Reviewed Games</h1>
       <p className="text-text-dim text-sm mb-6">Your last {entries.length} analysed game{entries.length === 1 ? '' : 's'}. Open one to re-review without re-analysing.</p>
 
       <div className="space-y-2">

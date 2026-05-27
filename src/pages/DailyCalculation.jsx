@@ -86,7 +86,7 @@ export default function DailyCalculation() {
     <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <div className="flex flex-wrap items-baseline justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-3xl font-display text-gold">Daily Calculation</h1>
+          <h1 className="text-2xl sm:text-3xl font-display">Daily Calculation</h1>
           <p className="text-text-dim text-sm">One curated position per day · 5-minute clock</p>
         </div>
         <div className="flex gap-4">

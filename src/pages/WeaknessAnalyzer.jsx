@@ -36,9 +36,9 @@ export default function WeaknessAnalyzer() {
 
   if (categories.length === 0) {
     return (
-      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center">
+      <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-10 lg:py-16 text-center">
         <div className="text-5xl mb-4 opacity-20">♕</div>
-        <h1 className="text-3xl font-display text-gold mb-4">Weakness Analyzer</h1>
+        <h1 className="text-2xl sm:text-3xl font-display mb-4">Weakness Analyzer</h1>
         <p className="text-text-dim mb-6">Solve some puzzles first! The analyzer needs data from your puzzle attempts to identify your strengths and weaknesses.</p>
         <Link to="/tactics" className="bg-gold text-bg px-4 sm:px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press no-underline inline-block">Start Solving Puzzles</Link>
       </div>
@@ -53,9 +53,9 @@ export default function WeaknessAnalyzer() {
   const strongest = sorted.filter(c => c.accuracy >= 70).sort((a, b) => b.accuracy - a.accuracy);
 
   return (
-    <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Weakness Analyzer</h1>
-      <p className="text-text-dim text-base mb-8">Based on your puzzle performance, here's where to focus.</p>
+    <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Weakness Analyzer</h1>
+      <p className="text-text-dim text-sm mb-5">Based on your puzzle performance, here's where to focus.</p>
 
       {/* Weaknesses */}
       {weakest.length > 0 && (

@@ -10,7 +10,7 @@ export default function StrategyLesson() {
   const isComplete = progressService.isLessonComplete('strategy', id);
 
   if (!lesson) {
-    return <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-10">
+    return <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <p className="text-text-dim">Lesson not found. <Link to="/strategy" className="text-gold">Back to strategy</Link></p>
     </div>;
   }
@@ -21,10 +21,10 @@ export default function StrategyLesson() {
   }
 
   return (
-    <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-10">
+    <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <Breadcrumb to="/strategy" label="Back to Strategy" />
       <h1 className="text-2xl font-display text-gold mb-1">{lesson.title}</h1>
-      <p className="text-text-dim text-base mb-8">{lesson.difficulty} &middot; {lesson.readTime}</p>
+      <p className="text-text-dim text-sm mb-5">{lesson.difficulty} &middot; {lesson.readTime}</p>
 
       <div className="space-y-6 leading-relaxed">
         {lesson.content.map((section, i) => {

@@ -59,9 +59,9 @@ export default function ProgressDashboard() {
   }
 
   return (
-    <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-10">
-      <h1 className="text-3xl font-display text-gold mb-1">Progress Dashboard</h1>
-      <p className="text-text-dim text-base mb-8">Track your chess improvement over time.</p>
+    <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+      <h1 className="text-2xl sm:text-3xl font-display mb-1">Progress Dashboard</h1>
+      <p className="text-text-dim text-sm mb-5">Track your chess improvement over time.</p>
 
       {/* Tactics */}
       <section className="mb-6">
