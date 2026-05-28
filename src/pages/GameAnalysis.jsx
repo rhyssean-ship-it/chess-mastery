@@ -291,17 +291,17 @@ export default function GameAnalysis() {
             </div>
             <div className="flex items-stretch gap-2">
               <button onClick={jumpToStart} disabled={currentPly === -1}
-                className="flex-1 py-3.5 sm:py-3 rounded-xl bg-bg-card border border-bg-hover text-lg leading-none hover:bg-bg-hover active:scale-[0.97] transition-all disabled:opacity-25"
-                aria-label="Go to start" title="Home">⏮</button>
+                className="flex-1 flex items-center justify-center py-3.5 sm:py-3 rounded-xl bg-bg-card border border-bg-hover hover:bg-bg-hover active:scale-[0.97] transition-all disabled:opacity-25"
+                aria-label="Go to start" title="Home"><StepIcon dir="start" /></button>
               <button onClick={goPrev} disabled={currentPly === -1}
-                className="flex-[1.6] py-3.5 sm:py-3 rounded-xl bg-bg-card border border-bg-hover text-xl leading-none hover:bg-bg-hover active:scale-[0.97] transition-all disabled:opacity-25"
-                aria-label="Previous move" title="←">◀</button>
+                className="flex-[1.6] flex items-center justify-center py-3.5 sm:py-3 rounded-xl bg-bg-card border border-bg-hover hover:bg-bg-hover active:scale-[0.97] transition-all disabled:opacity-25"
+                aria-label="Previous move" title="←"><StepIcon dir="prev" /></button>
               <button onClick={goNext} disabled={currentPly >= history.length - 1}
-                className="flex-[1.6] py-3.5 sm:py-3 rounded-xl bg-gold/15 border border-gold/40 text-gold text-xl leading-none hover:bg-gold/25 active:scale-[0.97] transition-all disabled:opacity-25 disabled:bg-bg-card disabled:border-bg-hover disabled:text-text"
-                aria-label="Next move" title="→">▶</button>
+                className="flex-[1.6] flex items-center justify-center py-3.5 sm:py-3 rounded-xl bg-gold/15 border border-gold/40 text-gold hover:bg-gold/25 active:scale-[0.97] transition-all disabled:opacity-25 disabled:bg-bg-card disabled:border-bg-hover disabled:text-text"
+                aria-label="Next move" title="→"><StepIcon dir="next" /></button>
               <button onClick={jumpToEnd} disabled={currentPly >= history.length - 1}
-                className="flex-1 py-3.5 sm:py-3 rounded-xl bg-bg-card border border-bg-hover text-lg leading-none hover:bg-bg-hover active:scale-[0.97] transition-all disabled:opacity-25"
-                aria-label="Go to end" title="End">⏭</button>
+                className="flex-1 flex items-center justify-center py-3.5 sm:py-3 rounded-xl bg-bg-card border border-bg-hover hover:bg-bg-hover active:scale-[0.97] transition-all disabled:opacity-25"
+                aria-label="Go to end" title="End"><StepIcon dir="end" /></button>
             </div>
             {/* Secondary actions */}
             <div className="flex gap-2 mt-2">
@@ -393,6 +393,17 @@ export default function GameAnalysis() {
         </div>
       </div>
     </div>
+  );
+}
+
+function StepIcon({ dir }) {
+  return (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" className="block">
+      {dir === 'start' && (<><rect x="5" y="5.5" width="2.4" height="13" rx="0.8" /><path d="M19 5.5 L8.5 12 L19 18.5 Z" /></>)}
+      {dir === 'prev' && <path d="M16.5 5 L8 12 L16.5 19 Z" />}
+      {dir === 'next' && <path d="M7.5 5 L16 12 L7.5 19 Z" />}
+      {dir === 'end' && (<><path d="M5 5.5 L15.5 12 L5 18.5 Z" /><rect x="16.6" y="5.5" width="2.4" height="13" rx="0.8" /></>)}
+    </svg>
   );
 }
 
