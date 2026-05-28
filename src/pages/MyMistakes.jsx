@@ -118,7 +118,7 @@ export default function MyMistakes() {
                 </div>
                 <button
                   onClick={(ev) => { ev.stopPropagation(); handleDelete(e.id); }}
-                  className="text-text-dim/50 hover:text-incorrect px-2 text-sm"
+                  className="text-text-dim hover:text-incorrect px-2 text-sm"
                   aria-label="Delete"
                 >×</button>
               </button>

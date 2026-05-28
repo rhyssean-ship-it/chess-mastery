@@ -28,7 +28,7 @@ export default function Glossary() {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Search terms..."
-          className="flex-1 bg-bg-card border border-bg-hover rounded-lg px-4 py-3 text-sm text-text focus:outline-none focus:border-gold/50"
+          className="flex-1 bg-bg-card border border-bg-hover rounded-lg px-4 py-3 text-sm text-text focus:border-gold/50"
         />
         <div className="flex flex-wrap gap-1.5">
           {categories.map(cat => (
@@ -75,7 +75,7 @@ export default function Glossary() {
 
                 {term.relatedTerms && term.relatedTerms.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mt-3">
-                    <span className="text-xs text-text-dim/50">Related:</span>
+                    <span className="text-xs text-text-dim">Related:</span>
                     {term.relatedTerms.map(rt => (
                       <button key={rt} onClick={() => { setSearch(rt); setExpanded(null); }} className="text-xs text-gold hover:underline">{rt}</button>
                     ))}

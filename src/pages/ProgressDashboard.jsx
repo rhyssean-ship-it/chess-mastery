@@ -158,7 +158,7 @@ export default function ProgressDashboard() {
                     <div className="flex justify-between text-xs"><span className="text-text-dim">Avg Accuracy</span><span className="font-medium">{s.attempts > 0 ? Math.round(s.totalAccuracy / s.attempts) : 0}%</span></div>
                   </div>
                 ) : (
-                  <p className="text-xs text-text-dim/50">No attempts yet</p>
+                  <p className="text-xs text-text-dim">No attempts yet</p>
                 )}
               </div>
             );

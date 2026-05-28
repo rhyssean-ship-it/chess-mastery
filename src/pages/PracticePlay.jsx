@@ -326,6 +326,7 @@ export default function PracticePlay() {
                     <p className="text-xs text-text-dim">{toggle.desc}</p>
                   </div>
                   <button onClick={() => toggle.set(!toggle.value)}
+                    role="switch" aria-checked={toggle.value} aria-label={toggle.label}
                     className={`w-11 h-6 rounded-full transition-all duration-200 relative shrink-0 ${toggle.value ? 'bg-gold' : 'bg-bg-hover'}`}>
                     <div className={`w-4 h-4 rounded-full bg-white shadow absolute top-1 transition-all duration-200 ${toggle.value ? 'left-6' : 'left-1'}`} />
                   </button>
@@ -425,7 +426,7 @@ export default function PracticePlay() {
         </div>
         {/* Notation */}
         <div className="mt-1 max-h-20 overflow-y-auto">
-          <MoveList history={history} currentIndex={moveIndex} onSelectMove={() => {}} />
+          <MoveList history={history} currentIndex={moveIndex} />
         </div>
       </div>
 
@@ -488,7 +489,7 @@ export default function PracticePlay() {
             </div>
           </div>
           <div className="space-y-4">
-            <MoveList history={history} currentIndex={moveIndex} onSelectMove={() => {}} />
+            <MoveList history={history} currentIndex={moveIndex} />
             {thinking && (
               <div className="card-base p-4 flex items-center gap-3">
                 <div className="flex gap-1">

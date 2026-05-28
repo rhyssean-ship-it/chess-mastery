@@ -1,7 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, memo } from 'react';
 import { CLASS_META } from '../services/moveClassification';
 
-export default function MoveList({ history, currentIndex, onSelectMove, classifications = null, maxHeightClass = 'max-h-[28rem]' }) {
+function MoveList({ history, currentIndex, onSelectMove, classifications = null, maxHeightClass = 'max-h-[28rem]' }) {
+  const interactive = typeof onSelectMove === 'function';
   const activeRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -44,29 +45,43 @@ export default function MoveList({ history, currentIndex, onSelectMove, classifi
     );
   };
 
+  // Build the props for a clickable move cell — keyboard-accessible only when there's a handler.
+  const cellProps = (idx, hasMove) => {
+    if (!interactive || !hasMove) return {};
+    return {
+      role: 'button',
+      tabIndex: 0,
+      'aria-current': currentIndex === idx ? 'true' : undefined,
+      onClick: () => onSelectMove(idx),
+      onKeyDown: (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelectMove(idx); }
+      },
+    };
+  };
+  const cellClass = (active) =>
+    `px-2 py-1 rounded-md transition-all duration-150 ${interactive ? 'cursor-pointer' : ''} ${
+      active ? 'bg-gold text-bg font-semibold shadow-sm' : interactive ? 'hover:bg-bg-hover' : ''
+    }`;
+
   return (
     <div ref={containerRef} className={`bg-bg-card rounded-xl p-3 ${maxHeightClass} overflow-y-auto overflow-x-hidden`}>
       <table className="w-full text-base">
         <tbody>
           {ordered.map(p => (
             <tr key={p.number}>
-              <td className="text-text-dim/50 w-8 pr-2 text-right text-xs tabular-nums">{p.number}.</td>
+              <td className="text-text-dim/70 w-8 pr-2 text-right text-xs tabular-nums">{p.number}.</td>
               <td
                 ref={currentIndex === p.whiteIdx ? activeRef : null}
-                className={`px-2 py-1 cursor-pointer rounded-md transition-all duration-150 ${
-                  currentIndex === p.whiteIdx ? 'bg-gold text-bg font-semibold shadow-sm' : 'hover:bg-bg-hover'
-                }`}
-                onClick={() => onSelectMove(p.whiteIdx)}
+                className={cellClass(currentIndex === p.whiteIdx)}
+                {...cellProps(p.whiteIdx, true)}
               >
                 <span>{p.white?.move?.san || p.white?.san || ''}</span>
                 {renderTag(p.whiteIdx)}
               </td>
               <td
                 ref={p.black && currentIndex === p.blackIdx ? activeRef : null}
-                className={`px-2 py-1 cursor-pointer rounded-md transition-all duration-150 ${
-                  p.black && currentIndex === p.blackIdx ? 'bg-gold text-bg font-semibold shadow-sm' : 'hover:bg-bg-hover'
-                }`}
-                onClick={() => p.black && onSelectMove(p.blackIdx)}
+                className={cellClass(p.black && currentIndex === p.blackIdx)}
+                {...cellProps(p.blackIdx, !!p.black)}
               >
                 <span>{p.black?.move?.san || p.black?.san || ''}</span>
                 {p.black && renderTag(p.blackIdx)}
@@ -78,3 +93,5 @@ export default function MoveList({ history, currentIndex, onSelectMove, classifi
     </div>
   );
 }
+
+export default memo(MoveList);

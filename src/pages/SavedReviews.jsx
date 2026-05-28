@@ -72,7 +72,7 @@ export default function SavedReviews() {
                   {blunders > 0 && <span className="text-incorrect">{blunders} blunder{blunders === 1 ? '' : 's'}</span>}
                 </div>
               </button>
-              <button onClick={() => handleDelete(e.id)} className="text-text-dim/50 hover:text-incorrect px-2 py-1 text-lg" aria-label="Delete">×</button>
+              <button onClick={() => handleDelete(e.id)} className="text-text-dim hover:text-incorrect px-2 py-1 text-lg" aria-label="Delete">×</button>
             </div>
           );
         })}

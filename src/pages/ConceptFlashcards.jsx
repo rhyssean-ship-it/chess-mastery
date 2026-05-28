@@ -60,12 +60,12 @@ export default function ConceptFlashcards() {
       </div>
 
       {/* Card */}
-      <div onClick={() => setFlipped(!flipped)} className="card-base p-5 sm:p-8 min-h-[200px] sm:min-h-[240px] flex flex-col justify-center cursor-pointer hover:border-gold/20 transition-all relative" style={{ perspective: '1000px' }}>
+      <div onClick={() => setFlipped(!flipped)} role="button" tabIndex={0} aria-label="Flip card" onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setFlipped(f => !f); } }} className="card-base p-5 sm:p-8 min-h-[200px] sm:min-h-[240px] flex flex-col justify-center cursor-pointer hover:border-gold/20 transition-all relative" style={{ perspective: '1000px' }}>
         {!flipped ? (
           <div className="text-center">
             <p className="text-xs text-text-dim uppercase tracking-wider mb-4">Question</p>
             <p className="text-lg font-semibold leading-relaxed">{card.front}</p>
-            <p className="text-xs text-text-dim/50 mt-6">Click to reveal answer</p>
+            <p className="text-xs text-text-dim mt-6">Click to reveal answer</p>
           </div>
         ) : (
           <div className="text-center" style={{ animation: 'cardFadeUp 200ms ease-out' }}>

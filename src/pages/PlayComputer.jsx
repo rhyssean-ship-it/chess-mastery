@@ -97,6 +97,7 @@ export default function PlayComputer() {
   const evalBeforeRef = useRef(null);     // { fen, cp } — cached eval of the position before the player's move
   const gameEndedRef = useRef(false);     // makes game-over handling idempotent (clock can tick past 0 before the interval clears)
   const startEpochRef = useRef(0);        // invalidates in-flight engine.init() callbacks from a previous game
+  const cancelBtnRef = useRef(null);      // focus target for the blunder dialog
   const waitingForHint = useRef(false);
   const tickRef = useRef(null);
   const lastTickRef = useRef(null);
@@ -127,6 +128,15 @@ export default function PlayComputer() {
       setTcId('untimed');
     } catch { /* ignore an invalid stash */ }
   }, []);
+
+  // Blunder dialog: focus the primary action on open and let Escape dismiss it.
+  useEffect(() => {
+    if (!pendingMove) return;
+    cancelBtnRef.current?.focus();
+    const onKey = (e) => { if (e.key === 'Escape') { e.preventDefault(); cancelPendingMove(); } };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [pendingMove]);
 
   // Tick the active player's clock during gameplay
   useEffect(() => {
@@ -674,7 +684,7 @@ export default function PlayComputer() {
           <span><span className="text-text-dim mr-1">Eval</span><span className={`tabular-nums font-medium ${evaluation > 0.5 ? 'text-correct' : evaluation < -0.5 ? 'text-incorrect' : 'text-text-dim'}`}>{evaluation > 0 ? '+' : ''}{evaluation.toFixed(1)}</span></span>
         </div>
         <div className="mt-1 max-h-20 overflow-y-auto">
-          <MoveList history={history} currentIndex={moveIndex} onSelectMove={() => {}} />
+          <MoveList history={history} currentIndex={moveIndex} />
         </div>
         {phase === 'playing' && (
           <OpeningExplorer
@@ -754,7 +764,7 @@ export default function PlayComputer() {
             </div>
           </div>
           <div className="space-y-4">
-            <MoveList history={history} currentIndex={moveIndex} onSelectMove={() => {}} />
+            <MoveList history={history} currentIndex={moveIndex} />
             <div className="card-base p-4">
               <div className="flex justify-between text-sm mb-2"><span className="text-text-dim">Moves</span><span className="tabular-nums">{Math.ceil(history.length / 2)}</span></div>
               <div className="flex justify-between text-sm mb-2"><span className="text-text-dim">Evaluation</span><span className={`tabular-nums font-medium ${evaluation > 0.5 ? 'text-correct' : evaluation < -0.5 ? 'text-incorrect' : 'text-text-dim'}`}>{evaluation > 0 ? '+' : ''}{evaluation.toFixed(1)}</span></div>
@@ -782,11 +792,11 @@ export default function PlayComputer() {
 
       {/* Blunder warning (coach mode) */}
       {pendingMove && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="blunder-title">
           <div className="card-base p-5 max-w-sm w-full border border-amber/40 shadow-2xl">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-amber text-xl">⚠</span>
-              <h2 className="text-lg font-display">Hold on — that looks risky</h2>
+              <h2 id="blunder-title" className="text-lg font-display">Hold on — that looks risky</h2>
             </div>
             <p className="text-sm text-text-dim mb-1">
               <span className="font-semibold text-text">{pendingMove.san}</span> may be a blunder.
@@ -796,7 +806,7 @@ export default function PlayComputer() {
             )}
             <p className="text-xs text-text-dim/80 mb-4">Take another look, or play it anyway if you've seen something the coach hasn't.</p>
             <div className="flex gap-2">
-              <button onClick={cancelPendingMove} className="flex-1 py-2.5 rounded-lg bg-gold text-bg font-semibold hover:bg-gold-dim transition-all btn-press">Take it back</button>
+              <button ref={cancelBtnRef} onClick={cancelPendingMove} className="flex-1 py-2.5 rounded-lg bg-gold text-bg font-semibold hover:bg-gold-dim transition-all btn-press">Take it back</button>
               <button onClick={confirmPendingMove} className="flex-1 py-2.5 rounded-lg bg-bg-card border border-bg-hover text-sm font-medium hover:bg-bg-hover transition-all btn-press">Play anyway</button>
             </div>
           </div>

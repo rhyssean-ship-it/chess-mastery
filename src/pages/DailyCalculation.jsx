@@ -158,7 +158,7 @@ export default function DailyCalculation() {
                     className={`w-3 h-3 rounded-sm ${h.result === 'solved' ? 'bg-correct/70' : 'bg-incorrect/40'}`}
                   />
                 ))}
-                {store.history.length === 0 && <div className="text-xs text-text-dim/50">No attempts yet</div>}
+                {store.history.length === 0 && <div className="text-xs text-text-dim">No attempts yet</div>}
               </div>
             </div>
           </div>
