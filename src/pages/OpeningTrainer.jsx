@@ -108,7 +108,7 @@ export default function OpeningTrainer() {
   return (
     <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <Breadcrumb to="/openings" label="Back to Openings" />
-      <h1 className="text-2xl font-display text-gold mb-1">{opening.name}</h1>
+      <h1 className="text-2xl font-display mb-1">{opening.name}</h1>
       <p className="text-text-dim text-sm mb-2">{opening.eco} &middot; {opening.difficulty}</p>
       <p className="text-text text-base mb-8">{opening.description}</p>
 

@@ -16,7 +16,7 @@ export default function PawnStructures() {
           <span>Back to Structures</span>
         </button>
 
-        <h1 className="text-2xl font-display text-gold mb-1">{structure.name}</h1>
+        <h1 className="text-2xl font-display mb-1">{structure.name}</h1>
         <p className="text-text text-base mb-8">{structure.description}</p>
 
         {/* Typical position */}

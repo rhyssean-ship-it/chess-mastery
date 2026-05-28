@@ -42,7 +42,7 @@ function PlanDetail() {
   return (
     <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <Breadcrumb to="/middlegame" label="Back to Middlegame Plans" />
-      <h1 className="text-2xl font-display text-gold mb-1">{plan.title}</h1>
+      <h1 className="text-2xl font-display mb-1">{plan.title}</h1>
       <p className="text-text-dim text-sm mb-5">{plan.structure} &middot; {plan.difficulty}</p>
 
       <div className="space-y-6 leading-relaxed">

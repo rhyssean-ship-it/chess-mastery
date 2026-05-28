@@ -7,16 +7,18 @@ function load() {
   try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; } catch { return []; }
 }
 function save(entries) {
-  localStorage.setItem(STORE_KEY, JSON.stringify(entries.slice(0, MAX_ENTRIES)));
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify(entries.slice(0, MAX_ENTRIES)));
+  } catch { /* quota exceeded or storage unavailable — skip rather than crash the analysis flow */ }
 }
 
 // Insert a mistake derived from a GameAnalysis entry.
 // `analysis` is one item from gameAnalysisService.analyses[].
 export function saveMistake(analysis, context = {}) {
-  if (!analysis?.bestMove || !analysis?.fenBefore) return;
+  if (!analysis?.bestMove || !analysis?.fenBefore) return false;
   const entries = load();
   const id = `${analysis.fenBefore}|${analysis.bestMove}`;
-  if (entries.some(e => e.id === id)) return; // already stored
+  if (entries.some(e => e.id === id)) return false; // already stored
   entries.unshift({
     id,
     fen: analysis.fenBefore,
@@ -35,6 +37,7 @@ export function saveMistake(analysis, context = {}) {
     interval: 1,
   });
   save(entries);
+  return true;
 }
 
 // Bulk-save mistakes/blunders from an analysis result.
@@ -42,9 +45,7 @@ export function saveAnalysisMistakes(analyses, context = {}) {
   let added = 0;
   for (const a of analyses) {
     if (a.classification === 'mistake' || a.classification === 'blunder') {
-      const before = load().length;
-      saveMistake(a, context);
-      if (load().length > before) added++;
+      if (saveMistake(a, context)) added++;
     }
   }
   return added;

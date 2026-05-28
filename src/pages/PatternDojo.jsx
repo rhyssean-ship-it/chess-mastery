@@ -106,7 +106,7 @@ export default function PatternDojo() {
   return (
     <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-6">
       <div className="flex justify-between items-baseline mb-3">
-        <h1 className="text-xl font-display text-gold">Pattern Dojo</h1>
+        <h1 className="text-xl font-display">Pattern Dojo</h1>
         <div className="text-sm text-text-dim">Streak <span className="text-gold font-bold tabular-nums">{streak}</span> · Best {store.best}</div>
       </div>
 

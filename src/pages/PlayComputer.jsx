@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Chess } from 'chess.js';
 import ChessBoard from '../components/ChessBoard';
@@ -10,6 +10,7 @@ import { progressService } from '../services/progressService';
 
 const STANDARD_INITIAL = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 const PLAY_FROM_FEN_KEY = 'enpassant:playFromFen';
+const EMPTY_DESTS = new Map(); // stable identity for "no legal moves"
 
 // Bot personalities. Strength stays governed by the ELO preset; these only bias
 // the choice among near-best moves (see stockfishService._pickStyledMove).
@@ -94,6 +95,8 @@ export default function PlayComputer() {
   const coachEngineRef = useRef(null);
   const coachQueueRef = useRef(null);     // serialises coach analyses so they never clobber each other
   const evalBeforeRef = useRef(null);     // { fen, cp } — cached eval of the position before the player's move
+  const gameEndedRef = useRef(false);     // makes game-over handling idempotent (clock can tick past 0 before the interval clears)
+  const startEpochRef = useRef(0);        // invalidates in-flight engine.init() callbacks from a previous game
   const waitingForHint = useRef(false);
   const tickRef = useRef(null);
   const lastTickRef = useRef(null);
@@ -139,25 +142,22 @@ export default function PlayComputer() {
       const g = gameRef.current;
       if (!g) return;
       const turn = g.turn() === 'w' ? 'white' : 'black';
+      // Keep the side-effect (onFlag) out of the pure setState updater — defer it.
+      const flag = (color) => {
+        if (gameEndedRef.current) return;
+        gameEndedRef.current = true;
+        queueMicrotask(() => onFlag(color));
+      };
       if (turn === 'white') {
-        setWhiteTime(t => {
-          const nx = Math.max(0, (t ?? 0) - dt);
-          if (nx === 0) onFlag('white');
-          return nx;
-        });
+        setWhiteTime(t => { const nx = Math.max(0, (t ?? 0) - dt); if (nx === 0) flag('white'); return nx; });
       } else {
-        setBlackTime(t => {
-          const nx = Math.max(0, (t ?? 0) - dt);
-          if (nx === 0) onFlag('black');
-          return nx;
-        });
+        setBlackTime(t => { const nx = Math.max(0, (t ?? 0) - dt); if (nx === 0) flag('black'); return nx; });
       }
     }, 100);
     return () => { if (tickRef.current) { clearInterval(tickRef.current); tickRef.current = null; } };
   }, [phase, isTimed]);
 
   function onFlag(loserColor) {
-    if (phase !== 'playing') return;
     const pc = playerColorRef.current;
     setResult(loserColor === pc ? 'Lost on time' : 'Computer lost on time');
     setPhase('ended');
@@ -182,6 +182,8 @@ export default function PlayComputer() {
     startFenRef.current = startFen;
     evalBeforeRef.current = null;
     coachQueueRef.current = null;
+    gameEndedRef.current = false;
+    const myEpoch = ++startEpochRef.current;
 
     const g = new Chess(startFen);
     gameRef.current = g;
@@ -242,6 +244,8 @@ export default function PlayComputer() {
     };
 
     engine.init().then(() => {
+      // A newer game started while we were initialising — abandon this one.
+      if (startEpochRef.current !== myEpoch) { engine.destroy(); return; }
       engine.setPersonality(personality);
 
       // Also init a separate hint engine
@@ -305,14 +309,17 @@ export default function PlayComputer() {
   }
 
   function checkEnd(g) {
+    if (gameEndedRef.current) return;
     const pc = playerColorRef.current;
     if (g.isCheckmate()) {
+      gameEndedRef.current = true;
       const winner = g.turn() === 'w' ? 'black' : 'white';
       setResult(winner === pc ? 'You win!' : 'Computer wins!');
       setPhase('ended');
       progressService.logActivity(`Played vs computer (${preset.label}) — ${winner === pc ? 'Won' : 'Lost'}`);
       progressService.recordActivity();
     } else if (g.isDraw() || g.isStalemate() || g.isThreefoldRepetition() || g.isInsufficientMaterial()) {
+      gameEndedRef.current = true;
       setResult('Draw!');
       setPhase('ended');
     }
@@ -338,6 +345,8 @@ export default function PlayComputer() {
           : toCpScore(await coachAnalyze(beforeFen), false);
         const after = await coachAnalyze(g2.fen());
         setCoachChecking(false);
+        // Bail if the game moved on while we were thinking (resign / takeback / game over).
+        if (gameEndedRef.current || gameRef.current?.fen() !== beforeFen) return;
         if (after) {
           const evalAfter = toCpScore(after, true); // opponent is side-to-move → flip to player POV
           const drop = evalBefore - evalAfter;
@@ -441,6 +450,8 @@ export default function PlayComputer() {
   }
 
   function resign() {
+    if (gameEndedRef.current) return;
+    gameEndedRef.current = true;
     setResult('You resigned');
     setPhase('ended');
     progressService.logActivity(`Played vs computer (${preset.label}) — Resigned`);
@@ -467,6 +478,17 @@ export default function PlayComputer() {
   const turnColor = gameRef.current ? (gameRef.current.turn() === 'w' ? 'white' : 'black') : 'white';
   const isPlayerTurn = turnColor === playerColor && !thinking;
   const canMove = isPlayerTurn && !coachChecking && !pendingMove;
+  const inCheck = phase === 'playing' && !!gameRef.current?.isCheck();
+  // Memoised board props — stable identities so a clock tick doesn't recompute or churn them.
+  const legalDests = useMemo(
+    () => (canMove && phase === 'playing') ? getLegalDests() : EMPTY_DESTS,
+    [fen, canMove, phase]
+  );
+  const boardArrows = useMemo(() => hintArrow || [], [hintArrow]);
+  const handleExplorerMove = useMemo(
+    () => (canMove ? (uci) => handleMove(uci.slice(0, 2), uci.slice(2, 4)) : null),
+    [canMove]
+  );
   // evaluation is stored from White's perspective
   const evalClamped = Math.max(-5, Math.min(5, evaluation));
   const evalPct = ((evalClamped + 5) / 10) * 100;
@@ -477,7 +499,7 @@ export default function PlayComputer() {
         <h1 className="text-2xl sm:text-3xl font-display mb-1">Play vs Computer</h1>
         <p className="text-text-dim text-sm mb-6">Challenge Stockfish at any level.</p>
         {customStartFen && (
-          <div className="card-base p-3 mb-4 flex items-center justify-between gap-3 border border-gold/30">
+          <div className="card-base p-3 mb-4 flex items-center justify-between gap-3 bg-gold/5">
             <div className="text-sm">
               <span className="text-gold font-semibold">Playing from a set-up position.</span>
               <span className="text-text-dim"> You'll start as the side to move.</span>
@@ -573,10 +595,10 @@ export default function PlayComputer() {
             </h1>
             <p className="text-text-dim text-[11px]">vs Stockfish ({preset.label} — {preset.elo})</p>
           </div>
-          {gameRef.current?.isCheck() && phase === 'playing' && (
+          {inCheck && (
             <span className="bg-incorrect/15 text-incorrect border border-incorrect/20 px-2 py-0.5 rounded text-xs font-semibold">Check!</span>
           )}
-          {thinking && !gameRef.current?.isCheck() && (
+          {thinking && !inCheck && (
             <div className="flex gap-0.5">
               <div className="w-1.5 h-1.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '0ms' }} />
               <div className="w-1.5 h-1.5 rounded-full bg-gold animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -610,11 +632,11 @@ export default function PlayComputer() {
             fen={fen}
             orientation={playerColor}
             movable={canMove && phase === 'playing'}
-            dests={canMove && phase === 'playing' ? getLegalDests() : new Map()}
+            dests={legalDests}
             turnColor={turnColor}
             onMove={handleMove}
             lastMove={lastMove}
-            arrows={hintArrow || []}
+            arrows={boardArrows}
           />
         </div>
 
@@ -658,7 +680,7 @@ export default function PlayComputer() {
           <OpeningExplorer
             fen={fen}
             className="mt-2"
-            onPlayMove={canMove ? (uci) => handleMove(uci.slice(0, 2), uci.slice(2, 4)) : null}
+            onPlayMove={handleExplorerMove}
           />
         )}
       </div>
@@ -672,7 +694,7 @@ export default function PlayComputer() {
             </h1>
             <p className="text-text-dim text-sm">vs Stockfish ({preset.label} — {preset.elo} ELO)</p>
           </div>
-          {gameRef.current?.isCheck() && phase === 'playing' && (
+          {inCheck && (
             <span className="bg-incorrect/15 text-incorrect border border-incorrect/20 px-3 py-1 rounded-lg text-sm font-semibold">Check!</span>
           )}
         </div>
@@ -697,11 +719,11 @@ export default function PlayComputer() {
                   fen={fen}
                   orientation={playerColor}
                   movable={canMove && phase === 'playing'}
-                  dests={canMove && phase === 'playing' ? getLegalDests() : new Map()}
+                  dests={legalDests}
                   turnColor={turnColor}
                   onMove={handleMove}
                   lastMove={lastMove}
-                  arrows={hintArrow || []}
+                  arrows={boardArrows}
                 />
               </div>
             </div>
@@ -751,7 +773,7 @@ export default function PlayComputer() {
             {phase === 'playing' && (
               <OpeningExplorer
                 fen={fen}
-                onPlayMove={canMove ? (uci) => handleMove(uci.slice(0, 2), uci.slice(2, 4)) : null}
+                onPlayMove={handleExplorerMove}
               />
             )}
           </div>

@@ -94,7 +94,7 @@ export default function EndgameLesson() {
   return (
     <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <Breadcrumb to="/endgames" label="Back to Endgames" />
-      <h1 className="text-2xl font-display text-gold mb-1">{lesson.title}</h1>
+      <h1 className="text-2xl font-display mb-1">{lesson.title}</h1>
       <p className="text-text-dim text-sm mb-5">{lesson.category} &middot; {lesson.difficulty}</p>
 
       {drillMode ? (

@@ -1,9 +1,9 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, memo } from 'react';
 import { fetchExplorer } from '../services/openingExplorerService';
 
 // Live opening-book panel for a given position. Self-manages loading / empty / error.
 // Pass `onPlayMove(uci)` to make the listed moves clickable (e.g. to play them on the board).
-export default function OpeningExplorer({ fen, onPlayMove = null, maxMoves = 8, className = '' }) {
+function OpeningExplorer({ fen, onPlayMove = null, maxMoves = 8, className = '' }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -94,3 +94,5 @@ function fmtGames(n) {
   if (n >= 1_000) return `${(n / 1_000).toFixed(0)}k`;
   return `${n}`;
 }
+
+export default memo(OpeningExplorer);

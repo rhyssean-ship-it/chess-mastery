@@ -141,7 +141,7 @@ export default function GameReview() {
   return (
     <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <button onClick={() => setLoaded(false)} className="inline-flex items-center gap-1.5 text-text-dim hover:text-gold text-sm mb-5 group transition-colors"><svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform"><path fillRule="evenodd" d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" clipRule="evenodd" /></svg><span>Load Another Game</span></button>
-      <h1 className="text-2xl font-display text-gold mb-1">Game Review</h1>
+      <h1 className="text-2xl font-display mb-1">Game Review</h1>
       <p className="text-text-dim text-sm mb-5">Annotate and study your games move by move.</p>
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] lg:grid-cols-[1fr_360px] gap-6">

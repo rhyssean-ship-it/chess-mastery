@@ -138,7 +138,7 @@ export default function EndgameDrills() {
       <div className="page-enter max-w-5xl mx-auto px-4 sm:px-6 py-6">
         <div className="flex flex-wrap items-baseline justify-between gap-3 mb-4">
           <div>
-            <h1 className="text-2xl font-display text-gold">{selected.name}</h1>
+            <h1 className="text-2xl font-display">{selected.name}</h1>
             <p className="text-text-dim text-sm">{selected.objective}</p>
           </div>
           <div className="text-sm text-text-dim">Streak: <span className="text-gold font-bold tabular-nums">{progress}/{selected.wins}</span></div>

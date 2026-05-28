@@ -165,7 +165,7 @@ export default function BlindfoldLadder() {
   if (phase === 'studying') {
     return (
       <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-6 text-center">
-        <h1 className="text-2xl font-display text-gold mb-1">Level {level + 1}</h1>
+        <h1 className="text-2xl font-display mb-1">Level {level + 1}</h1>
         <p className="text-text-dim text-sm mb-3">Study this position — {studyTime}s remaining</p>
         <div className="w-full max-w-[480px] mx-auto">
           <ChessBoard fen={targetFen} orientation="white" movable={false} />
@@ -178,7 +178,7 @@ export default function BlindfoldLadder() {
   return (
     <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-6">
       <div className="text-center mb-4">
-        <h1 className="text-2xl font-display text-gold mb-1">Level {level + 1}</h1>
+        <h1 className="text-2xl font-display mb-1">Level {level + 1}</h1>
         <p className="text-text-dim text-sm">{SEQUENCES[level].ply} moves played from the starting position</p>
       </div>
       <div className="card-base p-5 mb-4">

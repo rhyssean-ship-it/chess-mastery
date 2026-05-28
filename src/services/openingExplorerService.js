@@ -5,6 +5,7 @@
 
 const ENDPOINT = 'https://explorer.lichess.ovh/lichess';
 const CACHE = new Map(); // fen -> result (positions are immutable, safe to cache for the session)
+const CACHE_MAX = 300;   // every distinct mid-game position is a key — cap to avoid unbounded growth
 
 export async function fetchExplorer(fen, { signal } = {}) {
   if (CACHE.has(fen)) return CACHE.get(fen);
@@ -40,6 +41,7 @@ export async function fetchExplorer(fen, { signal } = {}) {
     }),
   };
 
+  if (CACHE.size >= CACHE_MAX) CACHE.delete(CACHE.keys().next().value); // evict oldest (insertion order)
   CACHE.set(fen, result);
   return result;
 }

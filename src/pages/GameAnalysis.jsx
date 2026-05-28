@@ -277,7 +277,7 @@ export default function GameAnalysis() {
               fen={displayFen}
               orientation={orientation}
               movable={false}
-              turnColor={(new Chess(displayFen).turn() === 'w') ? 'white' : 'black'}
+              turnColor={displayFen.split(' ')[1] === 'b' ? 'black' : 'white'}
               lastMove={displayLastMove}
               arrows={bestArrow}
             />

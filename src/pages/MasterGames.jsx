@@ -87,7 +87,7 @@ function GameViewer() {
   return (
     <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <Breadcrumb to="/master-games" label="Back to Master Games" />
-      <h1 className="text-2xl font-display text-gold mb-1">{game.white} vs {game.black}</h1>
+      <h1 className="text-2xl font-display mb-1">{game.white} vs {game.black}</h1>
       <p className="text-text-dim text-base mb-1">{game.event} &middot; Result: {game.result}</p>
       <p className="text-text text-sm mb-8">{game.description}</p>
 

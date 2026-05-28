@@ -391,7 +391,7 @@ export default function VisualisationDrills() {
     return (
       <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
         <button onClick={() => setActiveDrill(null)} className="text-text-dim hover:text-gold text-sm mb-4 inline-block transition-all">&larr; Back to Drills</button>
-        <h1 className="text-2xl font-display text-gold mb-1">{drill.name}</h1>
+        <h1 className="text-2xl font-display mb-1">{drill.name}</h1>
         <p className="text-text-dim text-sm mb-5">Test your board visualisation skills.</p>
         <DrillComponent key={key} />
         <div className="text-center mt-6">
