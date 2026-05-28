@@ -194,13 +194,11 @@ export default function PracticePlay() {
     }
   }
 
-  function handlePreviewSelect(square) {
-    if (!showMoves || phase !== 'playing') return;
-    if (square === previewSquare) { setPreviewSquare(null); return; }
+  function handlePreviewHover(square) {
+    if (!showMoves || phase !== 'playing') { if (previewSquare) setPreviewSquare(null); return; }
     const g = gameRef.current;
     if (!g) return;
-    if (g.get(square)) setPreviewSquare(square);
-    else setPreviewSquare(null);
+    setPreviewSquare(square && g.get(square) ? square : null);
   }
 
   function handleMove(from, to) {
@@ -318,7 +316,7 @@ export default function PracticePlay() {
                 { key: 'hints', label: 'Opening move hints', desc: 'Show recommended opening moves', value: showHints, set: setShowHints },
                 { key: 'eval', label: 'Evaluation bar', desc: 'Show who\'s winning', value: showEval, set: setShowEval },
                 { key: 'tactics', label: 'Tactical alerts', desc: 'Warn about advantages and blunders', value: showTactics, set: setShowTactics },
-                { key: 'moves', label: 'Show piece moves', desc: 'Tap any piece to see where it can go (trains threat-scanning)', value: showMoves, set: setShowMoves },
+                { key: 'moves', label: 'Show piece moves', desc: 'Hover a piece to preview where it can go (trains threat-scanning)', value: showMoves, set: setShowMoves },
               ].map(toggle => (
                 <div key={toggle.key} className="flex items-center justify-between bg-bg-hover/30 rounded-lg px-4 py-3">
                   <div>
@@ -396,7 +394,7 @@ export default function PracticePlay() {
             dests={isPlayerTurn && phase === 'playing' && !thinking ? getLegalDests() : new Map()}
             turnColor={turnColor}
             onMove={handleMove}
-            onSelect={showMoves ? handlePreviewSelect : undefined}
+            onHover={showMoves ? handlePreviewHover : undefined}
             lastMove={lastMove}
             arrows={hintArrows}
             highlights={previewSquare ? previewTargets(previewSquare) : []}
@@ -466,7 +464,7 @@ export default function PracticePlay() {
                   dests={isPlayerTurn && phase === 'playing' && !thinking ? getLegalDests() : new Map()}
                   turnColor={turnColor}
                   onMove={handleMove}
-                  onSelect={showMoves ? handlePreviewSelect : undefined}
+                  onHover={showMoves ? handlePreviewHover : undefined}
                   lastMove={lastMove}
                   arrows={hintArrows}
                   highlights={previewSquare ? previewTargets(previewSquare) : []}
