@@ -30,6 +30,7 @@ export default function GameAnalysis() {
   const [evalPerspective, setEvalPerspective] = useState('objective'); // objective | your
   const [moveListView, setMoveListView] = useState('order');           // order | worst
   const [tryMode, setTryMode] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
   const abortRef = useRef(false);
 
   useEffect(() => {
@@ -174,51 +175,62 @@ export default function GameAnalysis() {
   const progressPct = progress.total > 0 ? (progress.current / progress.total) * 100 : 0;
   const canTryMode = currentAnalysis?.bestMove && !currentAnalysis.isBest;
 
-  function newGame() {
-    sessionStorage.removeItem(SESSION_KEY);
-    navigate('/play');
-  }
-
   return (
     <div className="page-enter max-w-6xl mx-auto px-4 sm:px-6 py-4 lg:py-5">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-        <div>
+      <div className="flex items-center justify-between gap-3 mb-3">
+        <div className="min-w-0">
           <h1 className="text-xl sm:text-2xl font-display leading-tight">Game Review</h1>
-          <p className="text-text-dim text-xs">
+          <p className="text-text-dim text-xs truncate">
             {gameData.label || 'Played game'}{gameData.result ? ` — ${gameData.result}` : ''}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2 items-center">
-          {/* Perspective toggle */}
-          <div className="flex rounded-lg bg-bg-card border border-bg-hover overflow-hidden text-xs">
-            <button
-              onClick={() => setEvalPerspective('objective')}
-              className={`px-3 py-1.5 transition-all ${evalPerspective === 'objective' ? 'bg-gold text-bg font-semibold' : 'text-text-dim hover:text-text'}`}
-            >Objective</button>
-            <button
-              onClick={() => setEvalPerspective('your')}
-              className={`px-3 py-1.5 transition-all ${evalPerspective === 'your' ? 'bg-gold text-bg font-semibold' : 'text-text-dim hover:text-text'}`}
-            >Your side</button>
-          </div>
-          {/* Depth toggle */}
-          <div className="flex rounded-lg bg-bg-card border border-bg-hover overflow-hidden text-xs">
-            {[14, 18].map(d => (
-              <button
-                key={d}
-                onClick={() => setDepth(d)}
-                disabled={!analysisComplete && d !== depth}
-                className={`px-3 py-1.5 font-medium transition-all ${depth === d ? 'bg-gold text-bg' : 'text-text-dim hover:text-text'}`}
-              >
-                {d === 18 ? `Deep ${d}` : `Quick ${d}`}
-              </button>
-            ))}
-          </div>
-          <button onClick={newGame} className="px-3 py-1.5 rounded-lg bg-bg-card border border-bg-hover text-xs hover:bg-bg-hover transition-all">
-            Play again
-          </button>
-        </div>
+        <button
+          onClick={() => setShowOptions(s => !s)}
+          aria-expanded={showOptions}
+          className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg border text-xs transition-all ${showOptions ? 'bg-bg-hover border-bg-hover text-text' : 'bg-bg-card border-bg-hover text-text-dim hover:text-text hover:bg-bg-hover'}`}
+        >
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+          Options
+        </button>
       </div>
+
+      {/* Collapsible options — hidden by default to give the board more room */}
+      {showOptions && (
+        <div className="mb-3 card-base p-3 flex flex-wrap items-center gap-x-5 gap-y-3">
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-text-dim">Eval view</span>
+            <div className="flex rounded-lg bg-bg overflow-hidden text-xs border border-bg-hover">
+              <button
+                onClick={() => setEvalPerspective('objective')}
+                className={`px-3 py-1.5 transition-all ${evalPerspective === 'objective' ? 'bg-gold text-bg font-semibold' : 'text-text-dim hover:text-text'}`}
+              >Objective</button>
+              <button
+                onClick={() => setEvalPerspective('your')}
+                className={`px-3 py-1.5 transition-all ${evalPerspective === 'your' ? 'bg-gold text-bg font-semibold' : 'text-text-dim hover:text-text'}`}
+              >Your side</button>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-text-dim">Engine depth</span>
+            <div className="flex rounded-lg bg-bg overflow-hidden text-xs border border-bg-hover">
+              {[14, 18].map(d => (
+                <button
+                  key={d}
+                  onClick={() => setDepth(d)}
+                  disabled={!analysisComplete && d !== depth}
+                  className={`px-3 py-1.5 font-medium transition-all disabled:opacity-40 ${depth === d ? 'bg-gold text-bg' : 'text-text-dim hover:text-text'}`}
+                >
+                  {d === 18 ? `Deep ${d}` : `Quick ${d}`}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Mistakes saved toast */}
       {analysisComplete && mistakesSaved > 0 && (
@@ -270,35 +282,42 @@ export default function GameAnalysis() {
             />
           )}
 
-          {/* Move controls */}
-          <div className="flex items-center gap-1.5 mt-2">
-            <button onClick={jumpToStart} disabled={currentPly === -1}
-              className="px-2.5 py-1.5 rounded-md bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all disabled:opacity-30"
-              aria-label="Go to start" title="Home">|◀</button>
-            <button onClick={goPrev} disabled={currentPly === -1}
-              className="px-2.5 py-1.5 rounded-md bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all disabled:opacity-30"
-              aria-label="Previous" title="←">◀</button>
-            <div className="flex-1 text-center text-xs text-text-dim tabular-nums">
-              {currentPly === -1 ? 'Start' : `Move ${Math.floor(currentPly / 2) + 1}${currentPly % 2 === 0 ? '' : '…'}`}
+          {/* Move controls — large touch targets for phone navigation */}
+          <div className="mt-2.5">
+            <div className="text-center text-xs text-text-dim tabular-nums mb-2">
+              {currentPly === -1
+                ? 'Starting position'
+                : `Move ${Math.floor(currentPly / 2) + 1}${currentPly % 2 === 0 ? '' : '…'} of ${Math.ceil(history.length / 2)}`}
             </div>
-            <button onClick={goNext} disabled={currentPly >= history.length - 1}
-              className="px-2.5 py-1.5 rounded-md bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all disabled:opacity-30"
-              aria-label="Next" title="→">▶</button>
-            <button onClick={jumpToEnd} disabled={currentPly >= history.length - 1}
-              className="px-2.5 py-1.5 rounded-md bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all disabled:opacity-30"
-              aria-label="Go to end" title="End">▶|</button>
-            <button onClick={jumpToNextMistake} disabled={!analysisComplete}
-              className="px-2.5 py-1.5 rounded-md bg-bg-card border border-bg-hover text-sm hover:bg-bg-hover transition-all disabled:opacity-30 hidden sm:block"
-              aria-label="Next mistake" title="↑ — jump to next mistake">↑?</button>
-            {canTryMode && (
-              <button
-                onClick={() => setTryMode(t => !t)}
-                className={`px-2.5 py-1.5 rounded-md text-sm font-semibold transition-all ${tryMode ? 'bg-gold text-bg' : 'bg-bg-card border border-gold/40 text-gold hover:bg-gold/10'}`}
-                title="T — try the engine's move yourself"
-              >
-                {tryMode ? '✓ Trying' : 'Try it'}
-              </button>
-            )}
+            <div className="flex items-stretch gap-2">
+              <button onClick={jumpToStart} disabled={currentPly === -1}
+                className="flex-1 py-3.5 sm:py-3 rounded-xl bg-bg-card border border-bg-hover text-lg leading-none hover:bg-bg-hover active:scale-[0.97] transition-all disabled:opacity-25"
+                aria-label="Go to start" title="Home">⏮</button>
+              <button onClick={goPrev} disabled={currentPly === -1}
+                className="flex-[1.6] py-3.5 sm:py-3 rounded-xl bg-bg-card border border-bg-hover text-xl leading-none hover:bg-bg-hover active:scale-[0.97] transition-all disabled:opacity-25"
+                aria-label="Previous move" title="←">◀</button>
+              <button onClick={goNext} disabled={currentPly >= history.length - 1}
+                className="flex-[1.6] py-3.5 sm:py-3 rounded-xl bg-gold/15 border border-gold/40 text-gold text-xl leading-none hover:bg-gold/25 active:scale-[0.97] transition-all disabled:opacity-25 disabled:bg-bg-card disabled:border-bg-hover disabled:text-text"
+                aria-label="Next move" title="→">▶</button>
+              <button onClick={jumpToEnd} disabled={currentPly >= history.length - 1}
+                className="flex-1 py-3.5 sm:py-3 rounded-xl bg-bg-card border border-bg-hover text-lg leading-none hover:bg-bg-hover active:scale-[0.97] transition-all disabled:opacity-25"
+                aria-label="Go to end" title="End">⏭</button>
+            </div>
+            {/* Secondary actions */}
+            <div className="flex gap-2 mt-2">
+              <button onClick={jumpToNextMistake} disabled={!analysisComplete}
+                className="flex-1 py-2.5 rounded-xl bg-bg-card border border-bg-hover text-sm text-text-dim hover:text-text hover:bg-bg-hover transition-all disabled:opacity-25"
+                title="↑ — jump to next mistake">Next mistake</button>
+              {canTryMode && (
+                <button
+                  onClick={() => setTryMode(t => !t)}
+                  className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${tryMode ? 'bg-gold text-bg' : 'bg-bg-card border border-gold/40 text-gold hover:bg-gold/10'}`}
+                  title="T — try the engine's move yourself"
+                >
+                  {tryMode ? '✓ Trying' : 'Try this move'}
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Mobile: per-move detail below board. Hidden on desktop (it lives in the sidebar). */}
