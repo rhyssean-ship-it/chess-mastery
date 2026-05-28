@@ -57,6 +57,9 @@ export default function PlayComputer() {
   const [whiteTime, setWhiteTime] = useState(null);
   const [blackTime, setBlackTime] = useState(null);
   const gameRef = useRef(null);
+  // Engine callbacks (onMove) are created once in startGame, before setPlayerColor
+  // has committed, so they'd capture a stale playerColor. Read colour from this ref instead.
+  const playerColorRef = useRef('white');
   const engineRef = useRef(null);
   const hintEngineRef = useRef(null);
   const waitingForHint = useRef(false);
@@ -108,9 +111,10 @@ export default function PlayComputer() {
 
   function onFlag(loserColor) {
     if (phase !== 'playing') return;
-    setResult(loserColor === playerColor ? 'Lost on time' : 'Computer lost on time');
+    const pc = playerColorRef.current;
+    setResult(loserColor === pc ? 'Lost on time' : 'Computer lost on time');
     setPhase('ended');
-    progressService.logActivity?.(`Played vs computer (${preset.label}) — ${loserColor === playerColor ? 'Lost on time' : 'Won on time'}`);
+    progressService.logActivity?.(`Played vs computer (${preset.label}) — ${loserColor === pc ? 'Lost on time' : 'Won on time'}`);
   }
 
   function startGame() {
@@ -122,6 +126,7 @@ export default function PlayComputer() {
       ? (Math.random() < 0.5 ? 'white' : 'black')
       : colorChoice;
     setPlayerColor(resolvedColor);
+    playerColorRef.current = resolvedColor;
 
     const g = new Chess();
     gameRef.current = g;
@@ -199,11 +204,12 @@ export default function PlayComputer() {
   }
 
   function checkEnd(g) {
+    const pc = playerColorRef.current;
     if (g.isCheckmate()) {
       const winner = g.turn() === 'w' ? 'black' : 'white';
-      setResult(winner === playerColor ? 'You win!' : 'Computer wins!');
+      setResult(winner === pc ? 'You win!' : 'Computer wins!');
       setPhase('ended');
-      progressService.logActivity(`Played vs computer (${preset.label}) — ${winner === playerColor ? 'Won' : 'Lost'}`);
+      progressService.logActivity(`Played vs computer (${preset.label}) — ${winner === pc ? 'Won' : 'Lost'}`);
       progressService.recordActivity();
     } else if (g.isDraw() || g.isStalemate() || g.isThreefoldRepetition() || g.isInsufficientMaterial()) {
       setResult('Draw!');
@@ -370,11 +376,12 @@ export default function PlayComputer() {
           )}
         </div>
 
-        {/* Horizontal eval bar (player perspective: their side at the bottom of the bar) */}
+        {/* Horizontal eval bar. White fill = White's advantage, anchored on White's
+            side of the board (right when the board is flipped for a Black player). */}
         <div className="h-2 rounded-full overflow-hidden bg-bg-hover relative mb-1" title={`Eval: ${evaluation > 0 ? '+' : ''}${evaluation.toFixed(1)}`}>
           <div
-            className="absolute top-0 bottom-0 left-0 bg-white transition-all duration-500 ease-out rounded-full"
-            style={{ width: `${playerColor === 'white' ? evalPct : (100 - evalPct)}%` }}
+            className={`absolute top-0 bottom-0 bg-white transition-all duration-500 ease-out rounded-full ${playerColor === 'black' ? 'right-0' : 'left-0'}`}
+            style={{ width: `${evalPct}%` }}
           />
         </div>
 
@@ -466,7 +473,8 @@ export default function PlayComputer() {
             )}
             <div className="flex gap-2">
               <div className="w-4 rounded-full overflow-hidden bg-bg-hover flex-shrink-0 relative" title={`Eval: ${evaluation > 0 ? '+' : ''}${evaluation.toFixed(1)}`}>
-                <div className="absolute bottom-0 left-0 right-0 bg-white transition-all duration-500 ease-out rounded-full" style={{ height: `${evalPct}%` }} />
+                {/* White fill anchored on White's side of the board — top when flipped for Black. */}
+                <div className={`absolute left-0 right-0 bg-white transition-all duration-500 ease-out rounded-full ${playerColor === 'black' ? 'top-0' : 'bottom-0'}`} style={{ height: `${evalPct}%` }} />
               </div>
               <div className="flex-1">
                 <ChessBoard
