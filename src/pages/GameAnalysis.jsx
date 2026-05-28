@@ -12,6 +12,7 @@ import { saveAnalysedGame } from '../services/savedGames';
 import { explainPlayedMove, explainBestMove, patternsFromAnalyses } from '../services/moveExplanation';
 
 const SESSION_KEY = 'enpassant:reviewGame';
+const PLAY_FROM_FEN_KEY = 'enpassant:playFromFen';
 const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
 const MISTAKE_CLASSES = new Set([CLASS.INACCURACY, CLASS.MISTAKE, CLASS.BLUNDER, CLASS.MISS]);
@@ -308,6 +309,10 @@ export default function GameAnalysis() {
               <button onClick={jumpToNextMistake} disabled={!analysisComplete}
                 className="flex-1 py-2.5 rounded-xl bg-bg-card border border-bg-hover text-sm text-text-dim hover:text-text hover:bg-bg-hover transition-all disabled:opacity-25"
                 title="↑ — jump to next mistake">Next mistake</button>
+              <button
+                onClick={() => { sessionStorage.setItem(PLAY_FROM_FEN_KEY, displayFen); navigate('/play'); }}
+                className="flex-1 py-2.5 rounded-xl bg-bg-card border border-bg-hover text-sm text-text-dim hover:text-text hover:bg-bg-hover transition-all"
+                title="Play this position out against the engine">Play from here</button>
               {canTryMode && (
                 <button
                   onClick={() => setTryMode(t => !t)}
@@ -361,6 +366,10 @@ export default function GameAnalysis() {
           <EvalGraph analyses={analyses} currentPly={currentPly} onJump={jumpTo} evalPerspective={evalPerspective} playerColor={orientation} compact />
 
           {summary && <SummaryCard summary={summary} />}
+
+          {analysisComplete && analyses.length > 0 && (
+            <TurningPointsCard analyses={analyses} playerColor={orientation} currentPly={currentPly} onJump={jumpTo} />
+          )}
 
           {analysisComplete && analyses.length > 0 && (
             <PatternCard analyses={analyses} playerColor={orientation} />
@@ -556,6 +565,49 @@ function MoveDetail({ analysis, showBestArrow, setShowBestArrow, evalPerspective
           Show engine's recommended move
         </label>
       )}
+    </div>
+  );
+}
+
+// The 3 moves where the player's win-percentage swung the most — the game's real
+// turning points. Tap one to jump there, then use "Try this move" to find the fix.
+function TurningPointsCard({ analyses, playerColor, currentPly, onJump }) {
+  const mine = analyses.filter(a => a && a.color === playerColor && (a.classification === 'mistake' || a.classification === 'blunder'));
+  const points = mine
+    .map(a => ({ a, drop: Math.max(0, a.wpBefore - a.wpAfter) }))
+    .sort((x, y) => y.drop - x.drop)
+    .slice(0, 3)
+    .sort((x, y) => x.a.ply - y.a.ply); // present chronologically
+  if (points.length === 0) return null;
+
+  const band = (w) => w >= 75 ? 'winning' : w >= 58 ? 'better' : w >= 42 ? 'equal' : w >= 25 ? 'worse' : 'losing';
+
+  return (
+    <div className="card-base p-3">
+      <div className="text-[10px] text-text-dim uppercase tracking-wide mb-2 font-semibold">Turning points</div>
+      <div className="space-y-1.5">
+        {points.map(({ a }) => {
+          const meta = CLASS_META[a.classification];
+          const moveNumber = Math.floor(a.ply / 2) + 1;
+          const isActive = a.ply === currentPly;
+          return (
+            <button
+              key={a.ply}
+              onClick={() => onJump(a.ply)}
+              className={`w-full text-left p-2 rounded-md transition-all ${isActive ? 'bg-gold/15' : 'hover:bg-bg-hover/40'}`}
+            >
+              <div className="flex items-center gap-2 text-sm">
+                <span className={`font-bold ${meta?.color}`}>{meta?.symbol}</span>
+                <span className="text-text-dim">{moveNumber}.{a.color === 'black' ? '..' : ''}</span>
+                <span className="font-semibold">{a.san}</span>
+                {a.bestMoveSan && !a.isBest && <span className="text-text-dim/70 text-xs ml-auto">better: {a.bestMoveSan}</span>}
+              </div>
+              <div className="text-[11px] text-text-dim mt-0.5">You were {band(a.wpBefore)}, then {band(a.wpAfter)}.</div>
+            </button>
+          );
+        })}
+      </div>
+      <div className="text-[10px] text-text-dim/70 mt-2">Tap one, then “Try this move” to find the better line.</div>
     </div>
   );
 }

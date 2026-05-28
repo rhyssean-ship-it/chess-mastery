@@ -3,8 +3,29 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Chess } from 'chess.js';
 import ChessBoard from '../components/ChessBoard';
 import MoveList from '../components/MoveList';
+import OpeningExplorer from '../components/OpeningExplorer';
 import StockfishService, { ELO_PRESETS } from '../services/stockfishService';
+import { toCpScore } from '../services/moveClassification';
 import { progressService } from '../services/progressService';
+
+const STANDARD_INITIAL = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+const PLAY_FROM_FEN_KEY = 'enpassant:playFromFen';
+
+// Bot personalities. Strength stays governed by the ELO preset; these only bias
+// the choice among near-best moves (see stockfishService._pickStyledMove).
+const PERSONALITIES = [
+  { id: 'balanced',    label: 'Balanced',    desc: 'Plays the engine’s top move.' },
+  { id: 'aggressive',  label: 'Aggressive',  desc: 'Loves checks, captures and attacks.' },
+  { id: 'defensive',   label: 'Defensive',   desc: 'Solid, quiet, avoids loose play.' },
+  { id: 'materialist', label: 'Materialist', desc: 'Grabs material whenever it can.' },
+  { id: 'positional',  label: 'Positional',  desc: 'Develops, castles, improves pieces.' },
+];
+
+// Depth for the on-the-fly coach evaluations. Shallow enough to feel instant,
+// deep enough to spot a hung piece or a big swing.
+const COACH_DEPTH = 11;
+const BLUNDER_DROP_CP = 150; // warn when a move drops >= 1.5 pawns
+const BLUNDER_KEEP_CP = 200; // …unless you're still clearly winning afterwards
 
 function getInitialLevel(searchParams) {
   const elo = parseInt(searchParams.get('elo'));
@@ -45,8 +66,10 @@ export default function PlayComputer() {
   const [colorChoice, setColorChoice] = useState('white');
   const [playerColor, setPlayerColor] = useState('white');
   const [levelIndex, setLevelIndex] = useState(() => getInitialLevel(searchParams));
+  const [personality, setPersonality] = useState('balanced');
+  const [coachMode, setCoachMode] = useState(true);
   const [tcId, setTcId] = useState(DEFAULT_TC_ID);
-  const [fen, setFen] = useState('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
+  const [fen, setFen] = useState(STANDARD_INITIAL);
   const [history, setHistory] = useState([]);
   const [moveIndex, setMoveIndex] = useState(-1);
   const [evaluation, setEvaluation] = useState(0);
@@ -56,12 +79,21 @@ export default function PlayComputer() {
   const [hintArrow, setHintArrow] = useState(null);
   const [whiteTime, setWhiteTime] = useState(null);
   const [blackTime, setBlackTime] = useState(null);
+  const [coachChecking, setCoachChecking] = useState(false);
+  const [pendingMove, setPendingMove] = useState(null); // { from, to, promotion, san, threat } when a blunder is flagged
+  const [customStartFen, setCustomStartFen] = useState(null); // set when arriving via "Play from here"
   const gameRef = useRef(null);
   // Engine callbacks (onMove) are created once in startGame, before setPlayerColor
   // has committed, so they'd capture a stale playerColor. Read colour from this ref instead.
   const playerColorRef = useRef('white');
+  const coachModeRef = useRef(true);
+  const personalityRef = useRef('balanced');
+  const startFenRef = useRef(STANDARD_INITIAL);
   const engineRef = useRef(null);
   const hintEngineRef = useRef(null);
+  const coachEngineRef = useRef(null);
+  const coachQueueRef = useRef(null);     // serialises coach analyses so they never clobber each other
+  const evalBeforeRef = useRef(null);     // { fen, cp } — cached eval of the position before the player's move
   const waitingForHint = useRef(false);
   const tickRef = useRef(null);
   const lastTickRef = useRef(null);
@@ -74,8 +106,23 @@ export default function PlayComputer() {
     return () => {
       if (engineRef.current) engineRef.current.destroy();
       if (hintEngineRef.current) hintEngineRef.current.destroy();
+      if (coachEngineRef.current) coachEngineRef.current.destroy();
       if (tickRef.current) clearInterval(tickRef.current);
     };
+  }, []);
+
+  // "Play from here": GameAnalysis stashes a FEN, we consume it once and pre-fill setup.
+  useEffect(() => {
+    const stashed = sessionStorage.getItem(PLAY_FROM_FEN_KEY);
+    if (!stashed) return;
+    sessionStorage.removeItem(PLAY_FROM_FEN_KEY);
+    try {
+      const g = new Chess(stashed);
+      setCustomStartFen(stashed);
+      // Default to playing the side that's on move in the stashed position.
+      setColorChoice(g.turn() === 'w' ? 'white' : 'black');
+      setTcId('untimed');
+    } catch { /* ignore an invalid stash */ }
   }, []);
 
   // Tick the active player's clock during gameplay
@@ -120,6 +167,7 @@ export default function PlayComputer() {
   function startGame() {
     if (engineRef.current) engineRef.current.destroy();
     if (hintEngineRef.current) hintEngineRef.current.destroy();
+    if (coachEngineRef.current) coachEngineRef.current.destroy();
 
     // Resolve the colour choice now so rematch with "random" re-rolls each time.
     const resolvedColor = colorChoice === 'random'
@@ -127,8 +175,15 @@ export default function PlayComputer() {
       : colorChoice;
     setPlayerColor(resolvedColor);
     playerColorRef.current = resolvedColor;
+    coachModeRef.current = coachMode;
+    personalityRef.current = personality;
 
-    const g = new Chess();
+    const startFen = customStartFen || STANDARD_INITIAL;
+    startFenRef.current = startFen;
+    evalBeforeRef.current = null;
+    coachQueueRef.current = null;
+
+    const g = new Chess(startFen);
     gameRef.current = g;
     setFen(g.fen());
     setHistory([]);
@@ -138,6 +193,8 @@ export default function PlayComputer() {
     setLastMove(null);
     setHintArrow(null);
     setThinking(false);
+    setCoachChecking(false);
+    setPendingMove(null);
     if (isTimed) {
       setWhiteTime(timeControl.initial * 1000);
       setBlackTime(timeControl.initial * 1000);
@@ -172,6 +229,7 @@ export default function PlayComputer() {
             else setBlackTime(t => (t ?? 0) + timeControl.increment * 1000);
           }
           checkEnd(g2);
+          if (!g2.isGameOver() && coachModeRef.current) primeCoachEval(g2.fen());
         }
         setThinking(false);
       }, 400);
@@ -184,6 +242,8 @@ export default function PlayComputer() {
     };
 
     engine.init().then(() => {
+      engine.setPersonality(personality);
+
       // Also init a separate hint engine
       const hintEng = new StockfishService();
       hintEngineRef.current = hintEng;
@@ -196,11 +256,52 @@ export default function PlayComputer() {
       };
       hintEng.init();
 
-      if (resolvedColor === 'black') {
+      // Who is on move in the starting position? (Usually the player, but a
+      // "play from here" position can start on either side.)
+      const engineToMove = (g.turn() === 'w' ? 'white' : 'black') !== resolvedColor;
+
+      // Separate full-strength engine that powers the blunder warnings
+      if (coachMode) {
+        const coachEng = new StockfishService();
+        coachEngineRef.current = coachEng;
+        coachEng.init().then(() => {
+          if (!engineToMove) primeCoachEval(g.fen());
+        });
+      }
+
+      if (engineToMove) {
         setThinking(true);
-        engine.getBestMove(g.fen());
+        requestEngineMove(g.fen());
       }
     });
+  }
+
+  // Route an engine move through the personality if one is active.
+  function requestEngineMove(fen) {
+    const eng = engineRef.current;
+    if (!eng) return;
+    if (personalityRef.current && personalityRef.current !== 'balanced') eng.getStyledMove(fen);
+    else eng.getBestMove(fen);
+  }
+
+  // Serialise all coach analyses through one promise chain so concurrent calls on the
+  // single coach worker can't clobber each other's message handlers.
+  function coachAnalyze(fen) {
+    if (!coachEngineRef.current) return Promise.resolve(null);
+    const prev = coachQueueRef.current || Promise.resolve();
+    const next = prev
+      .catch(() => {})
+      .then(() => coachEngineRef.current?.analyzePosition(fen, { depth: COACH_DEPTH, multiPv: 1 }));
+    coachQueueRef.current = next.catch(() => {});
+    return next;
+  }
+
+  // Pre-evaluate the position when it becomes the player's turn, so the blunder check
+  // only needs one more (post-move) eval and feels near-instant.
+  async function primeCoachEval(fen) {
+    evalBeforeRef.current = null;
+    const r = await coachAnalyze(fen);
+    if (r) evalBeforeRef.current = { fen, cp: toCpScore(r, false) }; // player is side-to-move here
   }
 
   function checkEnd(g) {
@@ -217,13 +318,51 @@ export default function PlayComputer() {
     }
   }
 
-  function handleMove(from, to) {
+  async function handleMove(from, to) {
     const g = gameRef.current;
-    if (!g || thinking || phase !== 'playing') return;
+    if (!g || thinking || coachChecking || pendingMove || phase !== 'playing') return;
     if ((g.turn() === 'w' ? 'white' : 'black') !== playerColor) return;
 
-    const g2 = new Chess(g.fen());
+    const beforeFen = g.fen();
+    const g2 = new Chess(beforeFen);
     const m = g2.move({ from, to, promotion: 'q' });
+    if (!m) return;
+
+    // Coach mode: evaluate the move before committing and warn on a likely blunder.
+    if (coachModeRef.current && coachEngineRef.current) {
+      setCoachChecking(true);
+      try {
+        const cached = evalBeforeRef.current;
+        const evalBefore = (cached && cached.fen === beforeFen)
+          ? cached.cp
+          : toCpScore(await coachAnalyze(beforeFen), false);
+        const after = await coachAnalyze(g2.fen());
+        setCoachChecking(false);
+        if (after) {
+          const evalAfter = toCpScore(after, true); // opponent is side-to-move → flip to player POV
+          const drop = evalBefore - evalAfter;
+          if (drop >= BLUNDER_DROP_CP && evalAfter < BLUNDER_KEEP_CP) {
+            setPendingMove({
+              from, to, promotion: 'q', san: m.san,
+              threat: describeThreat(g2.fen(), after.bestMove),
+            });
+            return; // hold the move until the player confirms or takes it back
+          }
+        }
+      } catch {
+        setCoachChecking(false);
+      }
+    }
+
+    commitMove(from, to, 'q');
+  }
+
+  // Actually play the player's move and trigger the engine's reply.
+  function commitMove(from, to, promotion = 'q') {
+    const g = gameRef.current;
+    if (!g) return;
+    const g2 = new Chess(g.fen());
+    const m = g2.move({ from, to, promotion });
     if (!m) return;
 
     gameRef.current = g2;
@@ -235,14 +374,43 @@ export default function PlayComputer() {
 
     // Add increment to the player's clock (they just moved)
     if (isTimed && timeControl.increment) {
-      if (playerColor === 'white') setWhiteTime(t => (t ?? 0) + timeControl.increment * 1000);
+      if (playerColorRef.current === 'white') setWhiteTime(t => (t ?? 0) + timeControl.increment * 1000);
       else setBlackTime(t => (t ?? 0) + timeControl.increment * 1000);
     }
 
     if (g2.isGameOver()) { checkEnd(g2); return; }
 
     setThinking(true);
-    setTimeout(() => engineRef.current?.getBestMove(g2.fen()), 300);
+    setTimeout(() => requestEngineMove(g2.fen()), 300);
+  }
+
+  // Describe what the opponent's best reply punishes, for the blunder warning.
+  function describeThreat(fenAfterPlayerMove, oppBestUci) {
+    if (!oppBestUci) return null;
+    try {
+      const g = new Chess(fenAfterPlayerMove);
+      const mv = g.move({ from: oppBestUci.slice(0, 2), to: oppBestUci.slice(2, 4), promotion: oppBestUci[4] || undefined });
+      if (!mv) return null;
+      if (mv.captured) {
+        const names = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' };
+        return `${mv.san} would win your ${names[mv.captured] || 'piece'}`;
+      }
+      if (mv.san.endsWith('#')) return `${mv.san} is checkmate`;
+      if (mv.san.endsWith('+')) return `${mv.san} comes with check`;
+      return `${mv.san} is strong`;
+    } catch { return null; }
+  }
+
+  function confirmPendingMove() {
+    if (!pendingMove) return;
+    const { from, to, promotion } = pendingMove;
+    setPendingMove(null);
+    commitMove(from, to, promotion);
+  }
+
+  function cancelPendingMove() {
+    // The move was never committed, so the board simply snaps back to `fen`.
+    setPendingMove(null);
   }
 
   function getLegalDests() {
@@ -259,7 +427,7 @@ export default function PlayComputer() {
   function takeBack() {
     if (!gameRef.current || history.length < 2) return;
     const newHistory = history.slice(0, -2);
-    const newFen = newHistory.length > 0 ? newHistory[newHistory.length - 1].fen : 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+    const newFen = newHistory.length > 0 ? newHistory[newHistory.length - 1].fen : startFenRef.current;
     gameRef.current = new Chess(newFen);
     setFen(newFen);
     setHistory(newHistory);
@@ -267,6 +435,9 @@ export default function PlayComputer() {
     setLastMove(null);
     setHintArrow(null);
     setThinking(false);
+    setCoachChecking(false);
+    setPendingMove(null);
+    if (coachModeRef.current) primeCoachEval(newFen);
   }
 
   function resign() {
@@ -288,13 +459,14 @@ export default function PlayComputer() {
       playerColor,
       result,
       label: `vs Stockfish (${preset.label}, ${preset.elo} ELO)`,
-      startingFen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+      startingFen: startFenRef.current,
     }));
     navigate('/play/analysis');
   }
 
   const turnColor = gameRef.current ? (gameRef.current.turn() === 'w' ? 'white' : 'black') : 'white';
   const isPlayerTurn = turnColor === playerColor && !thinking;
+  const canMove = isPlayerTurn && !coachChecking && !pendingMove;
   // evaluation is stored from White's perspective
   const evalClamped = Math.max(-5, Math.min(5, evaluation));
   const evalPct = ((evalClamped + 5) / 10) * 100;
@@ -304,6 +476,15 @@ export default function PlayComputer() {
       <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
         <h1 className="text-2xl sm:text-3xl font-display mb-1">Play vs Computer</h1>
         <p className="text-text-dim text-sm mb-6">Challenge Stockfish at any level.</p>
+        {customStartFen && (
+          <div className="card-base p-3 mb-4 flex items-center justify-between gap-3 border border-gold/30">
+            <div className="text-sm">
+              <span className="text-gold font-semibold">Playing from a set-up position.</span>
+              <span className="text-text-dim"> You'll start as the side to move.</span>
+            </div>
+            <button onClick={() => setCustomStartFen(null)} className="text-xs px-3 py-1.5 rounded-lg bg-bg-card border border-bg-hover hover:bg-bg-hover shrink-0">Use standard start</button>
+          </div>
+        )}
         <div className="card-base p-6 space-y-8">
           <div>
             <label className="text-sm text-text-dim block mb-3 font-medium">Play as</label>
@@ -333,6 +514,19 @@ export default function PlayComputer() {
             </div>
           </div>
           <div>
+            <label className="text-sm text-text-dim block mb-3 font-medium">Opponent style</label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {PERSONALITIES.map(p => (
+                <button key={p.id} onClick={() => setPersonality(p.id)}
+                  title={p.desc}
+                  className={`py-2 rounded-lg text-sm font-medium transition-all btn-press ${personality === p.id ? 'bg-gold text-bg' : 'bg-bg-hover text-text-dim hover:text-text'}`}>
+                  {p.label}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-text-dim mt-2">{PERSONALITIES.find(p => p.id === personality)?.desc}</p>
+          </div>
+          <div>
             <label className="text-sm text-text-dim block mb-3 font-medium">Time control</label>
             <div className="grid grid-cols-3 gap-2">
               {TIME_CONTROLS.map(tc => (
@@ -343,6 +537,21 @@ export default function PlayComputer() {
               ))}
             </div>
           </div>
+          <label className="flex items-center justify-between gap-3 cursor-pointer">
+            <span>
+              <span className="text-sm font-medium block">Blunder warnings</span>
+              <span className="text-xs text-text-dim">Coach checks each of your moves and warns before a big mistake.</span>
+            </span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={coachMode}
+              onClick={() => setCoachMode(c => !c)}
+              className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${coachMode ? 'bg-gold' : 'bg-bg-hover'}`}
+            >
+              <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-bg transition-transform ${coachMode ? 'translate-x-5' : ''}`} />
+            </button>
+          </label>
           <button onClick={startGame} className="w-full bg-gold text-bg py-3 rounded-lg font-semibold text-lg hover:bg-gold-dim transition-all btn-press shadow-lg shadow-gold/10">
             Start Game
           </button>
@@ -360,7 +569,7 @@ export default function PlayComputer() {
         <div className="flex items-center justify-between mb-1.5 px-1">
           <div className="min-w-0">
             <h1 className="text-base font-display text-gold truncate">
-              {phase === 'ended' ? result : thinking ? 'Engine thinking...' : isPlayerTurn ? 'Your move' : ''}
+              {phase === 'ended' ? result : coachChecking ? 'Checking your move…' : thinking ? 'Engine thinking...' : isPlayerTurn ? 'Your move' : ''}
             </h1>
             <p className="text-text-dim text-[11px]">vs Stockfish ({preset.label} — {preset.elo})</p>
           </div>
@@ -400,8 +609,8 @@ export default function PlayComputer() {
           <ChessBoard
             fen={fen}
             orientation={playerColor}
-            movable={isPlayerTurn && phase === 'playing'}
-            dests={isPlayerTurn && phase === 'playing' ? getLegalDests() : new Map()}
+            movable={canMove && phase === 'playing'}
+            dests={canMove && phase === 'playing' ? getLegalDests() : new Map()}
             turnColor={turnColor}
             onMove={handleMove}
             lastMove={lastMove}
@@ -445,6 +654,13 @@ export default function PlayComputer() {
         <div className="mt-1 max-h-20 overflow-y-auto">
           <MoveList history={history} currentIndex={moveIndex} onSelectMove={() => {}} />
         </div>
+        {phase === 'playing' && (
+          <OpeningExplorer
+            fen={fen}
+            className="mt-2"
+            onPlayMove={canMove ? (uci) => handleMove(uci.slice(0, 2), uci.slice(2, 4)) : null}
+          />
+        )}
       </div>
 
       {/* Desktop: side-by-side layout */}
@@ -452,7 +668,7 @@ export default function PlayComputer() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-display text-gold mb-0.5">
-              {phase === 'ended' ? result : thinking ? 'Engine thinking...' : isPlayerTurn ? 'Your move' : ''}
+              {phase === 'ended' ? result : coachChecking ? 'Checking your move…' : thinking ? 'Engine thinking...' : isPlayerTurn ? 'Your move' : ''}
             </h1>
             <p className="text-text-dim text-sm">vs Stockfish ({preset.label} — {preset.elo} ELO)</p>
           </div>
@@ -480,8 +696,8 @@ export default function PlayComputer() {
                 <ChessBoard
                   fen={fen}
                   orientation={playerColor}
-                  movable={isPlayerTurn && phase === 'playing'}
-                  dests={isPlayerTurn && phase === 'playing' ? getLegalDests() : new Map()}
+                  movable={canMove && phase === 'playing'}
+                  dests={canMove && phase === 'playing' ? getLegalDests() : new Map()}
                   turnColor={turnColor}
                   onMove={handleMove}
                   lastMove={lastMove}
@@ -532,9 +748,38 @@ export default function PlayComputer() {
                 <span className="text-sm text-text-dim">Stockfish is calculating...</span>
               </div>
             )}
+            {phase === 'playing' && (
+              <OpeningExplorer
+                fen={fen}
+                onPlayMove={canMove ? (uci) => handleMove(uci.slice(0, 2), uci.slice(2, 4)) : null}
+              />
+            )}
           </div>
         </div>
       </div>
+
+      {/* Blunder warning (coach mode) */}
+      {pendingMove && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" role="dialog" aria-modal="true">
+          <div className="card-base p-5 max-w-sm w-full border border-amber/40 shadow-2xl">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-amber text-xl">⚠</span>
+              <h2 className="text-lg font-display">Hold on — that looks risky</h2>
+            </div>
+            <p className="text-sm text-text-dim mb-1">
+              <span className="font-semibold text-text">{pendingMove.san}</span> may be a blunder.
+            </p>
+            {pendingMove.threat && (
+              <p className="text-sm text-text-dim mb-3">After it, <span className="text-text">{pendingMove.threat}</span>.</p>
+            )}
+            <p className="text-xs text-text-dim/80 mb-4">Take another look, or play it anyway if you've seen something the coach hasn't.</p>
+            <div className="flex gap-2">
+              <button onClick={cancelPendingMove} className="flex-1 py-2.5 rounded-lg bg-gold text-bg font-semibold hover:bg-gold-dim transition-all btn-press">Take it back</button>
+              <button onClick={confirmPendingMove} className="flex-1 py-2.5 rounded-lg bg-bg-card border border-bg-hover text-sm font-medium hover:bg-bg-hover transition-all btn-press">Play anyway</button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

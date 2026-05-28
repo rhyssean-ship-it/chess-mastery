@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Chess } from 'chess.js';
 import ChessBoard from '../components/ChessBoard';
+import OpeningExplorer from '../components/OpeningExplorer';
 import StockfishService from '../services/stockfishService';
 
 const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
@@ -303,6 +304,9 @@ export default function PositionLab() {
               })}
             </div>
           </div>
+
+          {/* Opening book for the current position */}
+          {fenValid && <OpeningExplorer fen={fen} />}
 
           {/* FEN display */}
           <div className="card-base p-3">

@@ -1,3 +1,5 @@
+import { Chess } from 'chess.js';
+
 const ELO_PRESETS = [
   { label: 'Beginner', elo: 400, depth: 1, skill: 0, moveTime: 50 },
   { label: 'Novice', elo: 600, depth: 2, skill: 1, moveTime: 50 },
@@ -20,6 +22,7 @@ class StockfishService {
     this.onMove = null;
     this.onEval = null;
     this.currentPreset = ELO_PRESETS[4];
+    this.personality = 'balanced';
   }
 
   init() {
@@ -130,6 +133,113 @@ class StockfishService {
     this.send('stop');
     this.send(`position fen ${fen}`);
     this.send('go depth 8 movetime 300');
+  }
+
+  // Bot "personality". Strength is still governed by the ELO preset (depth/movetime/skill);
+  // personality only biases the choice *among near-best candidate moves*.
+  setPersonality(style) {
+    this.personality = style || 'balanced';
+    // Contempt nudges draw-avoidance/sharpness. Harmless setoption if the build ignores it.
+    const contempt = style === 'aggressive' ? 60 : style === 'defensive' ? -30 : 0;
+    this.send(`setoption name Contempt value ${contempt}`);
+  }
+
+  // Ask for a move shaped by the current personality. For 'balanced' this is just getBestMove.
+  // Otherwise we read the top few candidate lines and pick the one that best fits the style,
+  // staying within a small centipawn window of the engine's best so strength is barely affected.
+  getStyledMove(fen) {
+    if (!this.ready || !this.worker) return;
+    const style = this.personality || 'balanced';
+    if (style === 'balanced') { this.getBestMove(fen); return; }
+
+    const preset = this.currentPreset;
+    const linesByPv = {};
+    const prevOnMessage = this.worker.onmessage;
+
+    this.worker.onmessage = (e) => {
+      const msg = typeof e.data === 'string' ? e.data : '';
+      if (!msg) return;
+      if (msg.startsWith('info ') && msg.includes(' pv ')) {
+        const pvIdxMatch = msg.match(/ multipv (\d+)/);
+        const idx = pvIdxMatch ? parseInt(pvIdxMatch[1]) : 1;
+        const cpMatch = msg.match(/ score cp (-?\d+)/);
+        const mateMatch = msg.match(/ score mate (-?\d+)/);
+        const lineMatch = msg.match(/ pv (.+)$/);
+        if (lineMatch) {
+          linesByPv[idx] = {
+            scoreCp: cpMatch ? parseInt(cpMatch[1]) : null,
+            mate: mateMatch ? parseInt(mateMatch[1]) : null,
+            pv: lineMatch[1].trim().split(/\s+/),
+          };
+        }
+      }
+      if (msg.startsWith('bestmove')) {
+        this.worker.onmessage = prevOnMessage;
+        this.send('setoption name MultiPV value 1');
+        const lines = Object.entries(linesByPv)
+          .map(([k, v]) => ({ multipv: parseInt(k), ...v }))
+          .sort((a, b) => a.multipv - b.multipv);
+        const fallback = msg.split(' ')[1];
+        const chosen = this._pickStyledMove(lines, style, fen)
+          || (fallback && fallback !== '(none)' ? fallback : null);
+        const top = lines[0];
+        if (top && this.onEval) {
+          if (top.mate != null) this.onEval(top.mate > 0 ? 100 : -100);
+          else if (top.scoreCp != null) this.onEval(top.scoreCp / 100);
+        }
+        if (chosen && this.onMove) this.onMove(chosen);
+      }
+    };
+
+    this.send('stop');
+    this.send('setoption name MultiPV value 4');
+    this.send(`position fen ${fen}`);
+    this.send(`go depth ${preset.depth} movetime ${preset.moveTime}`);
+  }
+
+  _pickStyledMove(lines, style, fen) {
+    if (!lines.length) return null;
+    const PIECE_VALUE = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };
+    const cands = [];
+    for (const ln of lines) {
+      const uci = ln.pv?.[0];
+      if (!uci) continue;
+      let v = null;
+      try {
+        const g = new Chess(fen);
+        v = g.move({ from: uci.slice(0, 2), to: uci.slice(2, 4), promotion: uci[4] || undefined });
+      } catch { /* skip illegal */ }
+      if (!v) continue;
+      const score = ln.mate != null
+        ? (ln.mate > 0 ? 100000 - ln.mate : -100000 - ln.mate)
+        : (ln.scoreCp ?? 0);
+      cands.push({ uci, v, score });
+    }
+    if (!cands.length) return null;
+
+    const best = cands[0].score;
+    const WINDOW = 70; // cp — only re-rank among moves this close to best
+    const pool = cands.filter(c => best - c.score <= WINDOW);
+    const isCheck = v => v.san.includes('+') || v.san.includes('#');
+    const isCapture = v => !!v.captured;
+    const capVal = v => (v.captured ? PIECE_VALUE[v.captured] : 0);
+    const isCastle = v => v.san === 'O-O' || v.san === 'O-O-O';
+    const isMinorDev = v => v.piece === 'n' || v.piece === 'b';
+
+    let scored;
+    if (style === 'aggressive') {
+      scored = pool.map(c => ({ c, k: (isCheck(c.v) ? 100 : 0) + (isCapture(c.v) ? 40 + capVal(c.v) * 3 : 0) + c.score * 0.01 }));
+    } else if (style === 'materialist') {
+      scored = pool.map(c => ({ c, k: capVal(c.v) * 100 + (isCapture(c.v) ? 20 : 0) + c.score * 0.01 }));
+    } else if (style === 'defensive') {
+      scored = pool.map(c => ({ c, k: (isCapture(c.v) ? -20 : 20) + (isCheck(c.v) ? -10 : 0) + (isCastle(c.v) ? 40 : 0) + c.score * 0.02 }));
+    } else if (style === 'positional') {
+      scored = pool.map(c => ({ c, k: (isCastle(c.v) ? 60 : 0) + (isMinorDev(c.v) ? 30 : 0) + (isCapture(c.v) ? -10 : 15) + c.score * 0.02 }));
+    } else {
+      return cands[0].uci;
+    }
+    scored.sort((a, b) => b.k - a.k);
+    return scored[0].c.uci;
   }
 
   stop() {
