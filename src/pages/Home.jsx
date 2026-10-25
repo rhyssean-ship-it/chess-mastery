@@ -6,6 +6,7 @@ import { listSavedGames } from '../services/savedGames';
 import { listDue as repertoireDue } from '../services/repertoireSRS';
 import DailyPlanCard from '../components/DailyPlanCard';
 import BlunderTrendCard from '../components/BlunderTrendCard';
+import RatingCard from '../components/RatingCard';
 import { localDateKey, localDateKeyDaysAgo } from '../utils/dateKey';
 
 function loadJson(key, fallback) {
@@ -68,10 +69,13 @@ export default function Home() {
           {[
             streak > 0 && <>Day <span className="text-gold font-semibold">{streak}</span> streak</>,
             totalMistakes > 0 && <>{totalMistakes} saved mistakes</>,
-            lastRating && <>Est. rating <span className="text-gold font-semibold">{lastRating.estimated}</span></>,
+            lastRating && <>Puzzle est. <span className="text-gold font-semibold">{lastRating.estimated}</span></>,
           ].filter(Boolean).map((part, i) => <span key={i}>{i > 0 && ' · '}{part}</span>)}
         </p>
       </div>
+
+      {/* Where you are */}
+      <RatingCard className="mb-5" />
 
       {/* Today's plan */}
       <DailyPlanCard />

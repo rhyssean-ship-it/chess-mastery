@@ -154,6 +154,7 @@ export function ProfileIndex() {
       <FocusBanner />
 
       <Section title="Progress" items={[
+        { to: '/profile/rating', label: 'Your Rating', desc: 'Rated games vs the computer' },
         { to: '/progress', label: 'Dashboard', desc: 'Stats, accuracy, activity' },
         { to: '/rating-estimator', label: 'Rating Estimator', desc: 'Adaptive 16-puzzle battery' },
         { to: '/weakness', label: 'Weakness Analyzer' },

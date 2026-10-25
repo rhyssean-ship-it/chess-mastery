@@ -52,6 +52,7 @@ const ROUTE_LABELS = {
   '/blunder-detection': 'Blunder Detection',
   '/practice-play': 'Practice Play',
   '/progress': 'Progress Dashboard',
+  '/profile/rating': 'Your Rating',
   '/settings': 'Settings',
 };
 

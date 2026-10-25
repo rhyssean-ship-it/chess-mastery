@@ -45,6 +45,7 @@ const BlindfoldLadder = lazy(() => import('./pages/BlindfoldLadder'))
 const PatternDojo = lazy(() => import('./pages/PatternDojo'))
 const RatingEstimator = lazy(() => import('./pages/RatingEstimator'))
 const SavedReviews = lazy(() => import('./pages/SavedReviews'))
+const RatingHistory = lazy(() => import('./pages/RatingHistory'))
 const PositionLab = lazy(() => import('./pages/PositionLab'))
 const LearnIndex = lazy(() => import('./pages/SectionIndex').then(m => ({ default: m.LearnIndex })))
 const TrainIndex = lazy(() => import('./pages/SectionIndex').then(m => ({ default: m.TrainIndex })))
@@ -91,6 +92,7 @@ function App() {
             <Route path="/train" element={<TrainIndex />} />
             <Route path="/profile" element={<ProfileIndex />} />
             <Route path="/profile/reviews" element={<SavedReviews />} />
+            <Route path="/profile/rating" element={<RatingHistory />} />
             <Route path="/lab" element={<PositionLab />} />
             <Route path="/daily" element={<DailyChallenge />} />
             <Route path="/openings" element={<OpeningsIndex />} />

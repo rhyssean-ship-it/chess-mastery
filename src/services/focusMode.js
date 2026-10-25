@@ -16,7 +16,7 @@ export const FOCUS_ROUTES = new Set([
   // Train
   '/daily', '/daily-calculation', '/tactics', '/puzzle-rush', '/thinking-drills', '/my-mistakes', '/endgame-drills',
   // Profile
-  '/progress', '/weakness', '/profile/reviews',
+  '/profile/rating', '/progress', '/weakness', '/profile/reviews',
 ]);
 
 export function isFocusMode() {

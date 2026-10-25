@@ -7,6 +7,7 @@ import OpeningExplorer from '../components/OpeningExplorer';
 import StockfishService, { ELO_PRESETS } from '../services/stockfishService';
 import { toCpScore } from '../services/moveClassification';
 import { progressService } from '../services/progressService';
+import { currentRating, listRatedGames, recordRatedGame } from '../services/ratingHistory';
 
 const STANDARD_INITIAL = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 const PLAY_FROM_FEN_KEY = 'enpassant:playFromFen';
@@ -28,8 +29,14 @@ const COACH_DEPTH = 11;
 const BLUNDER_DROP_CP = 150; // warn when a move drops >= 1.5 pawns
 const BLUNDER_KEEP_CP = 200; // …unless you're still clearly winning afterwards
 
+const RATED_PREF_KEY = 'chess-mastery:ratedGames';
+function loadRatedPref() {
+  try { return localStorage.getItem(RATED_PREF_KEY) === 'on'; } catch { return false; }
+}
+
+// ?elo= wins; otherwise the bot nearest your rating once you have rated games.
 function getInitialLevel(searchParams) {
-  const elo = parseInt(searchParams.get('elo'));
+  const elo = parseInt(searchParams.get('elo')) || (listRatedGames().length ? currentRating() : null);
   if (!elo) return 4;
   // Find the closest ELO preset
   let best = 0;
@@ -75,6 +82,8 @@ export default function PlayComputer() {
   const [levelIndex, setLevelIndex] = useState(() => getInitialLevel(searchParams));
   const [personality, setPersonality] = useState('balanced');
   const [coachMode, setCoachMode] = useState(true);
+  const [rated, setRated] = useState(loadRatedPref);
+  const [ratingRow, setRatingRow] = useState(null); // { before, after } once a rated game ends, or { aborted: true }
   const [tcId, setTcId] = useState(DEFAULT_TC_ID);
   const [fen, setFen] = useState(STANDARD_INITIAL);
   const [history, setHistory] = useState([]);
@@ -94,6 +103,8 @@ export default function PlayComputer() {
   // has committed, so they'd capture a stale playerColor. Read colour from this ref instead.
   const playerColorRef = useRef('white');
   const coachModeRef = useRef(true);
+  const ratedRef = useRef(null);          // { elo, label } of the bot while a rated game is in progress
+  const playerMovesRef = useRef(0);
   const personalityRef = useRef('balanced');
   const startFenRef = useRef(STANDARD_INITIAL);
   const engineRef = useRef(null);
@@ -208,10 +219,12 @@ export default function PlayComputer() {
     if (!canMate) {
       setResult('Draw: time ran out, but the other side can’t mate');
       setPhase('ended');
+      finishRated(0.5, 'Draw on time');
       return;
     }
     setResult(loserColor === pc ? 'Lost on time' : 'Computer lost on time');
     setPhase('ended');
+    finishRated(loserColor === pc ? 0 : 1, loserColor === pc ? 'Lost on time' : 'Won on time');
     progressService.logActivity?.(`Played vs computer (${preset.label}) — ${loserColor === pc ? 'Lost on time' : 'Won on time'}`);
   }
 
@@ -226,7 +239,12 @@ export default function PlayComputer() {
       : colorChoice;
     setPlayerColor(resolvedColor);
     playerColorRef.current = resolvedColor;
-    coachModeRef.current = coachMode;
+    // Rated games are unassisted, and only count from the standard start.
+    const isRated = rated && !customStartFen;
+    ratedRef.current = isRated ? { elo: preset.elo, label: preset.label } : null;
+    playerMovesRef.current = 0;
+    setRatingRow(null);
+    coachModeRef.current = coachMode && !isRated;
     personalityRef.current = personality;
 
     const startFen = customStartFen || STANDARD_INITIAL;
@@ -296,24 +314,28 @@ export default function PlayComputer() {
       if (startEpochRef.current !== myEpoch) { engine.destroy(); return; }
       engine.setPersonality(personality);
 
-      // Also init a separate hint engine
-      const hintEng = new StockfishService();
-      hintEngineRef.current = hintEng;
-      hintEng.setLevel(ELO_PRESETS.length - 1); // full strength: hints must be right
-      hintEng.onMove = (uci) => {
-        if (waitingForHint.current && hintFenRef.current === gameRef.current?.fen()) {
-          setHintArrow([[uci.slice(0, 2), uci.slice(2, 4)]]);
-          waitingForHint.current = false;
-        }
-      };
-      hintEng.init();
+      // Also init a separate hint engine (not needed in a rated game: no hints)
+      if (!ratedRef.current) {
+        const hintEng = new StockfishService();
+        hintEngineRef.current = hintEng;
+        hintEng.setLevel(ELO_PRESETS.length - 1); // full strength: hints must be right
+        hintEng.onMove = (uci) => {
+          if (waitingForHint.current && hintFenRef.current === gameRef.current?.fen()) {
+            setHintArrow([[uci.slice(0, 2), uci.slice(2, 4)]]);
+            waitingForHint.current = false;
+          }
+        };
+        hintEng.init();
+      } else {
+        hintEngineRef.current = null;
+      }
 
       // Who is on move in the starting position? (Usually the player, but a
       // "play from here" position can start on either side.)
       const engineToMove = (g.turn() === 'w' ? 'white' : 'black') !== resolvedColor;
 
       // Separate full-strength engine that powers the blunder warnings
-      if (coachMode) {
+      if (coachModeRef.current) {
         const coachEng = new StockfishService();
         coachEngineRef.current = coachEng;
         coachEng.init().then(() => {
@@ -366,12 +388,23 @@ export default function PlayComputer() {
       setPhase('ended');
       progressService.logActivity(`Played vs computer (${preset.label}) — ${winner === pc ? 'Won' : 'Lost'}`);
       progressService.recordActivity();
+      finishRated(winner === pc ? 1 : 0, winner === pc ? 'Won by checkmate' : 'Lost to checkmate');
     } else if (g.isDraw() || g.isStalemate() || g.isThreefoldRepetition() || g.isInsufficientMaterial()) {
       gameEndedRef.current = true;
       setResult(g.isStalemate() ? 'Draw by stalemate' : g.isInsufficientMaterial() ? 'Draw: not enough material to mate'
         : g.isThreefoldRepetition() ? 'Draw by repetition' : 'Draw (50-move rule)');
       setPhase('ended');
+      finishRated(0.5, 'Draw');
     }
+  }
+
+  // Score a rated game once. Fewer than two of your own moves counts as an abort, not a result.
+  function finishRated(score, result) {
+    const bot = ratedRef.current;
+    if (!bot) return;
+    ratedRef.current = null;
+    if (playerMovesRef.current < 2) { setRatingRow({ aborted: true }); return; }
+    setRatingRow(recordRatedGame({ botElo: bot.elo, botLabel: bot.label, score, result }));
   }
 
   async function handleMove(from, to) {
@@ -424,6 +457,7 @@ export default function PlayComputer() {
     if (!m) return;
 
     gameRef.current = g2;
+    playerMovesRef.current++;
     setFen(g2.fen());
     setLastMove([from, to]);
     setHintArrow(null);
@@ -505,6 +539,7 @@ export default function PlayComputer() {
     setPhase('ended');
     progressService.logActivity(`Played vs computer (${preset.label}) — Resigned`);
     progressService.recordActivity();
+    finishRated(0, 'Resigned');
   }
 
   function requestHint() {
@@ -542,6 +577,13 @@ export default function PlayComputer() {
   // evaluation is stored from White's perspective
   const evalClamped = Math.max(-5, Math.min(5, evaluation));
   const evalPct = ((evalClamped + 5) / 10) * 100;
+
+  const ratedSetup = rated && !customStartFen;
+  // What the subtitle says about the rating: in progress, the change at the end, or an abort.
+  const ratingNote = ratingRow
+    ? (ratingRow.aborted ? 'Aborted: not rated'
+      : `Rating ${ratingRow.before} → ${ratingRow.after} (${ratingRow.after - ratingRow.before >= 0 ? '+' : ''}${ratingRow.after - ratingRow.before})`)
+    : (phase === 'playing' && ratedRef.current ? 'Rated' : null);
 
   if (phase === 'setup') {
     return (
@@ -609,19 +651,43 @@ export default function PlayComputer() {
               ))}
             </div>
           </div>
-          <label className="flex items-center justify-between gap-3 cursor-pointer">
+          <label className={`flex items-center justify-between gap-3 ${customStartFen ? 'opacity-50' : 'cursor-pointer'}`}>
             <span>
-              <span className="text-sm font-medium block">Blunder warnings</span>
-              <span className="text-xs text-text-dim">Coach checks each of your moves and warns before a big mistake.</span>
+              <span className="text-sm font-medium block">Rated game</span>
+              <span className="text-xs text-text-dim">
+                {customStartFen
+                  ? 'Only games from the standard start are rated.'
+                  : <>Counts towards your rating (now <span className="text-gold tabular-nums">{currentRating()}</span>). No hints, takebacks, opening book or blunder warnings.</>}
+              </span>
             </span>
             <button
               type="button"
               role="switch"
-              aria-checked={coachMode}
-              onClick={() => setCoachMode(c => !c)}
-              className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${coachMode ? 'bg-gold' : 'bg-bg-hover'}`}
+              aria-checked={rated && !customStartFen}
+              disabled={!!customStartFen}
+              onClick={() => setRated(r => {
+                try { localStorage.setItem(RATED_PREF_KEY, r ? 'off' : 'on'); } catch { /* storage unavailable */ }
+                return !r;
+              })}
+              className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${rated && !customStartFen ? 'bg-gold' : 'bg-bg-hover'}`}
             >
-              <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-bg transition-transform ${coachMode ? 'translate-x-5' : ''}`} />
+              <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-bg transition-transform ${rated && !customStartFen ? 'translate-x-5' : ''}`} />
+            </button>
+          </label>
+          <label className={`flex items-center justify-between gap-3 ${ratedSetup ? 'opacity-50' : 'cursor-pointer'}`}>
+            <span>
+              <span className="text-sm font-medium block">Blunder warnings</span>
+              <span className="text-xs text-text-dim">{ratedSetup ? 'Off in rated games.' : 'Coach checks each of your moves and warns before a big mistake.'}</span>
+            </span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={coachMode && !ratedSetup}
+              disabled={ratedSetup}
+              onClick={() => setCoachMode(c => !c)}
+              className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${coachMode && !ratedSetup ? 'bg-gold' : 'bg-bg-hover'}`}
+            >
+              <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-bg transition-transform ${coachMode && !ratedSetup ? 'translate-x-5' : ''}`} />
             </button>
           </label>
           <button onClick={startGame} className="w-full bg-gold text-bg py-3 rounded-lg font-semibold text-lg hover:bg-gold-dim transition-all btn-press shadow-lg shadow-gold/10">
@@ -644,7 +710,7 @@ export default function PlayComputer() {
             <div role="heading" aria-level={1} className="text-base font-display text-gold truncate">
               {phase === 'ended' ? result : coachChecking ? 'Checking your move…' : thinking ? 'Engine thinking...' : isPlayerTurn ? 'Your move' : ''}
             </div>
-            <p className="text-text-dim text-[11px]">vs Stockfish ({preset.label} — {preset.elo})</p>
+            <p className="text-text-dim text-[11px]">vs Stockfish ({preset.label} — {preset.elo}){ratingNote && <> · <span className="text-gold">{ratingNote}</span></>}</p>
           </div>
           {inCheck && (
             <span className="bg-incorrect/15 text-incorrect border border-incorrect/20 px-2 py-0.5 rounded text-xs font-semibold">Check!</span>
@@ -705,8 +771,10 @@ export default function PlayComputer() {
         <div className="flex gap-2 mt-2">
           {phase === 'playing' && (
             <>
+              {!ratedRef.current && <>
               <button onClick={takeBack} disabled={history.length < 2 || thinking} className="flex-1 py-2.5 rounded-lg bg-bg-card border border-bg-hover text-sm font-medium hover:bg-bg-hover transition-all btn-press disabled:opacity-30">Takeback</button>
               <button onClick={requestHint} disabled={thinking || !isPlayerTurn} className="flex-1 py-2.5 rounded-lg bg-bg-card border border-bg-hover text-sm font-medium hover:bg-bg-hover transition-all btn-press disabled:opacity-30">{hintArrow ? 'Hint ✓' : 'Hint'}</button>
+              </>}
               <button onClick={resign} className="flex-1 py-2.5 rounded-lg bg-incorrect/10 border border-incorrect/20 text-incorrect text-sm font-medium hover:bg-incorrect/20 transition-all btn-press">Resign</button>
             </>
           )}
@@ -727,7 +795,7 @@ export default function PlayComputer() {
         <div className="mt-1 max-h-20 overflow-y-auto">
           <MoveList history={history} currentIndex={moveIndex} />
         </div>
-        {phase === 'playing' && (
+        {phase === 'playing' && !ratedRef.current && (
           <OpeningExplorer
             fen={fen}
             className="mt-2"
@@ -743,7 +811,7 @@ export default function PlayComputer() {
             <h1 className="text-2xl font-display text-gold mb-0.5">
               {phase === 'ended' ? result : coachChecking ? 'Checking your move…' : thinking ? 'Engine thinking...' : isPlayerTurn ? 'Your move' : ''}
             </h1>
-            <p className="text-text-dim text-sm">vs Stockfish ({preset.label} — {preset.elo} ELO)</p>
+            <p className="text-text-dim text-sm">vs Stockfish ({preset.label} — {preset.elo} ELO){ratingNote && <> · <span className="text-gold">{ratingNote}</span></>}</p>
           </div>
           {inCheck && (
             <span className="bg-incorrect/15 text-incorrect border border-incorrect/20 px-3 py-1 rounded-lg text-sm font-semibold">Check!</span>
@@ -790,8 +858,10 @@ export default function PlayComputer() {
             <div className="flex gap-2 mt-3">
               {phase === 'playing' && (
                 <>
+                  {!ratedRef.current && <>
                   <button onClick={takeBack} disabled={history.length < 2 || thinking} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press disabled:opacity-30 disabled:cursor-not-allowed">Takeback</button>
                   <button onClick={requestHint} disabled={thinking || !isPlayerTurn} className="flex-1 py-2 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press disabled:opacity-30 disabled:cursor-not-allowed">{hintArrow ? 'Hint shown' : 'Hint'}</button>
+                  </>}
                   <button onClick={resign} className="flex-1 py-2 rounded-lg bg-incorrect/10 border border-incorrect/20 text-incorrect text-base hover:bg-incorrect/20 transition-all btn-press">Resign</button>
                 </>
               )}
@@ -821,7 +891,7 @@ export default function PlayComputer() {
                 <span className="text-sm text-text-dim">Stockfish is calculating...</span>
               </div>
             )}
-            {phase === 'playing' && (
+            {phase === 'playing' && !ratedRef.current && (
               <OpeningExplorer
                 fen={fen}
                 onPlayMove={handleExplorerMove}
