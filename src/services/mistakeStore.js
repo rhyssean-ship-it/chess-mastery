@@ -1,5 +1,8 @@
 // Persists mistakes/blunders from game analyses as solvable puzzles.
 
+import { Chess } from 'chess.js';
+import { failedStep } from './spyScanSafe';
+
 const STORE_KEY = 'chess-mastery:mistakes';
 const MAX_ENTRIES = 200;
 
@@ -29,6 +32,7 @@ export function saveMistake(analysis, context = {}) {
     classification: analysis.classification,
     cpl: analysis.cpl,
     color: analysis.color,
+    failedStep: analysis.failedStep || null, // spy | scan | safe
     context,                                // { label, result, date }
     savedAt: Date.now(),
     timesAttempted: 0,
@@ -51,7 +55,26 @@ export function saveAnalysisMistakes(analyses, context = {}) {
   return added;
 }
 
-export function listMistakes() { return load(); }
+// Entries saved before Spy, Scan, Safe tagging existed get tagged lazily, a few per call so
+// no single page load pays for the whole backlog.
+const BACKFILL_PER_CALL = 25;
+function backfillSteps(entries) {
+  let changed = 0;
+  for (const e of entries) {
+    if (e.failedStep !== undefined || changed >= BACKFILL_PER_CALL) continue;
+    let step = null;
+    try {
+      const m = new Chess(e.fen).move(e.youPlayed);
+      step = failedStep({ fenBefore: e.fen, uci: m.from + m.to + (m.promotion || ''), classification: e.classification, bestMove: e.solution?.[0] });
+    } catch { /* unparseable entry — leave untagged */ }
+    e.failedStep = step;
+    changed++;
+  }
+  if (changed) save(entries);
+  return entries;
+}
+
+export function listMistakes() { return backfillSteps(load()); }
 
 // Mark attempt; success extends SM-2-like interval, failure resets.
 export function recordAttempt(id, success) {

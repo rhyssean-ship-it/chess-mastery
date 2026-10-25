@@ -42,6 +42,7 @@ export function saveAnalysedGame({ label, result, playerColor, startingFen, hist
       bestMoveSan: a.bestMoveSan,
       bestMovePv: a.bestMovePv?.slice(0, 8),
       secondBestCpGap: a.secondBestCpGap,
+      failedStep: a.failedStep || null,
     }));
   const entry = {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,

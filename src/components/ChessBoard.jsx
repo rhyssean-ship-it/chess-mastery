@@ -1,10 +1,11 @@
 import { useRef, useEffect, useState } from 'react';
 import { Chessground } from 'chessground';
 
+// arrows: [from, to] or [from, to, brush]; highlights: 'e4' or { square, brush }.
 function buildShapes(arrows, highlights) {
   const shapes = [];
-  if (arrows.length > 0) shapes.push(...arrows.map(([from, to]) => ({ orig: from, dest: to, brush: 'green' })));
-  if (highlights.length > 0) shapes.push(...highlights.map(sq => ({ orig: sq, brush: 'yellow' })));
+  if (arrows.length > 0) shapes.push(...arrows.map(([from, to, brush]) => ({ orig: from, dest: to, brush: brush || 'green' })));
+  if (highlights.length > 0) shapes.push(...highlights.map(h => typeof h === 'string' ? { orig: h, brush: 'yellow' } : { orig: h.square, brush: h.brush || 'yellow' }));
   return shapes;
 }
 
@@ -31,6 +32,7 @@ export default function ChessBoard({
   turnColor = 'white',
   onMove,
   onHover,
+  onSquareClick,
   lastMove,
   check = false,
   arrows = [],
@@ -43,11 +45,13 @@ export default function ChessBoard({
   const cgRef = useRef(null);
   const onMoveRef = useRef(onMove);
   const onHoverRef = useRef(onHover);
+  const onSquareClickRef = useRef(onSquareClick);
   const [loaded, setLoaded] = useState(false);
 
   // Always keep the latest callbacks
   onMoveRef.current = onMove;
   onHoverRef.current = onHover;
+  onSquareClickRef.current = onSquareClick;
 
   // Destroy and recreate on key prop changes
   useEffect(() => {
@@ -123,6 +127,18 @@ export default function ChessBoard({
       el.removeEventListener('mouseleave', handleLeave);
     };
   }, [orientation, !!onHover]);
+
+  // Tap-a-square (drills): a plain click listener so it works on a non-movable board.
+  useEffect(() => {
+    const el = boardRef.current;
+    if (!el || !onSquareClick) return;
+    const handleClick = (e) => {
+      const sq = squareAt(el, e.clientX, e.clientY, orientation);
+      if (sq) onSquareClickRef.current?.(sq);
+    };
+    el.addEventListener('click', handleClick);
+    return () => el.removeEventListener('click', handleClick);
+  }, [orientation, !!onSquareClick]);
 
   const frameClass = framed
     ? `board-frame ${movable ? 'board-frame--interactive' : ''}`

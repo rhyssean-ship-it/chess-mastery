@@ -18,9 +18,9 @@ const stages = [
   {
     elo: '700 → 1000',
     title: 'Core Skills',
-    description: 'Build the pre-move checklist habit, learn common mistakes, and start solving tactics.',
+    description: 'Build the Spy, Scan, Safe habit, learn common mistakes, and start solving tactics.',
     sections: [
-      { to: '/pre-move-checklist', label: 'Pre-Move Checklist' },
+      { to: '/pre-move-checklist', label: 'Spy, Scan, Safe' },
       { to: '/common-mistakes', label: 'Common Mistakes Quiz' },
       { to: '/blunder-detection', label: 'Blunder Detection' },
       { to: '/tactics', label: 'Tactics Puzzles (Beginner)' },

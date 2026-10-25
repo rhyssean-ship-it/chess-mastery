@@ -9,6 +9,7 @@ import {
   moveAccuracy,
   summarize,
 } from './moveClassification';
+import { failedStep } from './spyScanSafe';
 
 const PIECE_VALUE = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 100 };
 const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
@@ -103,7 +104,7 @@ function buildAnalysis(ply, plyIdx, before, after, isBookMove) {
     } catch { /* invalid bestMove — leave null */ }
   }
 
-  return {
+  const analysis = {
     ply: plyIdx,
     color: ply.color,
     san: ply.san,
@@ -126,6 +127,9 @@ function buildAnalysis(ply, plyIdx, before, after, isBookMove) {
     secondBestCpGap,
     preliminary: false,
   };
+  // Which step of Spy, Scan, Safe the mistake broke (null for good moves)
+  analysis.failedStep = failedStep(analysis);
+  return analysis;
 }
 
 // Worker pool: spin up N Stockfish engines in parallel.

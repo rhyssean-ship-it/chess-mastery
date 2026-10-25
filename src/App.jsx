@@ -56,6 +56,7 @@ const PieceValueGuide = lazy(() => import('./pages/PieceValueGuide'))
 const HangingPieces = lazy(() => import('./pages/HangingPieces'))
 const CommonMistakes = lazy(() => import('./pages/CommonMistakes'))
 const PreMoveChecklist = lazy(() => import('./pages/PreMoveChecklist'))
+const ThinkingDrills = lazy(() => import('./pages/ThinkingDrills'))
 const GamePhaseGuide = lazy(() => import('./pages/GamePhaseGuide'))
 const BlunderDetection = lazy(() => import('./pages/BlunderDetection'))
 const DailyChallenge = lazy(() => import('./pages/DailyChallenge'))
@@ -133,6 +134,7 @@ function App() {
           <Route path="/hanging-pieces" element={<HangingPieces />} />
           <Route path="/common-mistakes" element={<CommonMistakes />} />
           <Route path="/pre-move-checklist" element={<PreMoveChecklist />} />
+          <Route path="/thinking-drills" element={<ThinkingDrills />} />
           <Route path="/game-phases" element={<GamePhaseGuide />} />
           <Route path="/blunder-detection" element={<BlunderDetection />} />
           {/* /learning-path redirects to / */}

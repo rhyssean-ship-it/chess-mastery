@@ -6,6 +6,15 @@ import MoveList from '../components/MoveList';
 import StockfishService, { ELO_PRESETS } from '../services/stockfishService';
 import openings from '../data/openings';
 import { progressService } from '../services/progressService';
+import RoutineCoach from '../components/RoutineCoach';
+import { safetyCheck, nullMoveFen } from '../services/spyScanSafe';
+
+const START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+const COACH_MODES = [
+  { id: 'every', label: 'Every move' },
+  { id: 'sharp', label: 'Sharp moments' },
+  { id: 'off', label: 'Off' },
+];
 
 export default function PracticePlay() {
   const navigate = useNavigate();
@@ -32,6 +41,15 @@ export default function PracticePlay() {
   const [openingPhase, setOpeningPhase] = useState(true);
   const [openingMoveIdx, setOpeningMoveIdx] = useState(0);
   const [previewSquare, setPreviewSquare] = useState(null);
+
+  // Spy, Scan, Safe coach
+  const [coachMode, setCoachMode] = useState('every');
+  const [coachMarks, setCoachMarks] = useState({ fen: null, arrows: [], highlights: [] });
+  const [pendingMove, setPendingMove] = useState(null); // move held back by the Safe check
+  const [passText, setPassText] = useState(null);
+  const [boardKey, setBoardKey] = useState(0);          // remount to snap a held-back piece home
+  const hintModeRef = useRef('hint');                   // 'hint' | 'pass'
+  const passFenRef = useRef(null);
 
   const engineRef = useRef(null);
   const hintEngineRef = useRef(null);
@@ -112,6 +130,15 @@ export default function PracticePlay() {
       hintEngineRef.current = hintEng;
       hintEng.setLevel(7);
       hintEng.onMove = (uci) => {
+        if (hintModeRef.current === 'pass') {
+          hintModeRef.current = 'hint';
+          try {
+            const m = new Chess(passFenRef.current).move({ from: uci.slice(0, 2), to: uci.slice(2, 4), promotion: uci[4] || undefined });
+            setPassText(`If it were their move, they’d play ${m.san}.`);
+            setCoachMarks({ fen: gameRef.current?.fen(), arrows: [[m.from, m.to, 'red']], highlights: [] });
+          } catch { /* position moved on */ }
+          return;
+        }
         setHintArrows([[uci.slice(0, 2), uci.slice(2, 4)]]);
         setCoachMessage({ type: 'info', text: 'The engine suggests this move.' });
       };
@@ -207,10 +234,30 @@ export default function PracticePlay() {
     if ((g.turn() === 'w' ? 'white' : 'black') !== playerColor) return;
 
     setPreviewSquare(null);  // clear preview when a real move starts
+    setPendingMove(null);
 
+    let m;
+    try { m = new Chess(g.fen()).move({ from, to, promotion: 'q' }); } catch { m = null; }
+    if (!m) return;
+
+    // Safe: hold back a move that hangs material or allows mate, and ask first.
+    if (coachMode !== 'off') {
+      const safe = safetyCheck(g.fen(), { from, to, promotion: 'q' });
+      if (!safe.ok && safe.issues[0].severity >= 2) {
+        setPendingMove({ from, to, issue: safe.issues[0] });
+        setBoardKey(k => k + 1);
+        return;
+      }
+    }
+    commitMove(from, to);
+  }
+
+  function commitMove(from, to) {
+    const g = gameRef.current;
     const g2 = new Chess(g.fen());
     const m = g2.move({ from, to, promotion: 'q' });
     if (!m) return;
+    setPassText(null);
 
     if (openingPhase && opening && openingMoveIdx < opening.moves.length) {
       const expected = opening.moves[openingMoveIdx];
@@ -245,7 +292,18 @@ export default function PracticePlay() {
     }
   }, [thinking, openingMoveIdx, openingPhase, opening, playerColor, showHints, phase]);
 
+  function requestPass() {
+    const g = gameRef.current;
+    if (!g || thinking || !hintEngineRef.current) return;
+    const nf = nullMoveFen(g.fen());
+    if (!nf) { setPassText('You’re in check, so answer it first.'); return; }
+    passFenRef.current = nf;
+    hintModeRef.current = 'pass';
+    hintEngineRef.current.getQuickHint(nf);
+  }
+
   function requestHint() {
+    hintModeRef.current = 'hint';
     if (!gameRef.current || thinking || !hintEngineRef.current) return;
     hintEngineRef.current.getQuickHint(gameRef.current.fen());
   }
@@ -263,6 +321,26 @@ export default function PracticePlay() {
 
   const turnColor = gameRef.current ? (gameRef.current.turn() === 'w' ? 'white' : 'black') : 'white';
   const isPlayerTurn = turnColor === playerColor;
+  const coachActive = coachMode !== 'off' && phase === 'playing' && isPlayerTurn && !thinking;
+  const prevFen = history.length >= 2 ? history[history.length - 2].fen : history.length === 1 ? START_FEN : null;
+  const marks = coachActive && coachMarks.fen === fen ? coachMarks : { arrows: [], highlights: [] };
+  const boardArrows = [...hintArrows, ...marks.arrows];
+  const boardHighlights = previewSquare ? previewTargets(previewSquare) : marks.highlights;
+  const coachBlock = (compact) => (
+    <>
+      {pendingMove && (
+        <div className="rounded-lg px-3 py-2 bg-incorrect/10 text-sm">
+          <p><span className="font-semibold text-incorrect">Safe check:</span> {pendingMove.issue.text}</p>
+          <div className="flex gap-2 mt-2">
+            <button onClick={() => setPendingMove(null)} className="btn btn-secondary btn-sm">Rethink</button>
+            <button onClick={() => { const p = pendingMove; setPendingMove(null); commitMove(p.from, p.to); }} className="btn btn-secondary btn-sm">Play it anyway</button>
+          </div>
+        </div>
+      )}
+      <RoutineCoach fen={fen} prevFen={prevFen} active={coachActive} mode={coachMode} onMarks={setCoachMarks}
+        onPass={requestPass} passText={passText} compact={compact} />
+    </>
+  );
   const evalClamped = Math.max(-5, Math.min(5, evaluation));
   const evalPct = ((evalClamped + 5) / 10) * 100;
 
@@ -333,6 +411,20 @@ export default function PracticePlay() {
             </div>
           </div>
 
+          {/* Spy, Scan, Safe coach */}
+          <div>
+            <label className="text-sm text-text-dim block mb-1 font-medium">Spy, Scan, Safe coach</label>
+            <p className="text-xs text-text-dim mb-2">Prompts you to run the routine and stops moves that hang material.</p>
+            <div className="flex rounded-lg bg-bg overflow-hidden text-sm border border-bg-hover">
+              {COACH_MODES.map(c => (
+                <button key={c.id} onClick={() => setCoachMode(c.id)}
+                  className={`flex-1 py-2.5 transition-all ${coachMode === c.id ? 'bg-gold text-bg font-semibold' : 'text-text-dim hover:text-text'}`}>
+                  {c.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <button onClick={startGame} className="w-full bg-gold text-bg py-3 rounded-lg font-semibold text-lg hover:bg-gold-dim transition-all btn-press shadow-lg shadow-gold/10">
             Start Practice Game
           </button>
@@ -349,9 +441,10 @@ export default function PracticePlay() {
         {/* Header */}
         <div className="flex items-center justify-between mb-1">
           <div className="min-w-0">
-            <h1 className="text-base font-display text-gold truncate">
+            {/* div, not h1: the global h1 size rule would override text-base and eat board height */}
+            <div role="heading" aria-level={1} className="text-base font-display text-gold truncate">
               {phase === 'ended' ? result : thinking ? 'Engine thinking...' : isPlayerTurn ? 'Your move' : ''}
-            </h1>
+            </div>
             <p className="text-text-dim text-[11px]">{opening?.name} vs Stockfish ({preset.label})</p>
           </div>
           {thinking && (
@@ -388,6 +481,7 @@ export default function PracticePlay() {
         {/* Board — edge-to-edge */}
         <div style={{ width: 'min(calc(100dvh - 26rem), calc(100vw - 1rem))', height: 'min(calc(100dvh - 26rem), calc(100vw - 1rem))' }} className="mx-auto">
           <ChessBoard
+            key={`m${boardKey}`}
             fen={fen}
             orientation={playerColor}
             movable={isPlayerTurn && phase === 'playing' && !thinking}
@@ -396,8 +490,8 @@ export default function PracticePlay() {
             onMove={handleMove}
             onHover={showMoves ? handlePreviewHover : undefined}
             lastMove={lastMove}
-            arrows={hintArrows}
-            highlights={previewSquare ? previewTargets(previewSquare) : []}
+            arrows={boardArrows}
+            highlights={boardHighlights}
           />
         </div>
 
@@ -416,6 +510,8 @@ export default function PracticePlay() {
             </>
           )}
         </div>
+
+        <div className="mt-2 space-y-2">{coachBlock(true)}</div>
 
         {/* Eval info */}
         <div className="mt-2 flex gap-3 items-center text-xs card-base px-3 py-2">
@@ -458,6 +554,7 @@ export default function PracticePlay() {
               )}
               <div className="flex-1">
                 <ChessBoard
+                  key={`d${boardKey}`}
                   fen={fen}
                   orientation={playerColor}
                   movable={isPlayerTurn && phase === 'playing' && !thinking}
@@ -466,8 +563,8 @@ export default function PracticePlay() {
                   onMove={handleMove}
                   onHover={showMoves ? handlePreviewHover : undefined}
                   lastMove={lastMove}
-                  arrows={hintArrows}
-                  highlights={previewSquare ? previewTargets(previewSquare) : []}
+                  arrows={boardArrows}
+                  highlights={boardHighlights}
                 />
               </div>
             </div>
@@ -487,6 +584,7 @@ export default function PracticePlay() {
             </div>
           </div>
           <div className="space-y-4">
+            {coachBlock(false)}
             <MoveList history={history} currentIndex={moveIndex} />
             {thinking && (
               <div className="card-base p-4 flex items-center gap-3">

@@ -44,7 +44,8 @@ const ROUTE_LABELS = {
   '/piece-values': 'Piece Values',
   '/hanging-pieces': 'Hanging Pieces',
   '/common-mistakes': 'Common Mistakes',
-  '/pre-move-checklist': 'Pre-Move Checklist',
+  '/pre-move-checklist': 'Spy, Scan, Safe',
+  '/thinking-drills': 'Spy, Scan, Safe drills',
   '/game-phases': 'Game Phases',
   '/blunder-detection': 'Blunder Detection',
   '/practice-play': 'Practice Play',
@@ -80,7 +81,7 @@ export function sectionFor(path) {
     path.startsWith('/train') || path.startsWith('/daily') ||
     path.startsWith('/tactics') || path.startsWith('/puzzle-rush') || path.startsWith('/pattern-dojo') ||
     path.startsWith('/calculation') || path.startsWith('/visualisation') || path.startsWith('/blindfold-ladder') ||
-    path.startsWith('/my-mistakes') || path.startsWith('/endgame-drills')
+    path.startsWith('/my-mistakes') || path.startsWith('/endgame-drills') || path.startsWith('/thinking-drills')
   ) return 'train';
   if (
     path.startsWith('/profile') || path.startsWith('/progress') || path.startsWith('/weakness') ||

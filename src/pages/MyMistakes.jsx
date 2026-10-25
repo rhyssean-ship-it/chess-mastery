@@ -3,6 +3,7 @@ import { listMistakes, recordAttempt, deleteMistake } from '../services/mistakeS
 import PuzzleSolver from '../components/PuzzleSolver';
 import EmptyState from '../components/EmptyState';
 import { CLASS_META } from '../services/moveClassification';
+import { STEP_META } from '../services/spyScanSafe';
 
 export default function MyMistakes() {
   const [entries, setEntries] = useState([]);
@@ -86,6 +87,12 @@ export default function MyMistakes() {
               <div className="mt-3 card-base p-4">
                 <div className="text-xs text-text-dim mb-2">You played: <span className="text-incorrect font-semibold">{active.youPlayed}</span></div>
                 <div className="text-xs text-text-dim">Find the engine's recommended move.</div>
+                {active.failedStep && (
+                  <div className="text-xs mt-2">
+                    <span className={`font-semibold ${STEP_META[active.failedStep].color}`}>Missed at {STEP_META[active.failedStep].label}:</span>{' '}
+                    <span className="text-text-dim">{STEP_META[active.failedStep].blurb.toLowerCase()}.</span>
+                  </div>
+                )}
                 {active.context?.label && <div className="text-[11px] text-text-dim mt-2 italic">From: {active.context.label}</div>}
               </div>
             </>
@@ -114,6 +121,7 @@ export default function MyMistakes() {
                   </div>
                   <div className="text-[10px] text-text-dim mt-0.5">
                     {e.timesSolved}/{e.timesAttempted} solved · CPL {Math.round(e.cpl)}
+                    {e.failedStep && <> · <span className={STEP_META[e.failedStep].color}>{STEP_META[e.failedStep].label}</span></>}
                   </div>
                 </div>
                 <button

@@ -40,7 +40,7 @@ export function LearnIndex() {
 
       <Section title="Avoid Mistakes" items={[
         { to: '/hanging-pieces', label: 'Hanging Pieces' },
-        { to: '/pre-move-checklist', label: 'Pre-Move Checklist' },
+        { to: '/pre-move-checklist', label: 'Spy, Scan, Safe', desc: 'The every-move routine, with game walkthroughs' },
         { to: '/common-mistakes', label: 'Common Mistakes' },
         { to: '/blunder-detection', label: 'Blunder Detection' },
       ]} />
@@ -91,6 +91,7 @@ export function TrainIndex() {
         { to: '/puzzle-rush', label: 'Puzzle Rush', desc: 'Rated sprint' },
         { to: '/pattern-dojo', label: 'Pattern Dojo', desc: '5s flash → motif' },
         { to: '/my-mistakes', label: 'My Mistakes', desc: 'Your own blunders as puzzles' },
+        { to: '/thinking-drills', label: 'Spy, Scan, Safe drills', desc: 'Threats, forcing moves, blunder checks' },
       ]} />
 
       <Section title="Calculation & vision" items={[

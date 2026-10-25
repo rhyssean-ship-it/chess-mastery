@@ -16,6 +16,8 @@
 import { dueCount as mistakesDue, listMistakes } from './mistakeStore';
 import { listDue as repertoireDue } from './repertoireSRS';
 import drills from '../data/endgameDrills';
+import { tallySteps, STEP_META } from './spyScanSafe';
+import { drillStats } from './thinkingDrillStore';
 
 const STORE_KEY = 'chess-mastery:dailyPlanState';
 
@@ -62,9 +64,21 @@ function endgameDrillToPractice() {
   return candidates[0];
 }
 
+// The Spy, Scan, Safe step to drill today: the one your games break down at most, else the
+// one with the weakest (or least) drill practice.
+function stepToDrill() {
+  const { weakest } = tallySteps(listMistakes());
+  if (weakest) return { step: weakest, fromGames: true };
+  const stats = drillStats();
+  const score = s => (stats[s].played ? stats[s].correct / stats[s].played : -1);
+  return { step: ['spy', 'scan', 'safe'].sort((a, b) => score(a) - score(b))[0], fromGames: false };
+}
+
 export function generatePlan() {
   const today = dateKey();
   const plan = [];
+  const planMarkers = loadJson(STORE_KEY, {});
+  const todayMarkers = planMarkers[today] || {};
 
   // 1. Daily Challenge (always; checks underlying store for completion)
   const dailyChallenge = loadJson('chess-mastery:daily', {});
@@ -101,6 +115,17 @@ export function generatePlan() {
     });
   }
 
+  // 3b. Spy, Scan, Safe drill on the weakest step
+  const { step, fromGames } = stepToDrill();
+  plan.push({
+    id: 'thinking-drill',
+    title: `${STEP_META[step].label} drill`,
+    blurb: fromGames ? `Your games break down most at ${STEP_META[step].label}` : 'Build the Spy, Scan, Safe habit',
+    route: `/thinking-drills?step=${step}`,
+    minutes: 4,
+    done: !!todayMarkers['thinking-drill'],
+  });
+
   // 4. Repertoire drill (if any due)
   const rDue = repertoireDue();
   if (rDue.length > 0) {
@@ -115,8 +140,6 @@ export function generatePlan() {
   }
 
   // 5. Tactics — puzzle rush short sprint (always good)
-  const planMarkers = loadJson(STORE_KEY, {});
-  const todayMarkers = planMarkers[today] || {};
   plan.push({
     id: 'puzzles',
     title: '15 tactics',

@@ -1,89 +1,75 @@
+// Quick-check exercises for the Spy, Scan, Safe routine (the steps themselves live in
+// services/spyScanSafe.js so every feature uses the same wording).
+// Verdicts checked with Stockfish (depth 15).
 const preMoveChecklist = {
-  steps: [
-    { id: 1, question: 'Are any of my pieces hanging?', description: 'Check every piece — is each one defended? If not, either defend it or move it.', icon: '\u26A0' },
-    { id: 2, question: 'What is my opponent threatening?', description: 'Look at their last move. Does it attack something? Does it create a fork, pin, or skewer? Does it threaten checkmate?', icon: '\u2639' },
-    { id: 3, question: 'Is my king safe?', description: 'Is your king castled? Is the pawn shield intact? Are there open files pointing at your king?', icon: '\u2654' },
-    { id: 4, question: 'What is my plan?', description: 'Every move should have a purpose. Are you developing, attacking a weakness, improving a piece, or preparing a pawn break?', icon: '\u2605' },
-    { id: 5, question: 'After I move, is anything hanging?', description: 'Before you click/touch the piece, visualise the board AFTER your move. Does your move leave anything undefended?', icon: '\u2714' },
-  ],
   exercises: [
-    // === BEGINNER (3) ===
+    // === BEGINNER ===
     {
       id: 'pmc-1', difficulty: 'Beginner',
       fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2',
       plannedMove: 'Qh5',
-      question: 'You want to play Qh5. Run through the checklist — is this a good move?',
-      checklistAnswers: [
-        { step: 1, answer: 'No hanging pieces — safe.', ok: true },
-        { step: 2, answer: 'No immediate threats from Black.', ok: true },
-        { step: 3, answer: 'King is still in centre but it\'s early.', ok: true },
-        { step: 4, answer: 'The plan is to threaten Qxe5+ and Qxf7#.', ok: true },
-        { step: 5, answer: 'BUT — the queen on h5 is exposed. Black can attack it with Nf6 gaining tempo. Moving the queen early violates opening principles.', ok: false },
-      ],
-      verdict: 'Bad move! While it threatens f7, bringing the queen out early wastes time. Play Nf3 or Bc4 instead — develop minor pieces first.',
+      question: 'You want to play Qh5. Run Spy, Scan, Safe. Is it a good idea?',
+      answers: {
+        spy: { answer: '…e5 claimed the centre. Nothing of yours is attacked and they have no threat.', ok: true },
+        scan: { answer: 'No checks or captures for either side. Qh5 would create a threat (Qxe5+).', ok: true },
+        safe: { answer: 'The queen isn’t attacked on h5, but Black defends with …Nc6 and then hits her with …g6 or …Nf6, gaining time while you move her again.', ok: false },
+      },
+      verdict: 'Not the best. Qh5 threatens e5, but Black defends easily and develops while chasing your queen. Develop a minor piece first.',
       betterMove: 'Nf3',
     },
     {
       id: 'pmc-2', difficulty: 'Beginner',
       fen: 'r1bqkbnr/pppppppp/2n5/8/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3',
       plannedMove: 'Bc4',
-      question: 'You want to play Bc4. Run through the checklist.',
-      checklistAnswers: [
-        { step: 1, answer: 'No pieces hanging.', ok: true },
-        { step: 2, answer: 'No threats from Black — Nc6 just developed.', ok: true },
-        { step: 3, answer: 'King not castled but we\'re developing toward it.', ok: true },
-        { step: 4, answer: 'Bc4 develops a piece, eyes f7, and prepares castling.', ok: true },
-        { step: 5, answer: 'After Bc4, no pieces are left hanging. The bishop is on a strong diagonal.', ok: true },
-      ],
-      verdict: 'Great move! Bc4 follows all opening principles: develops a piece, targets a weakness (f7), and prepares to castle.',
+      question: 'You want to play Bc4. Run the routine.',
+      answers: {
+        spy: { answer: '…Nc6 developed and eyes d4 and e5. No threat to you.', ok: true },
+        scan: { answer: 'Nothing forcing for either side.', ok: true },
+        safe: { answer: 'The bishop isn’t attacked on c4, nothing is left hanging, and it prepares castling.', ok: true },
+      },
+      verdict: 'Good move. Bc4 develops, aims at f7 and gets you ready to castle.',
       betterMove: null,
     },
     {
       id: 'pmc-4', difficulty: 'Beginner',
       fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1',
       plannedMove: 'e5',
-      question: 'As Black, you want to play e5. Run the checklist.',
-      checklistAnswers: [
-        { step: 1, answer: 'Starting position — nothing hanging.', ok: true },
-        { step: 2, answer: 'White played e4 — controls d5 and f5.', ok: true },
-        { step: 3, answer: 'King is safe in the starting position.', ok: true },
-        { step: 4, answer: 'e5 claims the centre and mirrors White\'s strategy.', ok: true },
-        { step: 5, answer: 'After e5, the pawn is defended by... nothing directly, but it\'s symmetrical. Standard and safe.', ok: true },
-      ],
-      verdict: 'Good move! 1...e5 is the most popular response — it fights for the centre immediately.',
+      question: 'As Black, you want to play e5. Run the routine.',
+      answers: {
+        spy: { answer: 'e4 grabbed the centre and opened lines for White’s queen and bishop. No threat yet.', ok: true },
+        scan: { answer: 'No checks, captures or threats for either side.', ok: true },
+        safe: { answer: 'Nothing attacks e5 yet, and the move opens lines for your own queen and bishop.', ok: true },
+      },
+      verdict: 'Good move. 1…e5 is the most popular reply: it fights for the centre straight away.',
       betterMove: null,
     },
 
-    // === INTERMEDIATE (2) ===
+    // === INTERMEDIATE ===
     {
       id: 'pmc-3', difficulty: 'Intermediate',
       fen: 'r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',
       plannedMove: 'Nxe5',
-      question: 'You want to capture Nxe5. Is this safe?',
-      checklistAnswers: [
-        { step: 1, answer: 'No hanging pieces currently.', ok: true },
-        { step: 2, answer: 'Black\'s pieces are developed actively — Bc5 eyes f2.', ok: true },
-        { step: 3, answer: 'King not yet castled — should castle soon.', ok: true },
-        { step: 4, answer: 'Winning a pawn seems good...', ok: true },
-        { step: 5, answer: 'DANGER! After Nxe5 Nxe5, the knight on e5 is fine, but then Black can play Bxf2+! forking the king and rook. This is a known trap.', ok: false },
-      ],
-      verdict: 'Trap! Nxe5 looks like it wins a pawn, but Bxf2+ is a devastating fork. Castle first with O-O instead.',
-      betterMove: 'O-O',
+      question: 'You want to capture Nxe5. Is it safe?',
+      answers: {
+        spy: { answer: '…Nf6 attacks your e4 pawn, and nothing defends it. Pass: they’d play …Nxe4.', ok: false },
+        scan: { answer: 'Captures: count on e5. Your knight attacks it once and their c6 knight defends it once. Nxe5 Nxe5 gives a knight for a pawn.', ok: false },
+        safe: { answer: 'The knight lands on a defended square and gets taken. (The d4 fork trick doesn’t save it: …Bb4+ keeps Black a piece up.)', ok: false },
+      },
+      verdict: 'Bad move. e5 is defended, so Nxe5 just loses a piece. Spy also found a threat to e4, and d3 deals with it.',
+      betterMove: 'd3',
     },
     {
       id: 'pmc-5', difficulty: 'Intermediate',
       fen: 'r1bqk2r/ppppbppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQ1RK1 b kq - 5 5',
       plannedMove: 'Nxe4',
-      question: 'Black wants to play Nxe4 winning a pawn. Safe?',
-      checklistAnswers: [
-        { step: 1, answer: 'Check Black\'s pieces — all seem defended.', ok: true },
-        { step: 2, answer: 'White just castled — no immediate threat.', ok: true },
-        { step: 3, answer: 'Black\'s king hasn\'t castled yet — should prioritise this.', ok: false },
-        { step: 4, answer: 'Winning a centre pawn seems great...', ok: true },
-        { step: 5, answer: 'After Nxe4, White plays Re1 pinning the knight to the king. Black is in trouble because they haven\'t castled!', ok: false },
-      ],
-      verdict: 'Dangerous! Grabbing the e4 pawn before castling invites Re1 with a nasty pin. Castle first with O-O, then consider taking.',
-      betterMove: 'O-O',
+      question: 'Black wants to play Nxe4, grabbing a centre pawn. Safe?',
+      answers: {
+        spy: { answer: 'White just castled. Nothing of yours is attacked.', ok: true },
+        scan: { answer: 'Captures: e4 has no defenders (no knight on c3, no pawn on d3), so Nxe4 wins a pawn.', ok: true },
+        safe: { answer: 'And then what? Re1 or Bd5 hits the knight, but it retreats to f6 safely and nothing is left hanging.', ok: true },
+      },
+      verdict: 'Good move. A free pawn: White has forgotten to defend e4. The engine rates it Black’s best move (≈ +1).',
+      betterMove: null,
     },
   ],
 };

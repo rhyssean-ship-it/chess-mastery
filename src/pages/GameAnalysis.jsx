@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Chess } from 'chess.js';
 import ChessBoard from '../components/ChessBoard';
 import MoveList from '../components/MoveList';
@@ -10,6 +10,7 @@ import { CLASS, CLASS_META } from '../services/moveClassification';
 import { saveAnalysisMistakes } from '../services/mistakeStore';
 import { saveAnalysedGame } from '../services/savedGames';
 import { explainPlayedMove, explainBestMove, patternsFromAnalyses } from '../services/moveExplanation';
+import { failedStep, tallySteps, STEP_META } from '../services/spyScanSafe';
 
 const SESSION_KEY = 'enpassant:reviewGame';
 const PLAY_FROM_FEN_KEY = 'enpassant:playFromFen';
@@ -48,7 +49,7 @@ export default function GameAnalysis() {
 
     // If restoring from a previously saved review, skip analysis entirely
     if (gameData.restoredFromSave && gameData.savedAnalyses) {
-      setAnalyses(gameData.savedAnalyses);
+      setAnalyses(gameData.savedAnalyses.map(a => (a && a.failedStep === undefined ? { ...a, failedStep: failedStep(a) } : a)));
       setSummary(gameData.savedSummary || null);
       setAnalysisComplete(true);
       setCurrentPly(0);
@@ -375,6 +376,10 @@ export default function GameAnalysis() {
             <PatternCard analyses={analyses} playerColor={orientation} />
           )}
 
+          {analysisComplete && analyses.length > 0 && (
+            <RoutineCard analyses={analyses} playerColor={orientation} currentPly={currentPly} onJump={jumpTo} />
+          )}
+
           {/* Move list with view toggle */}
           <div>
             <div className="flex rounded-md bg-bg-card overflow-hidden text-[11px] mb-1.5 w-fit">
@@ -542,6 +547,13 @@ function MoveDetail({ analysis, showBestArrow, setShowBestArrow, evalPerspective
         {playedExplanation && <> — {playedExplanation}</>}
       </p>
 
+      {analysis.failedStep && (
+        <div className={`rounded-md ${STEP_META[analysis.failedStep].bg} ${compact ? 'text-[12px] mb-2 px-2.5 py-1.5' : 'text-sm mb-3 px-3 py-2'}`}>
+          <span className={`font-semibold ${STEP_META[analysis.failedStep].color}`}>Missed at {STEP_META[analysis.failedStep].label}:</span>{' '}
+          <span className="text-text-dim">{STEP_META[analysis.failedStep].blurb.toLowerCase()}.</span>
+        </div>
+      )}
+
       {bestExplanation && !analysis.isBest && (
         <div className={`text-text-dim bg-bg-hover/30 rounded-md ${compact ? 'text-[12px] mb-2 px-2.5 py-1.5 leading-snug' : 'text-sm mb-3 px-3 py-2'}`}>
           <span className="text-gold font-semibold">{analysis.bestMoveSan}:</span> {bestExplanation.replace(`${analysis.bestMoveSan} `, '').replace(`${analysis.bestMoveSan}—`, '—')}
@@ -629,6 +641,44 @@ function PatternCard({ analyses, playerColor }) {
       {avgMistakeCpl > 0 && (
         <div className="text-[11px] text-text-dim mt-2">Avg mistake severity: {(avgMistakeCpl / 100).toFixed(1)} pawns.</div>
       )}
+    </div>
+  );
+}
+
+// Which step of Spy, Scan, Safe the player's mistakes broke this game.
+function RoutineCard({ analyses, playerColor, currentPly, onJump }) {
+  const mine = analyses.filter(a => a && a.color === playerColor && a.failedStep);
+  const { counts, total, weakest } = tallySteps(mine);
+  if (total === 0) return null;
+  return (
+    <div className="card-base p-3">
+      <div className="text-[12px] text-text-dim mb-2 font-semibold">Spy, Scan, Safe</div>
+      <div className="space-y-1.5">
+        {['spy', 'scan', 'safe'].map(step => {
+          const meta = STEP_META[step];
+          const plies = mine.filter(a => a.failedStep === step);
+          return (
+            <div key={step} className="flex items-center gap-2 text-[12px]">
+              <span className={`w-10 font-semibold ${meta.color}`}>{meta.label}</span>
+              <div className="flex-1 h-1.5 bg-bg-hover rounded-full overflow-hidden">
+                <div className="h-full bg-gold/70 rounded-full" style={{ width: `${(counts[step] / total) * 100}%` }} />
+              </div>
+              <span className="tabular-nums w-4 text-right">{counts[step]}</span>
+              <span className="flex gap-1">
+                {plies.slice(0, 3).map(a => (
+                  <button key={a.ply} onClick={() => onJump(a.ply)} className={`px-1.5 rounded ${a.ply === currentPly ? 'bg-gold/20 text-gold' : 'text-text-dim hover:text-text'}`}>
+                    {Math.floor(a.ply / 2) + 1}{a.color === 'black' ? '…' : '.'}
+                  </button>
+                ))}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      <div className="text-[11px] text-text-dim mt-2 leading-snug">
+        Most mistakes came at <span className="text-text font-medium">{STEP_META[weakest].label}</span>: {STEP_META[weakest].blurb.toLowerCase()}.{' '}
+        <Link to={`/thinking-drills?step=${weakest}`} className="text-gold">Drill it →</Link>
+      </div>
     </div>
   );
 }
