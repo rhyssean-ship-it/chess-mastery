@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Chess } from 'chess.js';
 import ChessBoard from '../components/ChessBoard';
@@ -18,6 +18,9 @@ export default function OpeningTrainer() {
   const [testFeedback, setTestFeedback] = useState(null);
   const [testFen, setTestFen] = useState('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
   const [testGame, setTestGame] = useState(null);
+  // Side the user plays in Test Me — defences (and the Benoni) default to Black.
+  const [testSide, setTestSide] = useState(() =>
+    opening?.side || (/defen[cs]e|benoni/i.test(opening?.name || '') ? 'black' : 'white'));
 
   useEffect(() => {
     const handler = (e) => {
@@ -54,6 +57,22 @@ export default function OpeningTrainer() {
   function goNext() { if (currentMove < moves.length - 1) setCurrentMove(currentMove + 1); }
   function goPrev() { if (currentMove > -1) setCurrentMove(currentMove - 1); }
 
+  // Play the opponent's scripted move at `idx` (if any) after a short pause.
+  function playOpponent(fromFen, idx) {
+    if (idx >= moves.length) return;
+    setTimeout(() => {
+      try {
+        const g = new Chess(fromFen);
+        g.move(moves[idx].move);
+        setTestGame(g);
+        setTestFen(g.fen());
+        setTestMoveIndex(idx + 1);
+      } catch {
+        setTestMoveIndex(moves.length); // bad data — end the test gracefully
+      }
+    }, 400);
+  }
+
   function startTest() {
     setTestMode(true);
     setTestMoveIndex(0);
@@ -62,6 +81,7 @@ export default function OpeningTrainer() {
     setTestFeedback(null);
     setTestFen(startFen);
     setTestGame(new Chess());
+    if (testSide === 'black') playOpponent(startFen, 0);
   }
 
   function getLegalDestsForTest() {
@@ -74,35 +94,34 @@ export default function OpeningTrainer() {
     return dests;
   }
 
-  const handleTestMove = useCallback((from, to) => {
+  function handleTestMove(from, to) {
     if (!testGame || testMoveIndex >= moves.length) return;
     const expected = moves[testMoveIndex];
     const g = new Chess(testGame.fen());
-    const m = g.move({ from, to, promotion: 'q' });
+    let m = null;
+    try { m = g.move({ from, to, promotion: 'q' }); } catch { /* illegal */ }
     if (!m) return;
 
+    let next = g;
+    setTestTotal(prev => prev + 1);
     if (m.san === expected.move) {
       setTestCorrect(prev => prev + 1);
-      setTestTotal(prev => prev + 1);
       setTestFeedback({ correct: true, message: `Correct! ${expected.move}` });
     } else {
-      setTestTotal(prev => prev + 1);
       setTestFeedback({ correct: false, message: `The correct move was ${expected.move}. ${expected.explanation}` });
-      const correctG = new Chess(testGame.fen());
-      correctG.move(expected.move);
-      setTestGame(correctG);
-      setTestFen(correctG.fen());
-      setTestMoveIndex(testMoveIndex + 1);
-      return;
+      next = new Chess(testGame.fen());
+      try { next.move(expected.move); } catch { setTestMoveIndex(moves.length); return; }
     }
 
-    setTestGame(g);
-    setTestFen(g.fen());
+    setTestGame(next);
+    setTestFen(next.fen());
     setTestMoveIndex(testMoveIndex + 1);
-  }, [testGame, testMoveIndex, moves]);
+    playOpponent(next.fen(), testMoveIndex + 1);
+  }
 
   const testFinished = testMode && testMoveIndex >= moves.length;
   const turnColor = testGame ? (testGame.turn() === 'w' ? 'white' : 'black') : 'white';
+  const userMoveCount = moves.filter((_, i) => (i % 2 === 0) === (testSide === 'white')).length;
   const studyHistory = moves.slice(0, currentMove + 1).map(m => ({ san: m.move }));
 
   return (
@@ -116,7 +135,7 @@ export default function OpeningTrainer() {
         {/* Board */}
         <div className="w-full max-w-[560px] board-fit-mobile">
           {testMode ? (
-            <ChessBoard fen={testFen} movable={!testFinished} dests={getLegalDestsForTest()} turnColor={turnColor} onMove={handleTestMove} />
+            <ChessBoard fen={testFen} orientation={testSide} movable={!testFinished && turnColor === testSide} dests={getLegalDestsForTest()} turnColor={turnColor} onMove={handleTestMove} />
           ) : (
             <ChessBoard fen={currentFen} movable={false} lastMove={lastMove} arrows={currentArrows} highlights={currentHighlights} />
           )}
@@ -134,12 +153,12 @@ export default function OpeningTrainer() {
                     <p className="text-text-dim text-base mb-4">
                       {testCorrect === testTotal ? 'Perfect! You know this opening well.' : 'Keep practicing to improve your recall.'}
                     </p>
-                    <button onClick={() => { setTestMode(false); progressService.recordOpeningDrill(id, 'white', Math.round((testCorrect / testTotal) * 100)); }} className="bg-gold text-bg px-5 py-2 rounded-lg font-semibold btn-press text-base hover:bg-gold-dim transition-all">
+                    <button onClick={() => { setTestMode(false); if (testTotal > 0) progressService.recordOpeningDrill(id, testSide, Math.round((testCorrect / testTotal) * 100)); }} className="bg-gold text-bg px-5 py-2 rounded-lg font-semibold btn-press text-base hover:bg-gold-dim transition-all">
                       Back to Study
                     </button>
                   </div>
                 ) : (
-                  <p className="text-text-dim text-base">Play move {testMoveIndex + 1} of {moves.length}</p>
+                  <p className="text-text-dim text-base">Playing as {testSide} &middot; move {Math.min(testTotal + 1, userMoveCount)} of {userMoveCount}</p>
                 )}
               </div>
               {testFeedback && (
@@ -184,6 +203,18 @@ export default function OpeningTrainer() {
                 </div>
               )}
 
+              <div className="flex gap-2" role="group" aria-label="Test me as">
+                {['white', 'black'].map(side => (
+                  <button
+                    key={side}
+                    onClick={() => setTestSide(side)}
+                    aria-pressed={testSide === side}
+                    className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all btn-press ${testSide === side ? 'bg-bg-hover text-text border border-gold/40' : 'bg-bg-card border border-bg-hover text-text-dim'}`}
+                  >
+                    Test as {side === 'white' ? 'White' : 'Black'}
+                  </button>
+                ))}
+              </div>
               <button onClick={startTest} className="w-full bg-gold text-bg py-2.5 rounded-lg font-semibold btn-press hover:bg-gold-dim transition-all shadow-lg shadow-gold/10">
                 Test Me
               </button>

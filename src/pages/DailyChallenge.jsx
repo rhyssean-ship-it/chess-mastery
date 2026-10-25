@@ -4,6 +4,7 @@ import ChessBoard from '../components/ChessBoard';
 import { progressService } from '../services/progressService';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import puzzles from '../data/puzzles';
+import { localDateKey } from '../utils/dateKey';
 import criticalMoments from '../data/criticalMoments';
 
 function getDayOfYear() {
@@ -15,7 +16,8 @@ function getDayOfYear() {
 export default function DailyChallenge() {
   const dayNum = getDayOfYear();
   const [completed, setCompleted] = useLocalStorage('daily-completed', {});
-  const todayDone = completed[dayNum];
+  const todayKey = localDateKey(); // keyed by full date so next year's same day isn't "done"
+  const todayDone = completed[todayKey];
 
   // Pick a deterministic puzzle and critical moment for today
   const dailyPuzzle = puzzles[dayNum % puzzles.length];
@@ -57,7 +59,9 @@ export default function DailyChallenge() {
   }
 
   function finishDaily() {
-    setCompleted(prev => ({ ...prev, [dayNum]: true }));
+    setCompleted(prev => ({ ...prev, [todayKey]: true }));
+    // Home and the Daily Plan read this key
+    try { localStorage.setItem('chess-mastery:daily', JSON.stringify({ lastCompleted: todayKey })); } catch { /* storage unavailable */ }
     progressService.recordActivity();
     progressService.logActivity('Completed daily challenge');
     setPhase('done');

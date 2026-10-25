@@ -22,7 +22,12 @@ export default function OpeningTraps() {
 
         <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] lg:grid-cols-[1fr_360px] gap-8">
           <div className="w-full max-w-[480px]">
-            <ChessBoard fen={showTrap ? trap.fenAfterTrap : trap.fen} movable={false} />
+            {/* face the side that springs the trap (to move in trap.fen), and say so */}
+            <ChessBoard fen={showTrap ? trap.fenAfterTrap : trap.fen} movable={false}
+              orientation={trap.fen.split(' ')[1] === 'b' ? 'black' : 'white'} />
+            <p className="text-xs text-text-dim mt-2">
+              {showTrap ? 'After the trap move.' : `${trap.fen.split(' ')[1] === 'b' ? 'Black' : 'White'} to move: can you spot the trap?`}
+            </p>
           </div>
           <div className="space-y-4">
             <div className="card-base p-5">

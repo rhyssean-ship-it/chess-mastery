@@ -1,4 +1,5 @@
 // Per-step accuracy for the Spy, Scan, Safe drills.
+import { localDateKey } from '../utils/dateKey';
 
 const KEY = 'chess-mastery:thinkingDrills';
 
@@ -16,7 +17,7 @@ export function recordDrill(step, correct) {
   const s = drillStats();
   s[step].played++;
   if (correct) s[step].correct++;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localDateKey();
   s[step].lastPlayed = today;
   s.days = [...new Set([...(load().days || []), today])].slice(-60); // any-step practice days
   try { localStorage.setItem(KEY, JSON.stringify(s)); } catch { /* storage unavailable */ }

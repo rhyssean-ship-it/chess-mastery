@@ -1,4 +1,5 @@
 import { getStorageItem, setStorageItem } from '../hooks/useLocalStorage';
+import { localDateKey, localDateKeyDaysAgo } from '../utils/dateKey';
 
 export const progressService = {
   // Activity log
@@ -15,18 +16,18 @@ export const progressService = {
   // Streak
   getStreak() {
     const data = getStorageItem('streak', { count: 0, lastDate: null });
-    const today = new Date().toISOString().slice(0, 10);
+    const today = localDateKey();
     if (data.lastDate === today) return data.count;
-    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    const yesterday = localDateKeyDaysAgo(1);
     if (data.lastDate === yesterday) return data.count;
     return 0;
   },
 
   recordActivity() {
     const data = getStorageItem('streak', { count: 0, lastDate: null });
-    const today = new Date().toISOString().slice(0, 10);
+    const today = localDateKey();
     if (data.lastDate === today) return;
-    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    const yesterday = localDateKeyDaysAgo(1);
     const newCount = data.lastDate === yesterday ? data.count + 1 : 1;
     setStorageItem('streak', { count: newCount, lastDate: today });
   },

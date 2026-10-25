@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import PuzzleSolver from '../components/PuzzleSolver';
 import puzzles from '../data/lichessPuzzles';
 import { progressService } from '../services/progressService';
+import { localDateKey, localDateKeyDaysAgo } from '../utils/dateKey';
 
 const STORE_KEY = 'chess-mastery:dailyCalculation';
 const TIME_LIMIT = 300; // 5 minutes
@@ -12,23 +13,28 @@ function loadStore() {
 }
 function saveStore(s) { localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
 
-// Pick a deterministic puzzle for today, mid-difficulty (1500-1900).
+// Pick a deterministic puzzle for today: a stretch for an improving player, not a wall.
 function getTodaysPuzzle() {
   const today = new Date();
-  const epoch = Math.floor(today.getTime() / 86400000); // day since 1970
-  const pool = puzzles.filter(p => p.rating >= 1500 && p.rating <= 1900);
+  const epoch = Math.floor(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) / 86400000); // local calendar day
+  const pool = puzzles.filter(p => p.rating >= 900 && p.rating <= 1300);
   if (pool.length === 0) return puzzles[0];
   return pool[epoch % pool.length];
 }
 
 function dateKey(d = new Date()) {
-  return d.toISOString().slice(0, 10);
+  return localDateKey(d);
 }
 
 export default function DailyCalculation() {
   const [puzzle] = useState(getTodaysPuzzle);
   const [store, setStore] = useState(loadStore);
-  const [phase, setPhase] = useState(() => store.lastSolved === dateKey() ? 'already' : 'ready');
+  // One real attempt per day: solved or failed, today is done (replays are practice only).
+  const attemptedToday = store.lastSolved === dateKey() || (store.history || []).some(h => h.date === dateKey());
+  const [phase, setPhase] = useState(() => attemptedToday ? 'already' : 'ready');
+  const [replay, setReplay] = useState(false); // re-trying after today's solve: practice only, no streak changes
+  // A streak only counts if the last solve was today or yesterday.
+  const liveStreak = [dateKey(), localDateKeyDaysAgo(1)].includes(store.lastSolved) ? store.streak : 0;
   const [timeLeft, setTimeLeft] = useState(TIME_LIMIT);
   const [showHint, setShowHint] = useState(false);
   const timerRef = useRef(null);
@@ -52,6 +58,7 @@ export default function DailyCalculation() {
 
   function handleTimeout() {
     setPhase('failed');
+    if (replay) return;
     const next = { ...store, streak: 0, history: [...store.history, { date: dateKey(), result: 'timeout' }].slice(-30) };
     setStore(next);
     saveStore(next);
@@ -60,9 +67,13 @@ export default function DailyCalculation() {
   function handleSolved() {
     clearInterval(timerRef.current);
     setPhase('solved');
+    if (replay) return;
+    // The hint button says it forfeits the streak, so it does.
+    const streak = showHint ? 0
+      : store.lastSolved === localDateKeyDaysAgo(1) ? store.streak + 1 : store.lastSolved === dateKey() ? store.streak : 1;
     const next = {
       ...store,
-      streak: store.streak + 1,
+      streak,
       history: [...store.history, { date: dateKey(), result: 'solved', timeUsed: TIME_LIMIT - timeLeft }].slice(-30),
       lastSolved: dateKey(),
     };
@@ -74,6 +85,7 @@ export default function DailyCalculation() {
   function handleFailed() {
     clearInterval(timerRef.current);
     setPhase('failed');
+    if (replay) return;
     const next = { ...store, streak: 0, history: [...store.history, { date: dateKey(), result: 'failed' }].slice(-30) };
     setStore(next);
     saveStore(next);
@@ -92,7 +104,7 @@ export default function DailyCalculation() {
         <div className="flex gap-4">
           <div>
             <div className="text-xs text-text-dim">Streak</div>
-            <div className="text-2xl font-display text-gold tabular-nums">{store.streak} 🔥</div>
+            <div className="text-2xl font-display text-gold tabular-nums">{liveStreak} 🔥</div>
           </div>
         </div>
       </div>
@@ -108,8 +120,8 @@ export default function DailyCalculation() {
 
       {phase === 'already' && (
         <div className="card-base p-6 text-center max-w-md mx-auto">
-          <p className="mb-4 text-text-dim">You've already completed today's puzzle. Come back tomorrow.</p>
-          <button onClick={() => { setStore({ ...store, lastSolved: null }); setPhase('ready'); }} className="text-xs px-3 py-1.5 rounded bg-bg-card border border-bg-hover hover:bg-bg-hover">Replay anyway</button>
+          <p className="mb-4 text-text-dim">{store.lastSolved === dateKey() ? 'You’ve solved today’s puzzle.' : 'You’ve had your attempt at today’s puzzle.'} Come back tomorrow.</p>
+          <button onClick={() => { setReplay(true); setPhase('ready'); }} className="text-xs px-3 py-1.5 rounded bg-bg-card border border-bg-hover hover:bg-bg-hover">Replay anyway</button>
         </div>
       )}
 
@@ -139,7 +151,7 @@ export default function DailyCalculation() {
             {phase === 'solved' && (
               <div className="card-base p-4 bg-correct/5">
                 <div className="text-correct font-semibold mb-1">Solved in {Math.floor((TIME_LIMIT - timeLeft) / 60)}:{((TIME_LIMIT - timeLeft) % 60).toString().padStart(2, '0')}</div>
-                <div className="text-xs text-text-dim">Streak now {store.streak}. Come back tomorrow.</div>
+                <div className="text-xs text-text-dim">Streak now {replay ? liveStreak : store.streak}.{replay ? ' (Practice replay, streak unchanged.)' : ''} Come back tomorrow.</div>
               </div>
             )}
             {phase === 'failed' && (

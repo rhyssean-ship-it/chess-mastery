@@ -43,11 +43,11 @@ export default function CheckmatePatterns() {
       setGame(g);
       setFen(g.fen());
       setState('correct');
-      progressService.recordPuzzleAttempt(`cp-${pattern.id}`, 'Checkmate Pattern', true);
+      progressService.recordPuzzleAttempt(pattern.id, 'Checkmate Pattern', true);
       progressService.logActivity(`Solved checkmate pattern: ${pattern.name}`);
     } else {
       setState('wrong');
-      progressService.recordPuzzleAttempt(`cp-${pattern.id}`, 'Checkmate Pattern', false);
+      progressService.recordPuzzleAttempt(pattern.id, 'Checkmate Pattern', false);
     }
   }
 

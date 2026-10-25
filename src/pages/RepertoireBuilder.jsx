@@ -23,7 +23,8 @@ export default function RepertoireBuilder() {
   const opening = openings.find(o => o.id === selectedOpening);
   const dueCount = listDue().length;
 
-  function start() {
+  function start(openingId = selectedOpening, side = selectedSide) {
+    const op = openings.find(o => o.id === openingId);
     const g = new Chess();
     setGame(g);
     setFen(g.fen());
@@ -35,10 +36,10 @@ export default function RepertoireBuilder() {
     setStarted(true);
 
     // If user is black, play white's first move automatically
-    if (selectedSide === 'black' && opening) {
+    if (side === 'black' && op) {
       setTimeout(() => {
         const g2 = new Chess();
-        g2.move(opening.moves[0].move);
+        g2.move(op.moves[0].move);
         setGame(g2);
         setFen(g2.fen());
         setMoveIndex(1);
@@ -150,7 +151,7 @@ export default function RepertoireBuilder() {
                     if (!next) return;
                     setSelectedOpening(next.openingId);
                     setSelectedSide(next.side);
-                    setTimeout(start, 0);
+                    start(next.openingId, next.side);
                   }} className="px-3 py-1.5 rounded-lg bg-gold text-bg text-xs font-semibold hover:bg-gold-dim btn-press">
                     Drill due ({dueCount})
                   </button>
@@ -206,7 +207,7 @@ export default function RepertoireBuilder() {
               </button>
             </div>
           </div>
-          <button onClick={start} className="w-full bg-gold text-bg py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
+          <button onClick={() => start()} className="w-full bg-gold text-bg py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
             Start Drill
           </button>
           </div>
@@ -255,7 +256,7 @@ export default function RepertoireBuilder() {
                   if (next) {
                     setSelectedOpening(next.openingId);
                     setSelectedSide(next.side);
-                    setTimeout(start, 0);
+                    start(next.openingId, next.side);
                   } else {
                     setStarted(false);
                   }

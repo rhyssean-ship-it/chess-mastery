@@ -94,7 +94,7 @@ function BoardVisionDrill() {
     // Q4: white pieces count
     let wCount = 0;
     for (const sq of squares) if (board[sq].color === 'white') wCount++;
-    qs.push({ text: 'How many white pieces are on the board?', type: 'number', correct: String(wCount) });
+    qs.push({ text: 'How many white pieces and pawns are on the board in total?', type: 'number', correct: String(wCount) });
 
     // Q5: random empty square check
     const rSq2 = emptySqs.length > 0 ? emptySqs[Math.floor(Math.random() * emptySqs.length)] : squares[0];
@@ -211,14 +211,18 @@ function BlindfoldDrill() {
       }
     }
     const target = pieces[Math.floor(Math.random() * pieces.length)];
-    setTargetPiece(target);
+    // There may be two of this piece (e.g. both knights) — any of them is a correct answer.
+    const squares = pieces
+      .filter(p => p.piece.color === target.piece.color && p.piece.type === target.piece.type)
+      .map(p => p.square);
+    setTargetPiece({ ...target, squares });
     setPhase('answering');
   }
 
   function selectSquare(sq) {
     setSelectedSquare(sq);
-    const correct = sq === targetPiece.square;
-    setFeedback({ correct, answer: targetPiece.square });
+    const correct = targetPiece.squares.includes(sq);
+    setFeedback({ correct, answer: targetPiece.squares.join(' / ') });
     if (correct) progressService.recordDrillScore('blindfold', 1, 100);
     else progressService.recordDrillScore('blindfold', 0, 0);
     setTimeout(() => setPhase('done'), 1500);
@@ -242,9 +246,9 @@ function BlindfoldDrill() {
     return (
       <div className="text-center space-y-4">
         <p className={`text-lg font-semibold ${feedback?.correct ? 'text-correct' : 'text-incorrect'}`}>
-          {feedback?.correct ? '✓ Correct!' : `✗ The ${pieceNames[targetPiece.piece.type]} was on ${targetPiece.square}`}
+          {feedback?.correct ? '✓ Correct!' : `✗ ${targetPiece.squares.length > 1 ? `The ${pieceNames[targetPiece.piece.type]}s were on` : `The ${pieceNames[targetPiece.piece.type]} was on`} ${feedback?.answer}`}
         </p>
-        <div className="max-w-[400px] mx-auto"><ChessBoard fen={game.game.fen()} movable={false} highlights={[targetPiece.square]} /></div>
+        <div className="max-w-[400px] mx-auto"><ChessBoard fen={game.game.fen()} movable={false} highlights={targetPiece.squares} /></div>
       </div>
     );
   }
@@ -252,8 +256,16 @@ function BlindfoldDrill() {
   const colorName = targetPiece.piece.color === 'w' ? 'white' : 'black';
   return (
     <div className="space-y-4 max-w-md mx-auto">
-      <p className="font-semibold text-center">Where is the {colorName} {pieceNames[targetPiece.piece.type]}?</p>
-      <p className="text-text-dim text-sm text-center">Click the correct square on the grid below.</p>
+      <p className="font-semibold text-center">
+        {targetPiece.squares.length > 1
+          ? `Where is a ${colorName} ${pieceNames[targetPiece.piece.type]}?`
+          : `Where is the ${colorName} ${pieceNames[targetPiece.piece.type]}?`}
+      </p>
+      <p className="text-text-dim text-sm text-center">
+        {targetPiece.squares.length > 1
+          ? `${colorName === 'white' ? 'White' : 'Black'} has ${targetPiece.squares.length} — click the square of either one.`
+          : 'Click the correct square on the grid below.'}
+      </p>
       <div className="grid grid-cols-8 gap-0.5 max-w-[280px] sm:max-w-[340px] mx-auto">
         {ranks.slice().reverse().map(r => files.map(f => {
           const sq = f + r;
@@ -273,7 +285,7 @@ function BlindfoldDrill() {
       </div>
       {feedback && (
         <p className={`text-center text-sm ${feedback.correct ? 'text-correct' : 'text-incorrect'}`}>
-          {feedback.correct ? '✓ Correct!' : `✗ It was on ${feedback.answer}`}
+          {feedback.correct ? '✓ Correct!' : `✗ ${targetPiece.squares.length > 1 ? 'They were on' : 'It was on'} ${feedback.answer}`}
         </p>
       )}
     </div>
@@ -310,8 +322,8 @@ function PieceCountingDrill() {
       if (board[sq].color === 'white') { wPieces++; if (board[sq].type === 'p') wPawns++; }
       else { bPieces++; if (board[sq].type === 'p') bPawns++; }
     }
-    qs.push({ text: 'How many pieces does White have?', correct: String(wPieces) });
-    qs.push({ text: 'How many pieces does Black have?', correct: String(bPieces) });
+    qs.push({ text: 'How many pieces and pawns does White have in total?', correct: String(wPieces) });
+    qs.push({ text: 'How many pieces and pawns does Black have in total?', correct: String(bPieces) });
     qs.push({ text: 'Which player has more pawns?', correct: wPawns > bPawns ? 'White' : bPawns > wPawns ? 'Black' : 'Equal', type: 'choice', options: ['White', 'Black', 'Equal'] });
     qs.push({ text: 'How many white pawns are there?', correct: String(wPawns) });
     qs.push({ text: 'How many black pawns are there?', correct: String(bPawns) });

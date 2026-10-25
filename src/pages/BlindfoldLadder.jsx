@@ -24,6 +24,8 @@ const SEQUENCES = [
 const FILES = ['a','b','c','d','e','f','g','h'];
 const RANKS = ['1','2','3','4','5','6','7','8'];
 
+function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
 function loadStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || { best: 0, attempts: 0 }; } catch { return { best: 0, attempts: 0 }; } }
 function saveStore(s) { localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
 
@@ -32,7 +34,6 @@ export default function BlindfoldLadder() {
   const [phase, setPhase] = useState('idle'); // idle | studying | playing | success | failed
   const [level, setLevel] = useState(0);
   const [studyTime, setStudyTime] = useState(5);
-  const [targetFen, setTargetFen] = useState(STARTING_FEN);
   const [question, setQuestion] = useState(null);
   const [chosen, setChosen] = useState(null);
   const studyTimerRef = useRef(null);
@@ -50,38 +51,53 @@ export default function BlindfoldLadder() {
       setPhase('success');
       return;
     }
-    // Compute the position after the sequence is played
+    // Compute the position after the sequence is played (never shown — the
+    // user studies the STARTING position and must play the moves in their head).
     const g = new Chess(STARTING_FEN);
-    for (const m of seq.moves) g.move(m);
-    setTargetFen(g.fen());
+    const played = [];
+    for (const m of seq.moves) played.push(g.move(m));
     setPhase('studying');
     setChosen(null);
     setStudyTime(5);
     clearInterval(studyTimerRef.current);
+    // Count down in the interval closure (not inside a state updater, which
+    // must stay pure) and start the quiz when it hits zero.
+    let remaining = 5;
     studyTimerRef.current = setInterval(() => {
-      setStudyTime(t => {
-        if (t <= 1) {
-          clearInterval(studyTimerRef.current);
-          beginQuiz(g, seq);
-          return 0;
-        }
-        return t - 1;
-      });
+      remaining -= 1;
+      setStudyTime(remaining);
+      if (remaining <= 0) {
+        clearInterval(studyTimerRef.current);
+        beginQuiz(g, seq, played);
+      }
     }, 1000);
   }
 
-  function beginQuiz(game, seq) {
-    // Pick a square that is occupied; ask which piece is there.
-    const board = game.board();
-    const occupied = [];
-    for (let r = 0; r < 8; r++) {
-      for (let f = 0; f < 8; f++) {
-        if (board[r][f]) occupied.push({ sq: FILES[f] + RANKS[7 - r], piece: board[r][f] });
-      }
+  function beginQuiz(game, seq, played) {
+    // Ask about a square the sequence touched (a piece's new home, or a square
+    // it vacated — so "Empty square" can be the answer), occasionally any square.
+    const touched = new Set();
+    for (const mv of played) {
+      touched.add(mv.from);
+      touched.add(mv.to);
+      if (mv.isKingsideCastle?.() || mv.flags?.includes('k')) { touched.add(mv.color === 'w' ? 'h1' : 'h8'); touched.add(mv.color === 'w' ? 'f1' : 'f8'); }
+      if (mv.isQueensideCastle?.() || mv.flags?.includes('q')) { touched.add(mv.color === 'w' ? 'a1' : 'a8'); touched.add(mv.color === 'w' ? 'd1' : 'd8'); }
     }
-    const target = occupied[Math.floor(Math.random() * occupied.length)];
+    const allSquares = [];
+    for (const f of FILES) for (const r of RANKS) allSquares.push(f + r);
+    // ~85% of the time pick a touched square, otherwise any square. Within
+    // the pool, ask about an empty square roughly a third of the time.
+    const pool = touched.size > 0 && pickRandom([1, 2, 3, 4, 5, 6, 0]) ? [...touched] : allSquares;
+    const occupiedSqs = pool.filter(s => game.get(s));
+    const emptySqs = pool.filter(s => !game.get(s));
+    const wantEmpty = pickRandom([true, false, false]);
+    const sq = pickRandom((wantEmpty && emptySqs.length) || !occupiedSqs.length ? emptySqs : occupiedSqs);
+    const piece = game.get(sq);
     const pieceChars = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' };
-    const correctLabel = `${target.piece.color === 'w' ? 'White' : 'Black'} ${pieceChars[target.piece.type]}`;
+    const target = { sq, piece };
+    const correctLabel = piece
+      ? `${piece.color === 'w' ? 'White' : 'Black'} ${pieceChars[piece.type]}`
+      : 'Empty square';
     const optionPool = [
       'White pawn', 'White knight', 'White bishop', 'White rook', 'White queen', 'White king',
       'Black pawn', 'Black knight', 'Black bishop', 'Black rook', 'Black queen', 'Black king',
@@ -131,7 +147,7 @@ export default function BlindfoldLadder() {
     return (
       <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-6 lg:py-10 text-center">
         <h1 className="text-2xl sm:text-3xl font-display mb-1">Blindfold Ladder</h1>
-        <p className="text-text-dim mb-6">Study a position for 5 seconds, then play the moves in your head. Identify what's on a target square.</p>
+        <p className="text-text-dim mb-6">Study the starting position for 5 seconds, then play the move sequence in your head. Identify what's on a target square in the final position.</p>
 
         <div className="card-base p-6 mb-6">
           <div className="grid grid-cols-2 gap-4">
@@ -166,9 +182,9 @@ export default function BlindfoldLadder() {
     return (
       <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-6 text-center">
         <h1 className="text-2xl font-display mb-1">Level {level + 1}</h1>
-        <p className="text-text-dim text-sm mb-3">Study this position — {studyTime}s remaining</p>
+        <p className="text-text-dim text-sm mb-3">Study the starting position — {studyTime}s remaining. Then play the moves in your head.</p>
         <div className="w-full max-w-[480px] mx-auto">
-          <ChessBoard fen={targetFen} orientation="white" movable={false} />
+          <ChessBoard fen={STARTING_FEN} orientation="white" movable={false} />
         </div>
       </div>
     );
@@ -194,7 +210,7 @@ export default function BlindfoldLadder() {
       </div>
       <div className="card-base p-5 mb-4 text-center">
         <div className="text-xs text-text-dim uppercase tracking-wide mb-2">Question</div>
-        <p className="text-lg">What is on square <span className="text-gold font-bold text-2xl">{question.square.toUpperCase()}</span>?</p>
+        <p className="text-lg">After these moves, what is on square <span className="text-gold font-bold text-2xl">{question.square.toUpperCase()}</span>?</p>
       </div>
       <div className="grid grid-cols-2 gap-2">
         {question.options.map(opt => {

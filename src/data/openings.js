@@ -245,7 +245,7 @@ const openings = [
       {
         "move": "Bb5",
         "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
-        "explanation": "The Ruy López! The bishop pins the knight that defends e5, creating long-term strategic pressure. White doesn't win a pawn immediately but builds tension.",
+        "explanation": "The Ruy López! The bishop attacks the knight that defends e5, creating long-term strategic pressure. White doesn't win a pawn immediately (after Bxc6 dxc6 Nxe5, Black can win the pawn back with ...Qd4), but builds lasting tension.",
         "arrows": [
           [
             "b5",
@@ -255,7 +255,7 @@ const openings = [
       }
     ],
     "keyIdeas": [
-      "Indirect pressure on the e5 pawn through the Nc6 pin",
+      "Indirect pressure on the e5 pawn by attacking its defender, the knight on c6",
       "White maintains flexibility — can exchange on c6 or retreat to a4",
       "Long-term strategic plans with d3, c3, and eventual d4",
       "The Morphy Defence (a6) is Black's most common response",
@@ -473,8 +473,8 @@ const openings = [
         "explanation": "White defends e4. Black will now typically play g6 and Bg7, fianchettoing the bishop to target the centre from afar.",
         "arrows": [
           [
-            "g7",
-            "a1"
+            "c3",
+            "e4"
           ]
         ]
       }
@@ -576,7 +576,7 @@ const openings = [
     "keyIdeas": [
       "Black controls e4 and prepares a kingside attack",
       "Three main systems: Stonewall (d5+e6+f5), Leningrad (g6+Bg7), and Classical (e6+Be7)",
-      "The Stonewall creates a fortress but leaves the dark-squared bishop passive",
+      "The Stonewall gives Black a solid wall of pawns but leaves the light-squared bishop on c8 passive",
       "The Leningrad Dutch combines the fianchetto with f5 for dynamic play",
       "Risky — the weakened kingside can be exploited if Black is not careful"
     ]
@@ -659,7 +659,7 @@ const openings = [
       {
         "move": "f4",
         "fen": "rnbqkb1r/pppp1ppp/5n2/4p3/4PP2/2N5/PPPP2PP/R1BQKBNR b KQkq - 0 3",
-        "explanation": "The Vienna Gambit! White offers the f-pawn to blast open the centre. After exf4, White gets a strong centre with d4 and open lines for attack. Very aggressive.",
+        "explanation": "The Vienna Gambit! White offers the f-pawn to blast open the centre. If Black takes with ...exf4, White plays e5 to kick the knight and gain space; the main reply is the central counter ...d5. Very aggressive.",
         "arrows": [
           [
             "f4",
@@ -701,7 +701,7 @@ const openings = [
       {
         "move": "d6",
         "fen": "rnbqkbnr/pp2pppp/3p4/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3",
-        "explanation": "Black supports the c5 pawn and prepares to develop the knight to f6."
+        "explanation": "Black controls the e5 square and opens the diagonal for the c8 bishop, preparing ...Nf6 without the knight being kicked by e5."
       },
       {
         "move": "d4",
@@ -780,12 +780,9 @@ const openings = [
       {
         "move": "Bg7",
         "fen": "rnbqk2r/ppppppbp/5np1/8/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4",
-        "explanation": "The fianchettoed bishop is the pride of the King's Indian. It targets the centre and the queenside along the long diagonal.",
-        "arrows": [
-          [
-            "g7",
-            "a1"
-          ]
+        "explanation": "The fianchettoed bishop is the pride of the King's Indian. Once the f6 knight moves, it will aim along the long diagonal at the centre and the queenside.",
+        "highlights": [
+          "g7"
         ]
       },
       {
@@ -1048,7 +1045,7 @@ const openings = [
       {
         "move": "d6",
         "fen": "rnbqkb1r/ppp1pppp/3p4/3nP3/3P4/8/PPP2PPP/RNBQKBNR w KQkq - 0 4",
-        "explanation": "Black strikes at the e5 pawn. After exd6, White's centre is diminished. After e6, the centre is closed and Black manoeuvres behind it.",
+        "explanation": "Black strikes at the e5 pawn. If White plays exd6, the big centre is reduced. If White keeps the pawn on e5 (for example with Nf3 or c4), Black keeps attacking it with pieces and pawns.",
         "arrows": [
           [
             "d6",

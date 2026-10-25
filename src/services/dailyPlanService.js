@@ -19,10 +19,11 @@ import drills from '../data/endgameDrills';
 import { tallySteps, STEP_META } from './spyScanSafe';
 import { drillStats } from './thinkingDrillStore';
 import { blunderTrend } from './gameLog';
+import { localDateKey } from '../utils/dateKey';
 
 const STORE_KEY = 'chess-mastery:dailyPlanState';
 
-function dateKey(d = new Date()) { return d.toISOString().slice(0, 10); }
+const dateKey = localDateKey;
 function loadJson(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
 }
@@ -109,14 +110,15 @@ export function generatePlan() {
 
   // 3. Review due mistakes (only if any)
   const mDue = mistakesDue();
-  if (mDue > 0) {
+  const reviewedToday = !!todayMarkers['review-mistakes'];
+  if (mDue > 0 || reviewedToday) {
     plan.push({
       id: 'review-mistakes',
-      title: `Review ${mDue} mistake${mDue === 1 ? '' : 's'}`,
+      title: mDue > 0 ? `Review ${mDue} mistake${mDue === 1 ? '' : 's'}` : 'Review your mistakes',
       blurb: 'Re-solve blunders from your games',
       route: '/my-mistakes',
       minutes: Math.min(8, Math.max(2, Math.ceil(mDue * 0.8))),
-      done: false, // can't tell if user reviewed without per-mistake timestamps; show as pending
+      done: reviewedToday && mDue === 0,
     });
   }
 

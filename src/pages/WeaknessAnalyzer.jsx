@@ -10,6 +10,7 @@ const categoryLinks = {
   'Back Rank Mate': '/tactics',
   Deflection: '/tactics',
   'Double Check': '/tactics',
+  'Checkmate Pattern': '/checkmate-patterns',
   Zugzwang: '/endgames',
   'Critical Moment': '/critical-moments',
   Calculation: '/calculation',

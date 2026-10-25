@@ -386,6 +386,10 @@ textarea:focus-visible {
   .board-fit-mobile {
     margin-left: -1rem;
     margin-right: -1rem;
+    /* widen into the page padding; without this, a w-full on the same element pins the width
+       and the board just shifts left (off-centre, h-file clipped) */
+    width: calc(100% + 2rem) !important;
+    max-width: none !important;
   }
   .board-fit-mobile-tight {
     margin-left: -0.5rem;
@@ -454,6 +458,35 @@ kbd {
   aspect-ratio: 1;
   border-radius: 6px;
   overflow: hidden;
+}
+
+/* Coordinates: chessground's defaults (files offset left:24px, ranks shifted
+   up 20px) are tuned for lichess's layout and spill into neighbouring squares /
+   get clipped here. Pin each label inside its own square instead:
+   files bottom-right, ranks top-left. */
+.cg-wrap coords.files {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: auto;
+}
+.cg-wrap coords.files coord {
+  flex: 1 1 0;
+  min-width: 0;
+  text-align: right;
+  padding: 0 3px 1px 0;
+  line-height: 1;
+}
+.cg-wrap coords.ranks {
+  left: 0;
+  top: 0;
+}
+.cg-wrap coords.ranks coord {
+  flex: 1 1 0;
+  min-height: 0;
+  transform: none;
+  padding: 2px 0 0 3px;
+  line-height: 1;
 }
 
 

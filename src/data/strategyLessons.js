@@ -17,7 +17,7 @@ const strategyLessons = [
       {
         "type": "position",
         "fen": "rnbqkbnr/pp2pppp/2p5/3p4/3PP3/2N5/PPP2PPP/R1BQKBNR b KQkq - 1 3",
-        "caption": "After 3.Nc3 in the Caro-Kann: if Black plays dxe4 and White recaptures Nxe4, the pawn structure stays clean. But if a knight is captured on c3, White gets doubled c-pawns.",
+        "caption": "After 3.Nc3 in the Caro-Kann. If Black plays ...dxe4 and White recaptures Nxe4, White's pawns stay healthy. But if Black's bishop ever captures the knight on c3 and White recaptures with the b-pawn (bxc3), White gets doubled c-pawns on c2 and c3.",
         "arrows": [],
         "highlights": []
       },
@@ -27,11 +27,11 @@ const strategyLessons = [
       },
       {
         "type": "position",
-        "fen": "rnbqkb1r/pp3ppp/4pn2/2pp4/3P4/2N2N2/PPP2PPP/R1BQKB1R w KQkq - 0 5",
-        "caption": "A typical IQP position. After cxd5 exd5, White would have an isolated d-pawn but active pieces.",
+        "fen": "rnbqk2r/pp2bppp/4pn2/3p4/2PP4/2N2N2/PP3PPP/R1BQKB1R w KQkq - 2 7",
+        "caption": "The Panov Attack against the Caro-Kann. White has no e-pawn, so after cxd5 Nxd5 White is left with an isolated d-pawn on d4 (no white pawns on the c- or e-files) but very active pieces.",
         "arrows": [
           [
-            "d4",
+            "c4",
             "d5"
           ]
         ],
@@ -45,7 +45,7 @@ const strategyLessons = [
       },
       {
         "type": "text",
-        "content": "A pawn chain is a diagonal line of pawns protecting each other (e.g., e4-d5-c6). The base of the chain is the weakest point, and the opponent should try to attack it. For example, in the French Defence with pawns on e5-d4, Black attacks the base with c5."
+        "content": "A pawn chain is a diagonal line of pawns protecting each other (e.g. c3-d4-e5). The base of the chain is the weakest point, and the opponent should try to attack it. For example, in the French Defence with White pawns on d4 and e5, Black attacks the base (d4) with ...c5."
       }
     ]
   },
@@ -113,17 +113,12 @@ const strategyLessons = [
       },
       {
         "type": "position",
-        "fen": "r1bq1rk1/ppp1bppp/2np1n2/4p3/2B1P3/2NP1N2/PPP2PPP/R1BQ1RK1 w - - 0 7",
-        "caption": "If White plays d4 and Black takes (exd4), the d5 square becomes an outpost for a White knight. Nd5 would be very strong.",
+        "fen": "rnb2rk1/pp2q1pp/2pbpn2/3pNp2/2PP4/1P4P1/P3PPBP/RNBQ1RK1 w - - 3 9",
+        "caption": "A Dutch Stonewall. Black's pawns on d5, e6 and f5 have all moved past the e5 square, so no black pawn can ever attack it. White's knight on e5 sits on a secure outpost in the middle of Black's position.",
         "highlights": [
-          "d5"
+          "e5"
         ],
-        "arrows": [
-          [
-            "c3",
-            "d5"
-          ]
-        ]
+        "arrows": []
       },
       {
         "type": "text",
@@ -135,17 +130,16 @@ const strategyLessons = [
       },
       {
         "type": "position",
-        "fen": "r1bq1rk1/1p2bppp/p1np1n2/4p3/4P3/1NN1BP2/PPPP2PP/R2QKB1R w KQ - 0 8",
-        "caption": "White's pieces are well-coordinated: the knight eyes d5, the bishop supports the centre. Black's pieces are solid but less active.",
+        "fen": "rnbq1rk1/1p2bppp/p2p1n2/4p3/4P3/1NN1BP2/PPP3PP/R2QKB1R w KQ - 1 9",
+        "caption": "A Najdorf Sicilian. Black has no c-pawn and has pushed the e-pawn to e5, so no black pawn can ever attack d5: it is a perfect outpost, and the knight on c3 is eyeing it. Black's dark-squared bishop on e7 is restricted by its own pawns on the dark squares d6 and e5.",
         "arrows": [
-          [
-            "b3",
-            "d4"
-          ],
           [
             "c3",
             "d5"
           ]
+        ],
+        "highlights": [
+          "d5"
         ]
       }
     ]
@@ -167,7 +161,7 @@ const strategyLessons = [
       },
       {
         "type": "position",
-        "fen": "r1bq1rk1/pppp1ppp/2n2n2/2b1p3/2B1P3/2N2N2/PPPP1PPP/R1BQ1RK1 b - - 6 5",
+        "fen": "r1bq1rk1/pppp1ppp/2n2n2/2b1p3/2B1P3/2N2N2/PPPP1PPP/R1BQ1RK1 w - - 8 6",
         "caption": "Both sides have castled kingside. The pawn shields (f2g2h2 and f7g7h7) are intact, providing good king safety.",
         "highlights": [
           "f2",
@@ -205,8 +199,8 @@ const strategyLessons = [
       },
       {
         "type": "position",
-        "fen": "r4rk1/ppp2ppp/2n1bn2/3pp3/8/2N1PN2/PPP1BPPP/R4RK1 w - - 0 9",
-        "caption": "The d-file is semi-open for White after a pawn exchange. Placing a rook on d1 would seize control of this important file.",
+        "fen": "r4rk1/ppp2ppp/2n1bn2/3p4/8/2N1PN2/PPP1BPPP/R4RK1 w - - 0 12",
+        "caption": "White's d-pawn has been exchanged, so the d-file is semi-open for White: the only pawn on it is Black's d5 pawn. Rd1 puts a rook on that file and starts pressing against d5.",
         "arrows": [
           [
             "a1",
@@ -224,15 +218,11 @@ const strategyLessons = [
       {
         "type": "position",
         "fen": "6k1/1R3ppp/8/8/8/8/5PPP/6K1 w - - 0 1",
-        "caption": "A rook on the 7th rank attacks all of Black's pawns from behind. The king is restricted to the back rank.",
+        "caption": "A rook on the 7th rank attacks Black's pawns from the side (here the f7 pawn) and, together with Black's own pawns, keeps the king shut in on the back rank.",
         "arrows": [
           [
             "b7",
             "f7"
-          ],
-          [
-            "b7",
-            "g7"
           ]
         ]
       },
@@ -260,10 +250,17 @@ const strategyLessons = [
       {
         "type": "position",
         "fen": "r1bq1rk1/pp3ppp/2n1pn2/2pp4/1bPP4/2N1PN2/PP3PPP/R1BQKB1R w KQ - 0 6",
-        "caption": "If Black captures Bxc3 and White recaptures bxc3, the d4 square becomes weak but White gains the bishop pair. A classic strategic trade-off.",
+        "caption": "A Nimzo-Indian position. If Black plays ...Bxc3+ and White recaptures bxc3, White gets doubled c-pawns. In return White gains the bishop pair, and Black, having given up the dark-squared bishop, may later find dark squares such as d6 and e5 hard to defend. A classic strategic trade-off.",
         "highlights": [
-          "d4",
-          "c3"
+          "c3",
+          "d6",
+          "e5"
+        ],
+        "arrows": [
+          [
+            "b4",
+            "c3"
+          ]
         ]
       },
       {
@@ -293,8 +290,8 @@ const strategyLessons = [
       },
       {
         "type": "position",
-        "fen": "r2q1rk1/pb2bppp/1pn1pn2/2pp4/3P4/1PNBPN2/P1P2PPP/R1BQ1RK1 w - - 0 9",
-        "caption": "Here White has the bishop pair. Opening the position with dxc5 would enhance the bishops' power. The dark-squared bishop on c1 and light-squared on d3 can become very strong.",
+        "fen": "r2q1rk1/p3bppp/1pn1pn2/2pp4/3P4/1P1BPN2/P1P2PPP/R1BQ1RK1 w - - 0 9",
+        "caption": "Black has given up the light-squared bishop for a knight, so White has the bishop pair. Opening the position (for example with dxc5) gives the bishops more scope: the bishop on d3 already aims at h7, and the bishop on c1 can come to b2 or a3.",
         "arrows": [
           [
             "d3",
@@ -329,12 +326,12 @@ const strategyLessons = [
       },
       {
         "type": "text",
-        "content": "The classic example is the Queen's Gambit Exchange variation: White has pawns on a2 and b2 vs Black's pawns on a7, b7, and c6. White plays a4, b4-b5, forcing Black to capture (cxb5 axb5) and leaving Black with an isolated c-pawn or a backward b-pawn."
+        "content": "The classic example is the Carlsbad structure from the Queen's Gambit Declined, Exchange Variation: on the queenside White has pawns on a2 and b2 against Black's pawns on a7, b7 and c6. White plays b4-b5 (often with a4 as well). If White then captures bxc6 and Black recaptures ...bxc6, Black is left with a backward c-pawn on a half-open file; if Black captures ...cxb5 instead, the d5 pawn becomes isolated."
       },
       {
         "type": "position",
-        "fen": "r1bq1rk1/pp1nbppp/2p1pn2/3p4/2PP4/2N1PN2/PP3PPP/R1BQKB1R w KQ - 0 7",
-        "caption": "A typical QGD structure. White can play a4 and b4-b5 to execute the minority attack on the queenside, targeting the c6 pawn.",
+        "fen": "r1bqrnk1/pp2bppp/2p2n2/3p2B1/3P4/2NBPN2/PPQ2PPP/R4RK1 w - - 8 11",
+        "caption": "The Carlsbad structure. White has two queenside pawns (a2, b2) against Black's three (a7, b7, c6). White can play b4-b5 (often with a4) to execute the minority attack, targeting the c6 pawn.",
         "arrows": [
           [
             "a2",
@@ -404,8 +401,8 @@ const strategyLessons = [
       },
       {
         "type": "position",
-        "fen": "r1bq1rk1/pp2bppp/2n1p3/3pP3/3P4/2N2N2/PP2BPPP/R1BQ1RK1 b - - 0 9",
-        "caption": "A typical French Advance position. Black might want to play f6 to challenge e5. A prophylactic move like h4 or f4 prevents this break.",
+        "fen": "r1bq1rk1/pp1nbppp/2n1p3/3pP3/3P4/2N2N2/PP2BPPP/R1BQ1RK1 w - - 0 10",
+        "caption": "A French Advance structure. Black would like to play ...f6 to challenge the e5 pawn. A prophylactic approach is to prepare for it in advance, for example with Re1 and Bd3: once the bishop leaves e2, the rook on e1 adds a defender to e5, so ...f6 does far less damage.",
         "arrows": [
           [
             "f7",

@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import { Chess } from 'chess.js';
 import ChessBoard from '../components/ChessBoard';
 import RatingButtons from '../components/RatingButtons';
@@ -16,7 +16,9 @@ const diffColors = {
 export default function TacticsQueue() {
   const { isDue, updateAfterReview, srData } = useSpacedRepetition();
 
-  const queue = useMemo(() => {
+  // Build the due queue from SR data. Called only when a session starts so the
+  // queue stays stable while the user rates puzzles (rating mutates srData).
+  function buildQueue() {
     const due = puzzles.filter(p => isDue(p.id));
     // Add one unseen if none are due
     if (due.length === 0) {
@@ -27,8 +29,9 @@ export default function TacticsQueue() {
     const seen = Object.keys(srData).length;
     if (seen === 0) return due.slice(0, 5);
     return due;
-  }, [isDue, srData]);
+  }
 
+  const [queue, setQueue] = useState(buildQueue);
   const [queueIndex, setQueueIndex] = useState(0);
   const [solveState, setSolveState] = useState('playing'); // playing | correct | wrong
   const [solutionStep, setSolutionStep] = useState(0);
@@ -120,6 +123,13 @@ export default function TacticsQueue() {
     }
   }
 
+  function restartSession() {
+    const next = buildQueue();
+    setQueue(next);
+    setQueueIndex(0);
+    if (next[0]) resetToPuzzle(next[0]);
+  }
+
   function tryAgain() {
     resetToPuzzle(puzzle);
   }
@@ -139,7 +149,7 @@ export default function TacticsQueue() {
       <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-10 lg:py-16 text-center">
         <h1 className="text-2xl sm:text-3xl font-display mb-1">Session Complete</h1>
         <p className="text-text-dim text-sm mb-5">You've finished all due puzzles for today. Great work!</p>
-        <button onClick={() => { setQueueIndex(0); resetToPuzzle(queue[0]); }} className="bg-gold text-bg px-4 sm:px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
+        <button onClick={restartSession} className="bg-gold text-bg px-4 sm:px-6 py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">
           Restart Session
         </button>
       </div>

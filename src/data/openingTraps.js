@@ -4,7 +4,7 @@ const openingTraps = [
     "name": "Elephant Trap",
     "opening": "Queen's Gambit Declined",
     "difficulty": "Beginner",
-    "description": "Black lures White's bishop to capture on d5, then wins a piece with a devastating discovered attack.",
+    "description": "Black to move. White's knight has just grabbed the pawn on d5 (6.Nxd5?), thinking Black's knight on f6 is pinned to the queen by the bishop on g5. Is it really pinned?",
     "setupMoves": [
       "d4",
       "d5",
@@ -18,13 +18,18 @@ const openingTraps = [
       "exd5",
       "Nxd5"
     ],
-    "fen": "r1bqkb1r/pppn1ppp/5n2/3Np1B1/3P4/8/PP2PPPP/R2QKBNR b KQkq - 0 6",
+    "fen": "r1bqkb1r/pppn1ppp/5n2/3N2B1/3P4/8/PP2PPPP/R2QKBNR b KQkq - 0 6",
     "trapMove": "Nxd5",
-    "fenAfterTrap": "r1bqkb1r/pppn1ppp/8/3np1B1/3P4/8/PP2PPPP/R2QKBNR w KQkq - 0 7",
-    "explanation": "After ...Nxd5, White naturally recaptures Bxd8, but Black has Bb4+! forking king and queen. After Qd2 Bxd2+ Kxd2, Black plays Kxd8 and is up a whole piece.",
-    "howToAvoid": "White should not play Nxd5 in this position. Instead, develop normally with Nf3 or e3.",
+    "fenAfterTrap": "r1bqkb1r/pppn1ppp/8/3n2B1/3P4/8/PP2PPPP/R2QKBNR w KQkq - 0 7",
+    "explanation": "6...Nxd5! Black simply takes the knight, offering the queen. If White grabs it with 7.Bxd8, Black plays 7...Bb4+: the only way to block the check is 8.Qd2, and after 8...Bxd2+ 9.Kxd2 Kxd8 the queens are gone and Black has won a whole knight. If White does not take the queen, Black is simply a knight up.",
+    "howToAvoid": "The knight on f6 only looked pinned. White should not take on d5 with the knight; normal moves such as 6.e3 or 6.Nf3 keep a good position.",
     "solution": [
-      "Nxd5"
+      "Bxd8",
+      "Bb4+",
+      "Qd2",
+      "Bxd2+",
+      "Kxd2",
+      "Kxd8"
     ]
   },
   {
@@ -32,7 +37,7 @@ const openingTraps = [
     "name": "Caro-Kann Smothered Mate Trap",
     "opening": "Caro-Kann",
     "difficulty": "Beginner",
-    "description": "White falls into a smothered mate after being greedy in the Caro-Kann.",
+    "description": "White to move. Black has just developed with 5...Ngf6??, a natural-looking move. But White's queen on e2 is lined up with the pawn on e7 and the king on e8, and Black's pieces are crowding the king. Can White finish the game at once?",
     "setupMoves": [
       "e4",
       "c6",
@@ -43,24 +48,21 @@ const openingTraps = [
       "Nxe4",
       "Nd7",
       "Qe2",
-      "Ngf6",
-      "Nd6#"
+      "Ngf6"
     ],
-    "fen": "r1bqkb1r/pp1npppp/2pN1n2/8/3P4/8/PPP1QPPP/R1B1KBNR b KQkq - 1 6",
+    "fen": "r1bqkb1r/pp1npppp/2p2n2/8/3PN3/8/PPP1QPPP/R1B1KBNR w KQkq - 3 6",
     "trapMove": "Nd6#",
-    "fenAfterTrap": "r1bqkb1r/pp1npppp/2pN1n2/8/3P4/8/PPP1QPPP/R1B1KBNR b KQkq - 1 6",
-    "explanation": "Nd6# is checkmate! The knight on d6 delivers check, and the king is smothered by its own pieces. The e7 pawn blocks the king, the queen on e2 covers e7 escape.",
-    "howToAvoid": "Black should play ...Ngf6 before ...Nd7, or play ...e5 to open the diagonal for the bishop.",
-    "solution": [
-      "Nd6#"
-    ]
+    "fenAfterTrap": "r1bqkb1r/pp1npppp/2pN1n2/8/3P4/8/PPP1QPPP/R1B1KBNR b KQkq - 4 6",
+    "explanation": "6.Nd6# is checkmate! The knight checks the king on e8. The e7 pawn cannot capture it because it is pinned to the king by the queen on e2. The king has no squares: d8 holds its own queen, d7 a knight, f8 a bishop, and e7 and f7 are pawns. The king is smothered by its own army.",
+    "howToAvoid": "After 5.Qe2 Black should play 5...Ndf6, attacking the knight on e4 with the other knight, and only then develop normally. Always check what the opponent's queen is pointing at.",
+    "solution": []
   },
   {
     "id": "trap-8",
     "name": "Scandinavian Queen Trap",
     "opening": "Scandinavian Defence",
     "difficulty": "Beginner",
-    "description": "Black's queen gets trapped after being lured to a vulnerable square.",
+    "description": "White to move. Black's queen sits on a5, and White's bishop on d2 points straight at it, with only the knight on c3 in between. Black has just played 6...Nc6?, which blocks the c7 pawn. How does White exploit this?",
     "setupMoves": [
       "e4",
       "d5",
@@ -72,17 +74,19 @@ const openingTraps = [
       "Nf6",
       "Nf3",
       "Bf5",
-      "Bc4",
-      "e6",
-      "Nd5"
+      "Bd2",
+      "Nc6"
     ],
-    "fen": "rn2kb1r/ppp2ppp/4pn2/q2N1b2/2BP4/5N2/PPP2PPP/R1BQK2R b KQkq - 5 7",
-    "trapMove": "Qd8",
-    "fenAfterTrap": "rn1qkb1r/ppp2ppp/4pn2/3N1b2/2BP4/5N2/PPP2PPP/R1BQK2R w KQkq - 6 8",
-    "explanation": "After Nd5, the knight forks the queen and threatens Nc7+ forking king and rook. The queen must retreat and Black loses material after Nc7+ Kd8 Nxa8.",
-    "howToAvoid": "Black should avoid placing the queen on a5 where it can be hit by Nd5, or play ...c6 to control d5.",
+    "fen": "r3kb1r/ppp1pppp/2n2n2/q4b2/3P4/2N2N2/PPPB1PPP/R2QKB1R w KQkq - 5 7",
+    "trapMove": "Nb5",
+    "fenAfterTrap": "r3kb1r/ppp1pppp/2n2n2/qN3b2/3P4/5N2/PPPB1PPP/R2QKB1R b KQkq - 6 7",
+    "explanation": "7.Nb5! moves the knight out of the way, so the bishop on d2 now attacks the queen (a discovered attack), and the knight also threatens Nxc7+, forking the king and the rook on a8. The queen must move: after 7...Qb6, 8.c4! threatens c5, trapping the queen. After 8...Nb8 9.c5 the queen has to run to c6 or e6 while White gains lots of time, and if 8...a6 9.c5 Black has to give up the queen for the knight and a bishop.",
+    "howToAvoid": "With the queen on a5, Black must watch for the knight on c3 jumping away. Black should play 6...c6 (covering b5 and d5) or 6...e6, keeping the c-pawn free to defend.",
     "solution": [
-      "Qd8"
+      "Qb6",
+      "c4",
+      "Nb8",
+      "c5"
     ]
   },
   {
@@ -90,7 +94,7 @@ const openingTraps = [
     "name": "Fishing Pole Trap",
     "opening": "Ruy López",
     "difficulty": "Intermediate",
-    "description": "Black sacrifices a knight to lure White's kingside pawns forward and crack open the h-file against the castled king.",
+    "description": "Black to move. Black put a knight on g4 as bait (the \"fishing pole\"), White kicked it with 5.h3, and Black ignored it with 5...h5. White has just taken the knight with 6.hxg4?. How does Black follow up?",
     "setupMoves": [
       "e4",
       "e5",
@@ -99,15 +103,20 @@ const openingTraps = [
       "Bb5",
       "Nf6",
       "O-O",
-      "Ng4"
+      "Ng4",
+      "h3",
+      "h5",
+      "hxg4"
     ],
-    "fen": "r1bqkb1r/pppp1ppp/2n5/1B2p3/4P1n1/5N2/PPPP1PPP/RNBQ1RK1 w kq - 5 5",
-    "trapMove": "h5",
-    "fenAfterTrap": "r1bqkb1r/pppp1ppp/2n5/1B2p2p/4P1n1/5N2/PPPP1PPP/RNBQ1RK1 w kq h6 0 6",
-    "explanation": "After ...h5, Black threatens ...h4-h3, cracking open the kingside. If White plays h3, Ng4xf2 is a strong sacrifice. The h-file becomes a highway to White's king.",
-    "howToAvoid": "White should play d4 before castling, or after O-O simply play d3 and develop naturally rather than allowing Ng4.",
+    "fen": "r1bqkb1r/pppp1pp1/2n5/1B2p2p/4P1P1/5N2/PPPP1PP1/RNBQ1RK1 b kq - 0 6",
+    "trapMove": "hxg4",
+    "fenAfterTrap": "r1bqkb1r/pppp1pp1/2n5/1B2p3/4P1p1/5N2/PPPP1PP1/RNBQ1RK1 w kq - 0 7",
+    "explanation": "6...hxg4! opens the h-file for the rook on h8. Now the pawn attacks the knight on f3, and if the knight moves away, ...Qh4 is coming with mate on h2 or h1. For example 7.Nxe5? Qh4 threatens ...Qh2# (the rook on h8 supports the queen), and White cannot stop mate for long. White's best is 7.c3 gxf3 8.Qxf3, but even then Black's rook and queen have a powerful attack down the open h-file.",
+    "howToAvoid": "Don't take the bait. After 5...h5, White should simply play 6.c3, 6.Nc3 or 6.d3: the knight on g4 is misplaced and White is clearly better. Taking on g4 opens the h-file against your own king.",
     "solution": [
-      "h5"
+      "c3",
+      "gxf3",
+      "Qxf3"
     ]
   },
   {
@@ -115,7 +124,7 @@ const openingTraps = [
     "name": "Fried Liver Attack",
     "opening": "Italian Game",
     "difficulty": "Intermediate",
-    "description": "White sacrifices a knight on f7 to expose Black's king and launch a devastating attack.",
+    "description": "White to move. In the Two Knights Defence, Black has just recaptured on d5 with the knight (5...Nxd5?!). White's knight on g5 and bishop on c4 are both aimed at f7. What is White's most aggressive idea?",
     "setupMoves": [
       "e4",
       "e5",
@@ -128,13 +137,16 @@ const openingTraps = [
       "exd5",
       "Nxd5"
     ],
-    "fen": "r1bqkb1r/ppp2ppp/2n5/3nN1N1/2B5/8/PPPP1PPP/RNBQK2R w KQkq - 0 6",
+    "fen": "r1bqkb1r/ppp2ppp/2n5/3np1N1/2B5/8/PPPP1PPP/RNBQK2R w KQkq - 0 6",
     "trapMove": "Nxf7",
-    "fenAfterTrap": "r1bqkb1r/ppp2Npp/2n5/3n4/2B5/8/PPPP1PPP/RNBQK2R b KQkq - 0 6",
-    "explanation": "Nxf7 is a knight sacrifice that forks the queen and rook. After Kxf7, White plays Qf3+ and the Black king is dragged into the open. White gets a ferocious attack.",
-    "howToAvoid": "Black should play ...Na5 instead of ...Nxd5, or avoid ...Nf6 in favour of ...h6 kicking the knight.",
+    "fenAfterTrap": "r1bqkb1r/ppp2Npp/2n5/3np3/2B5/8/PPPP1PPP/RNBQK2R b KQkq - 0 6",
+    "explanation": "6.Nxf7! sacrifices the knight, forking the queen on d8 and the rook on h8. After 6...Kxf7 7.Qf3+ the king has to step forward to e6 to keep defending the pinned knight on d5, and after 8.Nc3 White piles up on d5 with a ferocious attack against the exposed king. This is the Fried Liver Attack.",
+    "howToAvoid": "Black should not recapture with 5...Nxd5. The main line is 5...Na5, attacking the bishop on c4. Black gives up a pawn but gets good development and avoids the attack on f7.",
     "solution": [
-      "Nxf7"
+      "Kxf7",
+      "Qf3+",
+      "Ke6",
+      "Nc3"
     ]
   },
   {
@@ -142,22 +154,30 @@ const openingTraps = [
     "name": "Stafford Gambit",
     "opening": "Petroff Defence",
     "difficulty": "Intermediate",
-    "description": "Black sacrifices a pawn with ...Nf6 allowing Nxe5, setting up tactical tricks if White isn't careful.",
+    "description": "Black to move. In the Stafford Gambit Black gave up the e5 pawn for quick development. White has just pinned the knight on f6 to the queen with 6.Bg5?. Is the pin real?",
     "setupMoves": [
       "e4",
       "e5",
       "Nf3",
       "Nf6",
       "Nxe5",
-      "Nc6"
+      "Nc6",
+      "Nxc6",
+      "dxc6",
+      "d3",
+      "Bc5",
+      "Bg5"
     ],
-    "fen": "r1bqkb1r/pppp1ppp/2n2n2/4N3/4P3/8/PPPP1PPP/RNBQKB1R w KQkq - 3 4",
-    "trapMove": "Ng4",
-    "fenAfterTrap": "r1bqkb1r/pppp1ppp/2n5/4N3/4P1n1/8/PPPP1PPP/RNBQKB1R w KQkq - 4 5",
-    "explanation": "After Nxc6 dxc6, Black plays ...Ng4 threatening Qh4 with attacks on f2 and h2. Many traps lurk: Bc5 threatens Bxf2+ and Qb6 ideas give Black strong compensation.",
-    "howToAvoid": "White should play d4 after Nxe5 and be prepared with Nf3 retreating rather than Nxc6.",
+    "fen": "r1bqk2r/ppp2ppp/2p2n2/2b3B1/4P3/3P4/PPP2PPP/RN1QKB1R b KQkq - 2 6",
+    "trapMove": "Nxe4",
+    "fenAfterTrap": "r1bqk2r/ppp2ppp/2p5/2b3B1/4n3/3P4/PPP2PPP/RN1QKB1R w KQkq - 0 7",
+    "explanation": "6...Nxe4! breaks the 'pin' and offers the queen. If 7.Bxd8?? Bxf2+ 8.Ke2 Bg4# is checkmate. If 7.dxe4 Black plays 7...Bxf2+ 8.Ke2 Bg4+ winning White's queen. White's best is 7.Be3, but after 7...Bxe3 8.fxe3 Qh4+ Black has won back the pawn and White's king is badly exposed.",
+    "howToAvoid": "White should play solid, developing moves that keep f2 safe, such as 6.Be2. The Stafford is full of traps on f2 and e4, so don't make pins that leave your king in the centre.",
     "solution": [
-      "Ng4"
+      "Be3",
+      "Bxe3",
+      "fxe3",
+      "Qh4+"
     ]
   },
   {
@@ -165,7 +185,7 @@ const openingTraps = [
     "name": "Budapest Gambit Trap",
     "opening": "Budapest Gambit",
     "difficulty": "Intermediate",
-    "description": "Black wins back the pawn with interest after a sneaky knight manoeuvre.",
+    "description": "Black to move. Black has won back the gambit pawn with 7...Ngxe5, and White has greedily taken the bishop on b4 (8.axb4??). Black's queen is on e7 and the knight on e5 is ready to jump. Can Black finish the game?",
     "setupMoves": [
       "d4",
       "Nf6",
@@ -180,23 +200,22 @@ const openingTraps = [
       "Nbd2",
       "Qe7",
       "a3",
-      "Ngxe5"
+      "Ngxe5",
+      "axb4"
     ],
-    "fen": "r1b1k2r/ppppqppp/2n5/4n3/1bP2B2/P4N2/1P1NPPPP/R2QKB1R w KQkq - 1 8",
-    "trapMove": "Nxf3+",
-    "fenAfterTrap": "r1b1k2r/ppppqppp/2n5/8/1bP2B2/P2n1N2/1P2PPPP/R2QKB1R w KQkq - 0 9",
-    "explanation": "After ...Ngxe5, if White plays Nxe5 Nxe5, then ...Nd3+ is a fork winning the bishop on f4. Black regains the gambit pawn and wins material.",
-    "howToAvoid": "White should play e3 instead of Bf4, keeping the position solid and maintaining the extra pawn.",
-    "solution": [
-      "Nxf3+"
-    ]
+    "fen": "r1b1k2r/ppppqppp/2n5/4n3/1PP2B2/5N2/1P1NPPPP/R2QKB1R b KQkq - 0 8",
+    "trapMove": "Nd3#",
+    "fenAfterTrap": "r1b1k2r/ppppqppp/2n5/8/1PP2B2/3n1N2/1P1NPPPP/R2QKB1R w KQkq - 1 9",
+    "explanation": "8...Nd3# is a smothered checkmate! The knight checks the king on e1. White cannot take it because the e2 pawn is pinned by the queen on e7, and the king cannot move: d1 holds the queen, d2 the knight, f1 the bishop and f2 a pawn.",
+    "howToAvoid": "White should not take the bishop. 8.Nxe5 Nxe5 9.e3 is the safe line: the e-pawn moves, so the e-file is closed and the d3 square is covered.",
+    "solution": []
   },
   {
     "id": "trap-10",
     "name": "Lasker Trap",
     "opening": "Albin Counter-Gambit",
     "difficulty": "Intermediate",
-    "description": "Black sacrifices material to promote a pawn to a knight with devastating effect.",
+    "description": "Black to move. White has just taken the bishop with 6.Bxb4?, and Black's pawn has marched all the way to f2 with check. The king went to e2. Black's pawn can promote on g1 by capturing the knight. Which piece should it become?",
     "setupMoves": [
       "d4",
       "d5",
@@ -207,15 +226,21 @@ const openingTraps = [
       "e3",
       "Bb4+",
       "Bd2",
-      "dxe3"
+      "dxe3",
+      "Bxb4",
+      "exf2+",
+      "Ke2"
     ],
-    "fen": "rnbqk1nr/ppp2ppp/8/4P3/1b6/4p3/PP1B1PPP/RN1QKBNR w KQkq - 0 6",
-    "trapMove": "exf2+",
-    "fenAfterTrap": "rnbqk1nr/ppp2ppp/8/4P3/1b6/8/PP1B1pPP/RN1QKBNR w KQkq - 0 7",
-    "explanation": "After ...dxe3, if White plays Bxb4, then ...exf2+ Ke2 fxg1=N+! The pawn promotes to a knight with check, forking king and rook. A spectacular underpromotion trick.",
-    "howToAvoid": "White should play fxe3 instead of Bxb4, recapturing the pawn safely.",
+    "fen": "rnbqk1nr/ppp2ppp/8/4P3/1BP5/8/PP2KpPP/RN1Q1BNR b kq - 1 7",
+    "trapMove": "fxg1=N+",
+    "fenAfterTrap": "rnbqk1nr/ppp2ppp/8/4P3/1BP5/8/PP2K1PP/RN1Q1BnR w kq - 0 8",
+    "explanation": "7...fxg1=N+! The knight is the right choice because it comes with check. Promoting to a queen throws the win away: 7...fxg1=Q? 8.Qxd8+ Kxd8 9.Rxg1 and the game is roughly level. After 8.Ke1 Qh4+ Black's attack is crushing; if 8.Rxg1 then 8...Bg4+ wins White's queen on d1. Black has won a whole piece with a winning attack. This underpromotion is the Lasker Trap.",
+    "howToAvoid": "On move 6 White should play 6.fxe3, removing the dangerous pawn. 6.Bxb4? lets the pawn go to f2 with check.",
     "solution": [
-      "exf2+"
+      "Ke1",
+      "Qh4+",
+      "Kd2",
+      "Nc6"
     ]
   },
   {
@@ -223,7 +248,7 @@ const openingTraps = [
     "name": "English Opening Knight Trap",
     "opening": "English Opening",
     "difficulty": "Intermediate",
-    "description": "White traps Black's knight that ventures too deep into the queenside.",
+    "description": "Black to move. White took the e5 pawn with the knight (5.Nxe5?), Black's queen came to e7, and White retreated the knight to d3 (6.Nd3??). White's e-file is now open between Black's queen and White's king. Can Black punish this?",
     "setupMoves": [
       "c4",
       "e5",
@@ -233,26 +258,23 @@ const openingTraps = [
       "Nc6",
       "g3",
       "Nd4",
-      "Bg2",
-      "Nxf3+",
-      "Bxf3",
-      "Bc5"
+      "Nxe5",
+      "Qe7",
+      "Nd3"
     ],
-    "fen": "r1bqk2r/pppp1ppp/5n2/2b1p3/2P5/2N2BP1/PP1PPP1P/R1BQK2R w KQkq - 2 7",
-    "trapMove": "e3",
-    "fenAfterTrap": "r1bqk2r/pppp1ppp/5n2/2b1p3/2P5/2N1PBP1/PP1P1P1P/R1BQK2R b KQkq - 0 7",
-    "explanation": "e3 blocks the bishop's diagonal and prepares d4, gaining time. The bishop on c5 is awkwardly placed and must retreat, giving White a strong centre.",
-    "howToAvoid": "Black should delay Bc5 and instead play d6 or Be7 for more flexible development.",
-    "solution": [
-      "e3"
-    ]
+    "fen": "r1b1kb1r/ppppqppp/5n2/8/2Pn4/2NN2P1/PP1PPP1P/R1BQKB1R b KQkq - 2 6",
+    "trapMove": "Nf3#",
+    "fenAfterTrap": "r1b1kb1r/ppppqppp/5n2/8/2P5/2NN1nP1/PP1PPP1P/R1BQKB1R w KQkq - 3 7",
+    "explanation": "6...Nf3# is checkmate! The knight on f3 checks the king on e1. The e2 pawn cannot capture it because it is pinned by the queen on e7, and the king is boxed in by its own pieces: queen d1, pawn d2, bishop f1, pawns e2 and f2.",
+    "howToAvoid": "After 5...Qe7 White must deal with the threat on the e-file. 6.f4, keeping the knight on e5 protected, is best. Never leave the e-file open in front of your king when the opponent's queen is on it.",
+    "solution": []
   },
   {
     "id": "trap-4",
     "name": "Siberian Trap",
     "opening": "Sicilian Defence",
     "difficulty": "Advanced",
-    "description": "In the Smith-Morra Gambit, Black sets up a devastating queen trap after White castles.",
+    "description": "Black to move. In the Smith-Morra Gambit, Black's knight has jumped to g4 and White has just asked it to leave with 9.h3?. Black's queen on c7 is aimed at h2, which only the knight on f3 defends. Find Black's killer blow.",
     "setupMoves": [
       "e4",
       "c5",
@@ -269,74 +291,84 @@ const openingTraps = [
       "O-O",
       "Nf6",
       "Qe2",
-      "Ng4"
+      "Ng4",
+      "h3"
     ],
-    "fen": "r1b1kb1r/ppqp1ppp/2n1p3/8/2B1P1n1/2N2N2/PP2QPPP/R1B2RK1 w kq - 6 9",
-    "trapMove": "Qh2#",
-    "fenAfterTrap": "r1b1kb1r/ppqp1ppp/2n1p3/8/2B1P1n1/2N2N2/PP2QPqP/R1B2RK1 w kq - 6 10",
-    "explanation": "Black manoeuvres the knight to g4 and if White doesn't react, Qxh2# is checkmate. The knight on g4 and queen coordinate lethally against h2.",
-    "howToAvoid": "White must play h3 to prevent Ng4, or be alert to the Qh2# threat. After Ng4, h3 is mandatory.",
+    "fen": "r1b1kb1r/ppqp1ppp/2n1p3/8/2B1P1n1/2N2N1P/PP2QPP1/R1B2RK1 b kq - 0 9",
+    "trapMove": "Nd4",
+    "fenAfterTrap": "r1b1kb1r/ppqp1ppp/4p3/8/2BnP1n1/2N2N1P/PP2QPP1/R1B2RK1 w kq - 1 10",
+    "explanation": "9...Nd4! attacks White's queen on e2. If 10.Nxd4?? Qh2# is checkmate, because the knight that guarded h2 has left. If White saves the queen with 10.Qd1, then 10...Nxf3+ removes the defender of h2, and after 11.Qxf3 Qh2# is mate. White's best is 10.hxg4, but after 10...Nxe2+ 11.Bxe2 Black has won the queen for a knight.",
+    "howToAvoid": "After 8...Ng4 White must not play 9.h3. Moves like 9.Nb5 (attacking the queen) or 9.e5 keep White's game going. Always check what the opponent's queen is aiming at before making a pawn move near your king.",
     "solution": [
-      "Qh2#"
+      "hxg4",
+      "Nxe2+",
+      "Bxe2"
     ]
   },
   {
     "id": "trap-7",
-    "name": "Winawer Poisoned Pawn Trap",
+    "name": "French Advance Pawn Trap",
     "opening": "French Defence",
     "difficulty": "Advanced",
-    "description": "In the French Winawer, Black grabs the b2 pawn but falls into a tactical sequence if they're not careful.",
+    "description": "White to move. In the French Advance, Black has piled up on d4 and has just won the pawn with 7...Nxd4 8.Nxd4 Qxd4. Black's queen now stands on the d-file, facing White's queen on d1 with the bishop on d3 in between. How does White win?",
     "setupMoves": [
       "e4",
       "e6",
       "d4",
       "d5",
-      "Nc3",
-      "Bb4",
       "e5",
       "c5",
-      "a3",
-      "Bxc3+",
-      "bxc3",
-      "Ne7",
-      "Qg4"
+      "c3",
+      "Nc6",
+      "Nf3",
+      "Qb6",
+      "Bd3",
+      "cxd4",
+      "cxd4",
+      "Nxd4",
+      "Nxd4",
+      "Qxd4"
     ],
-    "fen": "rnbqk2r/pp2nppp/4p3/2ppP3/3P2Q1/P1P5/5PPP/R1B1KBNR b KQkq - 1 7",
-    "trapMove": "Qc7",
-    "fenAfterTrap": "rnb1k2r/ppq1nppp/4p3/2ppP3/3P2Q1/P1P5/5PPP/R1B1KBNR w KQkq - 2 8",
-    "explanation": "Black plays ...Qc7 instead of grabbing the poisoned g7 pawn. If Black plays ...Kf8 or ...Rg8, White's Qg4 becomes a monster. ...Qc7 prepares ...cxd4 and keeps the position under control.",
-    "howToAvoid": "White should continue with Nf3 and aggressive play; the position is double-edged.",
+    "fen": "r1b1kbnr/pp3ppp/4p3/3pP3/3q4/3B4/PP3PPP/RNBQK2R w KQkq - 0 9",
+    "trapMove": "Bb5+",
+    "fenAfterTrap": "r1b1kbnr/pp3ppp/4p3/1B1pP3/3q4/8/PP3PPP/RNBQK2R b KQkq - 1 9",
+    "explanation": "9.Bb5+! moves the bishop off the d-file with check, uncovering an attack by White's queen on d1 against Black's queen on d4. Black has to deal with the check (for example 9...Bd7 or 9...Ke7), and then 10.Qxd4 wins the queen. The d4 pawn was poisoned.",
+    "howToAvoid": "With White's bishop on d3, the d4 pawn is protected by a hidden discovered attack. Black should play 7...Bd7 (the main line) and not take on d4 while the bishop can give check on b5.",
     "solution": [
-      "Qc7"
+      "Bd7",
+      "Bxd7+",
+      "Kxd7",
+      "Qxd4"
     ]
   },
   {
     "id": "trap-12",
-    "name": "Staunton Gambit Trap",
+    "name": "Dutch Defence Bishop Mate",
     "opening": "Dutch Defence",
     "difficulty": "Advanced",
-    "description": "White sacrifices a pawn in the Staunton Gambit and sets up a devastating attack if Black is careless.",
+    "description": "White to move. Black has pushed the kingside pawns aggressively and has just played 6...Rh6?, defending the h-file but leaving the h5 pawn guarded only by the rook. White's bishop on d3 is pointing at g6. Find the knockout.",
     "setupMoves": [
       "d4",
       "f5",
-      "e4",
-      "fxe4",
-      "Nc3",
-      "Nf6",
       "Bg5",
-      "g6",
-      "f3",
-      "exf3",
-      "Nxf3",
-      "Bg7"
+      "h6",
+      "Bh4",
+      "g5",
+      "Bg3",
+      "f4",
+      "e3",
+      "h5",
+      "Bd3",
+      "Rh6"
     ],
-    "fen": "rnbqk2r/ppppp1bp/5np1/6B1/3P4/2N2N2/PPP3PP/R2QKB1R w KQkq - 2 7",
-    "trapMove": "Bd3",
-    "fenAfterTrap": "rnbqk2r/ppppp1bp/5np1/6B1/3P4/2NB1N2/PPP3PP/R2QK2R b KQkq - 3 7",
-    "explanation": "Bd3 sets up Bxf6 followed by Bxg6+, exploiting the weakened kingside. If Black castles, Bxf6 Bxf6 Bxg6 hxg6 Qd3 targets the g6 pawn with devastating effect.",
-    "howToAvoid": "Black should avoid the passive ...Bg7 and instead play ...d5 to challenge the centre, or ...c6 preparing ...d5.",
+    "fen": "rnbqkbn1/ppppp3/7r/6pp/3P1p2/3BP1B1/PPP2PPP/RN1QK1NR w KQq - 2 7",
+    "trapMove": "Qxh5+",
+    "fenAfterTrap": "rnbqkbn1/ppppp3/7r/6pQ/3P1p2/3BP1B1/PPP2PPP/RN2K1NR b KQq - 0 7",
+    "explanation": "7.Qxh5+! sacrifices the queen. After 7...Rxh5 8.Bg6# is checkmate: the bishop checks the king on e8 along the g6-e8 diagonal, it also covers f7, and the king has no other squares because d8, f8, d7 and e7 are all occupied by Black's own pieces and pawns. If Black blocks with 7...Rg6, then 8.Bxg6# is mate too.",
+    "howToAvoid": "Black's pawn pushes on the kingside weakened the e8-h5 diagonal and g6 square. Instead of 6...Rh6, Black should develop with 6...Bg7, and in general avoid pushing all the pawns in front of the king.",
     "solution": [
-      "Bd3"
+      "Rxh5",
+      "Bg6#"
     ]
   }
 ];

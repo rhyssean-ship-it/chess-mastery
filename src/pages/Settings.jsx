@@ -70,7 +70,6 @@ export default function Settings() {
           {[
             { key: 'showCoordinates', label: 'Show board coordinates', desc: 'Display a-h and 1-8 along the edges of the board.' },
             { key: 'moveAnimation', label: 'Animate piece movement', desc: 'Smooth animation when pieces move on the board.' },
-            { key: 'autoPromoteQueen', label: 'Auto-promote to queen', desc: 'Automatically promote pawns to queen instead of asking.' },
             { key: 'soundEnabled', label: 'Sound effects', desc: 'Play sounds for moves, captures, and notifications. (Coming soon)' },
           ].map(pref => (
             <div key={pref.key} className="card-base p-5 flex items-center justify-between gap-4">

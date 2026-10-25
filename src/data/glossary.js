@@ -4,8 +4,8 @@ const glossary = [
     term: 'Tempo',
     category: 'General',
     definition: 'A unit of time measured in moves. Gaining a tempo means making a useful move while forcing the opponent to waste one.',
-    example: 'After Bb5+ Bd7, White has developed with tempo because Black had to respond defensively.',
-    exampleFen: 'rnbqkb1r/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3',
+    example: 'After 1.e4 e5 2.Nf3 Nc6 3.Bb5, White has developed with tempo: 2.Nf3 attacked e5 so Black spent a move defending it, and 3.Bb5 develops again while hitting the defender on c6.',
+    exampleFen: 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3',
     relatedTerms: ['Initiative', 'Development'],
   },
   {
@@ -23,7 +23,7 @@ const glossary = [
     category: 'Endgame',
     definition: 'A situation where the player to move is at a disadvantage because any move they make worsens their position. Common in endgames.',
     example: 'In a king and pawn endgame, the side that must move may be forced to give way, allowing the opponent\'s king to penetrate.',
-    exampleFen: '8/8/1pk5/1p6/1P4K1/8/1PK5/8 b - - 0 1',
+    exampleFen: '3k4/3P4/4K3/8/8/8/8/8 b - - 0 1',
     relatedTerms: ['Opposition', 'Endgame Technique'],
   },
   {
@@ -130,8 +130,8 @@ const glossary = [
     term: 'Outpost',
     category: 'Strategy',
     definition: 'A square in enemy territory (typically the 4th, 5th, or 6th rank) that cannot be attacked by enemy pawns. An ideal square for a knight.',
-    example: 'A knight on d5 that cannot be challenged by ...c6 or ...e6 because those pawns are absent or have already advanced.',
-    exampleFen: '1rbq1rk1/pp1nbppp/4p3/3pN3/3P4/2N1BP2/PPP3PP/R2QR1K1 w - - 0 12',
+    example: 'The knight on e5, backed by the d4 pawn. Black\'s d- and f-pawns have already advanced to d5 and f5, so no Black pawn can ever challenge it.',
+    exampleFen: '1rbq1rk1/pp1nb1pp/4p3/3pNp2/3P4/2N1BP2/PPP3PP/R2QR1K1 w - - 0 12',
     relatedTerms: ['Blockade', 'Centralization'],
   },
   {
@@ -193,8 +193,8 @@ const glossary = [
     term: 'Opposition',
     category: 'Endgame',
     definition: 'A king endgame concept where the two kings stand on the same rank, file, or diagonal with an odd number of squares between them. The player NOT to move "has the opposition" and can force the opponent\'s king aside.',
-    example: 'White king on e4, Black king on e6 — whoever is NOT to move has the opposition.',
-    exampleFen: '4k3/8/8/8/4K3/8/8/8 w - - 0 1',
+    example: 'White king on e4, Black king on e6 — whoever is NOT to move has the opposition. Here White is to move, so Black has it.',
+    exampleFen: '8/8/4k3/8/4K3/8/8/8 w - - 0 1',
     relatedTerms: ['Zugzwang', 'Endgame Technique'],
   },
   {

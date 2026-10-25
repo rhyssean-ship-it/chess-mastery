@@ -13,6 +13,11 @@ function loadStore() {
 }
 function saveStore(s) { localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
 
+// Draw-defence drills: holding the draw (or surviving the move limit) is the goal.
+function isDrawDrill(drill) {
+  return drill.id === 'philidor' || drill.id === 'kpk-2' || /\b(hold|draw)/i.test(drill.objective || '');
+}
+
 export default function EndgameDrills() {
   const [params] = useSearchParams();
   const focusIds = params.get('focus')?.split(',') || null; // ?focus=kqk,krk shows just those drills
@@ -25,6 +30,10 @@ export default function EndgameDrills() {
   const [lastMove, setLastMove] = useState(null);
   const [thinking, setThinking] = useState(false);
   const [moveCount, setMoveCount] = useState(0);
+  const [resultReason, setResultReason] = useState('');
+  // Refs so the engine's onMove closure (created once per drill) sees live values.
+  const moveCountRef = useRef(0);
+  const finishedRef = useRef(false);
   const gameRef = useRef(null);
   const engineRef = useRef(null);
 
@@ -40,6 +49,9 @@ export default function EndgameDrills() {
     setHistory([]);
     setLastMove(null);
     setMoveCount(0);
+    setResultReason('');
+    moveCountRef.current = 0;
+    finishedRef.current = false;
     const g = new Chess(drill.fen);
     gameRef.current = g;
 
@@ -50,7 +62,7 @@ export default function EndgameDrills() {
     eng.onMove = (uci) => {
       setTimeout(() => {
         const cur = gameRef.current;
-        if (!cur) return;
+        if (!cur || finishedRef.current || engineRef.current !== eng) return;
         const g2 = new Chess(cur.fen());
         const m = g2.move({ from: uci.slice(0, 2), to: uci.slice(2, 4), promotion: uci[4] || undefined });
         if (m) {
@@ -58,8 +70,9 @@ export default function EndgameDrills() {
           setFen(g2.fen());
           setLastMove([m.from, m.to]);
           setHistory(h => [...h, { san: m.san, fen: g2.fen() }]);
-          setMoveCount(c => c + 1);
-          checkResult(g2, drill);
+          moveCountRef.current += 1;
+          setMoveCount(moveCountRef.current);
+          checkResult(g2, drill, m);
         }
         setThinking(false);
       }, 350);
@@ -74,33 +87,59 @@ export default function EndgameDrills() {
     });
   }
 
-  function checkResult(g, drill) {
+  // Returns true if the drill ended.
+  function checkResult(g, drill, lastMv) {
+    if (finishedRef.current) return true;
+    const drawDrill = isDrawDrill(drill);
     if (g.isCheckmate()) {
       const winner = g.turn() === 'w' ? 'black' : 'white';
-      finish(winner === drill.requiredColor, drill);
-    } else if (g.isDraw() || g.isStalemate() || g.isThreefoldRepetition() || g.isInsufficientMaterial()) {
-      // For draw-defence drills (e.g. Philidor) draw = success
-      const isDrawDrill = drill.id === 'philidor' || drill.id === 'kpk-2';
-      finish(isDrawDrill, drill);
-    } else if (moveCount + 1 >= drill.moveLimit * 2) {
-      // Failed to convert in time
-      finish(false, drill);
+      const won = winner === drill.requiredColor;
+      finish(won, drill, won ? 'Checkmate!' : 'Checkmate — you were mated.');
+      return true;
     }
+    if (g.isDraw() || g.isStalemate() || g.isThreefoldRepetition() || g.isInsufficientMaterial()) {
+      const why = g.isStalemate() ? 'Stalemate'
+        : g.isThreefoldRepetition() ? 'Threefold repetition'
+        : g.isInsufficientMaterial() ? 'Insufficient material'
+        : 'Draw by the fifty-move rule';
+      finish(drawDrill, drill, `${why} — that's a draw.`);
+      return true;
+    }
+    // "Promote the pawn" drills: a promotion by the player completes the task.
+    const moverColor = lastMv?.color === 'w' ? 'white' : 'black';
+    if (!drawDrill && lastMv?.promotion && moverColor === drill.requiredColor && /promote/i.test(drill.objective || '')) {
+      finish(true, drill, 'Pawn promoted!');
+      return true;
+    }
+    if (moveCountRef.current >= drill.moveLimit * 2) {
+      finish(drawDrill, drill, drawDrill
+        ? `Move limit reached — you held for ${drill.moveLimit} moves.`
+        : `Move limit reached — not converted within ${drill.moveLimit} moves.`);
+      return true;
+    }
+    return false;
   }
 
-  function finish(success, drill) {
+  function finish(success, drill, reason = '') {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+    setThinking(false);
+    setResultReason(reason);
     setPhase(success ? 'success' : 'failed');
     if (success) markItemDone('endgame-drill');
-    const cur = store[drill.id] || { consecutive: 0, attempts: 0, completions: 0 };
-    const next = {
-      consecutive: success ? cur.consecutive + 1 : 0,
-      attempts: cur.attempts + 1,
-      completions: cur.completions + (success ? 1 : 0),
-      lastResult: success ? 'win' : 'fail',
-    };
-    const newStore = { ...store, [drill.id]: next };
-    setStore(newStore);
-    saveStore(newStore);
+    // Functional update: finish can run from the engine callback's stale closure.
+    setStore(prev => {
+      const cur = prev[drill.id] || { consecutive: 0, attempts: 0, completions: 0 };
+      const next = {
+        consecutive: success ? cur.consecutive + 1 : 0,
+        attempts: cur.attempts + 1,
+        completions: cur.completions + (success ? 1 : 0),
+        lastResult: success ? 'win' : 'fail',
+      };
+      const newStore = { ...prev, [drill.id]: next };
+      saveStore(newStore);
+      return newStore;
+    });
   }
 
   function handleMove(from, to) {
@@ -116,11 +155,9 @@ export default function EndgameDrills() {
     setFen(g2.fen());
     setLastMove([from, to]);
     setHistory(h => [...h, { san: m.san, fen: g2.fen() }]);
-    setMoveCount(c => c + 1);
-    if (g2.isGameOver()) {
-      checkResult(g2, selected);
-      return;
-    }
+    moveCountRef.current += 1;
+    setMoveCount(moveCountRef.current);
+    if (checkResult(g2, selected, m)) return;
     setThinking(true);
     setTimeout(() => engineRef.current?.getBestMove(g2.fen()), 200);
   }
@@ -163,7 +200,7 @@ export default function EndgameDrills() {
             />
             <div className="flex gap-2 mt-3">
               {phase === 'playing' && (
-                <button onClick={() => finish(false, selected)} className="flex-1 py-2 rounded-lg bg-incorrect/10 border border-incorrect/30 text-incorrect text-sm hover:bg-incorrect/20">Give up</button>
+                <button onClick={() => finish(false, selected, 'You gave up.')} className="flex-1 py-2 rounded-lg bg-incorrect/10 border border-incorrect/30 text-incorrect text-sm hover:bg-incorrect/20">Give up</button>
               )}
               {phase === 'success' && (
                 <>
@@ -188,7 +225,7 @@ export default function EndgameDrills() {
               <div className="grid grid-cols-2 gap-3 text-center">
                 <div>
                   <div className="text-xs text-text-dim">Move</div>
-                  <div className="text-lg tabular-nums">{Math.ceil(moveCount / 2)} / {selected.moveLimit}</div>
+                  <div className="text-lg tabular-nums">{Math.min(Math.ceil(moveCount / 2), selected.moveLimit)} / {selected.moveLimit}</div>
                 </div>
                 <div>
                   <div className="text-xs text-text-dim">Streak</div>
@@ -199,16 +236,19 @@ export default function EndgameDrills() {
             {phase === 'success' && (
               <div className="card-base p-4 bg-correct/5">
                 <div className="text-correct font-semibold mb-1">Solved!</div>
+                {resultReason && <div className="text-sm text-text mb-1">{resultReason}</div>}
                 <div className="text-xs text-text-dim">
-                  {progress + 1 >= selected.wins
-                    ? 'You\'ve mastered this drill — three in a row.'
-                    : `${selected.wins - progress - 1} more in a row to master.`}
+                  {/* store (and so progress) already includes this win */}
+                  {progress >= selected.wins
+                    ? `You've mastered this drill — ${selected.wins} in a row.`
+                    : `${selected.wins - progress} more in a row to master.`}
                 </div>
               </div>
             )}
             {phase === 'failed' && (
               <div className="card-base p-4 bg-incorrect/5">
                 <div className="text-incorrect font-semibold mb-1">Not this time.</div>
+                {resultReason && <div className="text-sm text-text mb-1">{resultReason}</div>}
                 <div className="text-xs text-text-dim">Streak resets to 0. Try again.</div>
               </div>
             )}

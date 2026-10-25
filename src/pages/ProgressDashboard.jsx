@@ -7,6 +7,7 @@ import puzzles from '../data/puzzles';
 import openings from '../data/openings';
 import strategyLessons from '../data/strategyLessons';
 import endgameLessons from '../data/endgameLessons';
+import { dayStreak } from '../services/activityTracker';
 
 function getBarColor(value) {
   if (value >= 80) return 'from-correct/80 to-correct';
@@ -39,7 +40,7 @@ export default function ProgressDashboard() {
   const puzzleStats = progressService.getPuzzleStats();
   const openingStats = progressService.getOpeningStats();
   const drillStats = progressService.getDrillStats();
-  const streak = progressService.getStreak();
+  const streak = dayStreak(); // same streak as the Home header
   const recentActivity = progressService.getRecentActivity(10);
   const { getDueCount } = useSpacedRepetition();
 
@@ -68,14 +69,14 @@ export default function ProgressDashboard() {
         <h2 className="text-xl font-display mb-4">Tactics Stats</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
           {[
-            { value: puzzleStats.total, label: 'Puzzles Solved', accent: false },
+            { value: puzzleStats.total, label: 'Puzzles attempted', accent: false },
             { value: `${overallAccuracy}%`, label: 'Accuracy', accent: false },
-            { value: streak, label: 'Day Streak', accent: true },
-            { value: getDueCount(puzzles.map(p => p.id)), label: 'Due Today', accent: true },
+            { value: streak, label: 'Day streak', accent: true },
+            { value: getDueCount(puzzles.map(p => p.id)), label: 'Due today', accent: true },
           ].map((s, i) => (
             <div key={i} className="card-base p-5 text-center card-stagger">
               <div className={`text-2xl font-bold stat-animate tabular-nums ${s.accent ? 'text-gold' : ''}`}>{s.value}</div>
-              <div className="text-xs text-text-dim mt-1.5 uppercase tracking-wider">{s.label}</div>
+              <div className="text-xs text-text-dim mt-1.5">{s.label}</div>
             </div>
           ))}
         </div>

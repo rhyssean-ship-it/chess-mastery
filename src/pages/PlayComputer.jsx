@@ -60,6 +60,12 @@ function fmtClock(ms) {
   return `${mm}:${ss.toString().padStart(2, '0')}`;
 }
 
+// Pawns from White's view; ±100 means a forced mate.
+function fmtEval(e) {
+  if (Math.abs(e) >= 100) return e > 0 ? 'White mates' : 'Black mates';
+  return (e > 0 ? '+' : '') + e.toFixed(1);
+}
+
 export default function PlayComputer() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -95,6 +101,7 @@ export default function PlayComputer() {
   const coachEngineRef = useRef(null);
   const coachQueueRef = useRef(null);     // serialises coach analyses so they never clobber each other
   const evalBeforeRef = useRef(null);     // { fen, cp } — cached eval of the position before the player's move
+  const hintFenRef = useRef(null);       // position the pending hint was asked for
   const gameEndedRef = useRef(false);     // makes game-over handling idempotent (clock can tick past 0 before the interval clears)
   const startEpochRef = useRef(0);        // invalidates in-flight engine.init() callbacks from a previous game
   const cancelBtnRef = useRef(null);      // focus target for the blunder dialog
@@ -105,6 +112,31 @@ export default function PlayComputer() {
   const preset = ELO_PRESETS[levelIndex];
   const timeControl = TIME_CONTROLS.find(t => t.id === tcId) || TIME_CONTROLS[0];
   const isTimed = timeControl.initial != null;
+
+  // A separate full-strength engine for the eval bar. The playing engine's own search is only
+  // 1-5 plies deep at club levels and only reports on its own turn, so it misleads.
+  const evalEngineRef = useRef(null);
+  const evalQueueRef = useRef(Promise.resolve());
+  useEffect(() => {
+    const eng = new StockfishService();
+    evalEngineRef.current = eng;
+    eng.init();
+    return () => { eng.destroy(); evalEngineRef.current = null; };
+  }, []);
+  useEffect(() => {
+    if (phase === 'setup') return;
+    let stale = false;
+    evalQueueRef.current = evalQueueRef.current.then(async () => {
+      if (stale || !evalEngineRef.current) return;
+      const r = await evalEngineRef.current.analyzePosition(fen, { depth: 12 });
+      if (stale || !r) return;
+      const sign = fen.split(' ')[1] === 'w' ? 1 : -1; // engine scores are side-to-move
+      // ±100 marks a forced mate (mate 0 = the side to move is already mated)
+      const white = r.mate != null ? (r.mate > 0 ? 100 : -100) * sign : ((r.scoreCp ?? 0) / 100) * sign;
+      setEvaluation(white);
+    });
+    return () => { stale = true; };
+  }, [fen, phase]);
 
   useEffect(() => {
     return () => {
@@ -169,6 +201,15 @@ export default function PlayComputer() {
 
   function onFlag(loserColor) {
     const pc = playerColorRef.current;
+    // Time-out is a draw if the side with time left has no mating material (e.g. a bare king).
+    const winner = loserColor === 'white' ? 'b' : 'w';
+    const pieces = (gameRef.current?.board().flat() || []).filter(p => p && p.color === winner && p.type !== 'k');
+    const canMate = pieces.some(p => ['p', 'q', 'r'].includes(p.type)) || pieces.length >= 2;
+    if (!canMate) {
+      setResult('Draw: time ran out, but the other side can’t mate');
+      setPhase('ended');
+      return;
+    }
     setResult(loserColor === pc ? 'Lost on time' : 'Computer lost on time');
     setPhase('ended');
     progressService.logActivity?.(`Played vs computer (${preset.label}) — ${loserColor === pc ? 'Lost on time' : 'Won on time'}`);
@@ -224,6 +265,7 @@ export default function PlayComputer() {
       setTimeout(() => {
         const cur = gameRef.current;
         if (!cur) return;
+        if (gameEndedRef.current) { setThinking(false); return; } // resigned/flagged while it thought
         const from = uci.slice(0, 2);
         const to = uci.slice(2, 4);
         const g2 = new Chess(cur.fen());
@@ -247,11 +289,7 @@ export default function PlayComputer() {
       }, 400);
     };
 
-    engine.onEval = (score) => {
-      // Stockfish score is from the side to move (engine's turn).
-      // Convert to White's perspective for objective display.
-      setEvaluation(resolvedColor === 'white' ? -score : score);
-    };
+    // (the eval bar uses the dedicated eval engine, see evalEngineRef)
 
     engine.init().then(() => {
       // A newer game started while we were initialising — abandon this one.
@@ -261,9 +299,9 @@ export default function PlayComputer() {
       // Also init a separate hint engine
       const hintEng = new StockfishService();
       hintEngineRef.current = hintEng;
-      hintEng.setLevel(7); // Strong enough for good hints
+      hintEng.setLevel(ELO_PRESETS.length - 1); // full strength: hints must be right
       hintEng.onMove = (uci) => {
-        if (waitingForHint.current) {
+        if (waitingForHint.current && hintFenRef.current === gameRef.current?.fen()) {
           setHintArrow([[uci.slice(0, 2), uci.slice(2, 4)]]);
           waitingForHint.current = false;
         }
@@ -330,7 +368,8 @@ export default function PlayComputer() {
       progressService.recordActivity();
     } else if (g.isDraw() || g.isStalemate() || g.isThreefoldRepetition() || g.isInsufficientMaterial()) {
       gameEndedRef.current = true;
-      setResult('Draw!');
+      setResult(g.isStalemate() ? 'Draw by stalemate' : g.isInsufficientMaterial() ? 'Draw: not enough material to mate'
+        : g.isThreefoldRepetition() ? 'Draw by repetition' : 'Draw (50-move rule)');
       setPhase('ended');
     }
   }
@@ -471,6 +510,7 @@ export default function PlayComputer() {
   function requestHint() {
     if (!gameRef.current || thinking || !hintEngineRef.current) return;
     waitingForHint.current = true;
+    hintFenRef.current = gameRef.current.fen();
     hintEngineRef.current.getQuickHint(gameRef.current.fen());
   }
 
@@ -600,9 +640,10 @@ export default function PlayComputer() {
         {/* Header */}
         <div className="flex items-center justify-between mb-1.5 px-1">
           <div className="min-w-0">
-            <h1 className="text-base font-display text-gold truncate">
+            {/* div, not h1: the global h1 size rule would override text-base and push the board down */}
+            <div role="heading" aria-level={1} className="text-base font-display text-gold truncate">
               {phase === 'ended' ? result : coachChecking ? 'Checking your move…' : thinking ? 'Engine thinking...' : isPlayerTurn ? 'Your move' : ''}
-            </h1>
+            </div>
             <p className="text-text-dim text-[11px]">vs Stockfish ({preset.label} — {preset.elo})</p>
           </div>
           {inCheck && (
@@ -619,7 +660,7 @@ export default function PlayComputer() {
 
         {/* Horizontal eval bar. White fill = White's advantage, anchored on White's
             side of the board (right when the board is flipped for a Black player). */}
-        <div className="h-2 rounded-full overflow-hidden bg-bg-hover relative mb-1" title={`Eval: ${evaluation > 0 ? '+' : ''}${evaluation.toFixed(1)}`}>
+        <div className="h-2 rounded-full overflow-hidden bg-bg-hover relative mb-1" title={`Eval: ${fmtEval(evaluation)}`}>
           <div
             className={`absolute top-0 bottom-0 bg-white transition-all duration-500 ease-out rounded-full ${playerColor === 'black' ? 'right-0' : 'left-0'}`}
             style={{ width: `${evalPct}%` }}
@@ -681,7 +722,7 @@ export default function PlayComputer() {
         {/* Info strip + notation */}
         <div className="mt-2 flex gap-3 items-center text-xs card-base px-3 py-2">
           <span><span className="text-text-dim mr-1">Moves</span><span className="tabular-nums">{Math.ceil(history.length / 2)}</span></span>
-          <span><span className="text-text-dim mr-1">Eval</span><span className={`tabular-nums font-medium ${evaluation > 0.5 ? 'text-correct' : evaluation < -0.5 ? 'text-incorrect' : 'text-text-dim'}`}>{evaluation > 0 ? '+' : ''}{evaluation.toFixed(1)}</span></span>
+          <span><span className="text-text-dim mr-1">Eval</span><span className={`tabular-nums font-medium ${evaluation > 0.5 ? 'text-correct' : evaluation < -0.5 ? 'text-incorrect' : 'text-text-dim'}`}>{fmtEval(evaluation)}</span></span>
         </div>
         <div className="mt-1 max-h-20 overflow-y-auto">
           <MoveList history={history} currentIndex={moveIndex} />
@@ -720,7 +761,7 @@ export default function PlayComputer() {
               />
             )}
             <div className="flex gap-2">
-              <div className="w-4 rounded-full overflow-hidden bg-bg-hover flex-shrink-0 relative" title={`Eval: ${evaluation > 0 ? '+' : ''}${evaluation.toFixed(1)}`}>
+              <div className="w-4 rounded-full overflow-hidden bg-bg-hover flex-shrink-0 relative" title={`Eval: ${fmtEval(evaluation)}`}>
                 {/* White fill anchored on White's side of the board — top when flipped for Black. */}
                 <div className={`absolute left-0 right-0 bg-white transition-all duration-500 ease-out rounded-full ${playerColor === 'black' ? 'top-0' : 'bottom-0'}`} style={{ height: `${evalPct}%` }} />
               </div>
@@ -767,7 +808,7 @@ export default function PlayComputer() {
             <MoveList history={history} currentIndex={moveIndex} />
             <div className="card-base p-4">
               <div className="flex justify-between text-sm mb-2"><span className="text-text-dim">Moves</span><span className="tabular-nums">{Math.ceil(history.length / 2)}</span></div>
-              <div className="flex justify-between text-sm mb-2"><span className="text-text-dim">Evaluation</span><span className={`tabular-nums font-medium ${evaluation > 0.5 ? 'text-correct' : evaluation < -0.5 ? 'text-incorrect' : 'text-text-dim'}`}>{evaluation > 0 ? '+' : ''}{evaluation.toFixed(1)}</span></div>
+              <div className="flex justify-between text-sm mb-2"><span className="text-text-dim">Evaluation</span><span className={`tabular-nums font-medium ${evaluation > 0.5 ? 'text-correct' : evaluation < -0.5 ? 'text-incorrect' : 'text-text-dim'}`}>{fmtEval(evaluation)}</span></div>
               <div className="flex justify-between text-sm"><span className="text-text-dim">Engine</span><span>{preset.label} ({preset.elo})</span></div>
             </div>
             {thinking && (

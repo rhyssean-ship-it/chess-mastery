@@ -88,6 +88,9 @@ export default function GameAnalysis() {
           setSummary(result.summary);
           setAnalysisComplete(true);
           setCurrentPly(0);
+          // Re-analysing the same game (reload, or a deeper pass) must not save or count it twice.
+          if (gameData.logged) return;
+          try { sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ...gameData, logged: true })); } catch { /* storage unavailable */ }
           const added = saveAnalysisMistakes(result.analyses, {
             label: gameData.label,
             result: gameData.result,
@@ -132,12 +135,13 @@ export default function GameAnalysis() {
   const jumpToNextMistake = useCallback(() => {
     setTryMode(false);
     for (let i = currentPly + 1; i < analyses.length; i++) {
-      if (analyses[i] && MISTAKE_CLASSES.has(analyses[i].classification)) {
+      const a = analyses[i];
+      if (a && a.color === (gameData?.playerColor || a.color) && a.classification !== CLASS.INACCURACY && MISTAKE_CLASSES.has(a.classification)) {
         setCurrentPly(i);
         return;
       }
     }
-  }, [currentPly, analyses]);
+  }, [currentPly, analyses, gameData]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -170,7 +174,7 @@ export default function GameAnalysis() {
   if (currentPly === -1) {
     displayFen = gameData.startingFen || STARTING_FEN;
   } else if (currentPly >= 0 && currentPly < history.length) {
-    displayFen = history[currentPly].fen;
+    displayFen = history[currentPly].fen || analyses[currentPly]?.fenAfter || STARTING_FEN;
     const a = analyses[currentPly];
     if (a) displayLastMove = [a.from, a.to];
   }
@@ -294,7 +298,13 @@ export default function GameAnalysis() {
             <div className="text-center text-xs text-text-dim tabular-nums mb-2">
               {currentPly === -1
                 ? 'Starting position'
-                : `Move ${Math.floor(currentPly / 2) + 1}${currentPly % 2 === 0 ? '' : '…'} of ${Math.ceil(history.length / 2)}`}
+                : (() => {
+                    // number from the position itself, so games started mid-way count correctly
+                    const fenBefore = analyses[currentPly]?.fenBefore;
+                    const no = parseInt(fenBefore?.split(' ')[5], 10) || Math.floor(currentPly / 2) + 1;
+                    const black = fenBefore ? fenBefore.split(' ')[1] === 'b' : currentPly % 2 === 1;
+                    return `Move ${no}${black ? '…' : ''}`;
+                  })()}
             </div>
             <div className="flex items-stretch gap-2">
               <button onClick={jumpToStart} disabled={currentPly === -1}
@@ -316,7 +326,11 @@ export default function GameAnalysis() {
                 className="flex-1 py-2.5 rounded-xl bg-bg-card border border-bg-hover text-sm text-text-dim hover:text-text hover:bg-bg-hover transition-all disabled:opacity-25"
                 title="↑ — jump to next mistake">Next mistake</button>
               <button
-                onClick={() => { sessionStorage.setItem(PLAY_FROM_FEN_KEY, displayFen); navigate('/play'); }}
+                onClick={() => {
+                  const mine = currentAnalysis && currentAnalysis.color === orientation;
+                  sessionStorage.setItem(PLAY_FROM_FEN_KEY, mine ? currentAnalysis.fenBefore : displayFen);
+                  navigate('/play');
+                }}
                 className="flex-1 py-2.5 rounded-xl bg-bg-card border border-bg-hover text-sm text-text-dim hover:text-text hover:bg-bg-hover transition-all"
                 title="Play this position out against the engine">Play from here</button>
               {canTryMode && (
@@ -398,7 +412,7 @@ export default function GameAnalysis() {
               >Worst first</button>
             </div>
             {moveListView === 'order' ? (
-              <MoveList history={history} currentIndex={currentPly} onSelectMove={jumpTo} classifications={classifications} maxHeightClass="max-h-64 lg:max-h-72" />
+              <MoveList startFen={gameData.startingFen || STARTING_FEN} history={history} currentIndex={currentPly} onSelectMove={jumpTo} classifications={classifications} maxHeightClass="max-h-64 lg:max-h-72" />
             ) : (
               <WorstMovesList analyses={analyses} currentPly={currentPly} onSelect={jumpTo} />
             )}
@@ -413,6 +427,12 @@ export default function GameAnalysis() {
       </div>
     </div>
   );
+}
+
+// The card already shows the move, so drop it from the start of the explanation.
+function stripLeadingMove(text, san) {
+  if (!san || !text.startsWith(san)) return text;
+  return text.slice(san.length).replace(/^[\s:—-]+/, '');
 }
 
 function StepIcon({ dir }) {
@@ -524,7 +544,7 @@ function ManualPuzzleBoard({ fen, expectedUci, orientation }) {
 function MoveDetail({ analysis, showBestArrow, setShowBestArrow, evalPerspective, playerColor, compact = false }) {
   const meta = CLASS_META[analysis.classification];
   const moveColorLabel = analysis.color === 'white' ? 'White' : 'Black';
-  const moveNumber = Math.floor(analysis.ply / 2) + 1;
+  const moveNumber = parseInt(analysis.fenBefore?.split(' ')[5], 10) || Math.floor(analysis.ply / 2) + 1;
 
   const playedExplanation = explainPlayedMove(analysis);
   const bestExplanation = explainBestMove(analysis);
@@ -561,14 +581,14 @@ function MoveDetail({ analysis, showBestArrow, setShowBestArrow, evalPerspective
 
       {bestExplanation && !analysis.isBest && (
         <div className={`text-text-dim bg-bg-hover/30 rounded-md ${compact ? 'text-[12px] mb-2 px-2.5 py-1.5 leading-snug' : 'text-sm mb-3 px-3 py-2'}`}>
-          <span className="text-gold font-semibold">{analysis.bestMoveSan}:</span> {bestExplanation.replace(`${analysis.bestMoveSan} `, '').replace(`${analysis.bestMoveSan}—`, '—')}
+          <span className="text-gold font-semibold">{analysis.bestMoveSan}:</span> {stripLeadingMove(bestExplanation, analysis.bestMoveSan)}
         </div>
       )}
 
       <div className={`grid grid-cols-3 gap-1.5 ${compact ? 'text-[10px]' : 'text-xs'}`}>
-        <Stat label="CPL" value={analysis.cpl.toFixed(0)} compact={compact} />
+        <Stat label="CPL" value={analysis.classification === CLASS.BOOK ? '—' : analysis.cpl.toFixed(0)} compact={compact} />
         <Stat label={evalPerspective === 'your' ? 'Eval (you)' : 'Eval (W)'} value={formatEval(evalCp)} compact={compact} />
-        <Stat label="Accuracy" value={analysis.moveAccuracy != null ? `${analysis.moveAccuracy.toFixed(0)}%` : '—'} compact={compact} />
+        <Stat label="Accuracy" value={analysis.classification !== CLASS.BOOK && analysis.moveAccuracy != null ? `${analysis.moveAccuracy.toFixed(0)}%` : "—"} compact={compact} />
       </div>
 
       {analysis.bestMove && !analysis.isBest && !compact && (
@@ -605,7 +625,7 @@ function TurningPointsCard({ analyses, playerColor, currentPly, onJump }) {
       <div className="space-y-1.5">
         {points.map(({ a }) => {
           const meta = CLASS_META[a.classification];
-          const moveNumber = Math.floor(a.ply / 2) + 1;
+          const moveNumber = parseInt(a.fenBefore?.split(' ')[5], 10) || Math.floor(a.ply / 2) + 1;
           const isActive = a.ply === currentPly;
           return (
             <button
@@ -701,7 +721,7 @@ function WorstMovesList({ analyses, currentPly, onSelect }) {
       {sorted.map(a => {
         const meta = CLASS_META[a.classification];
         const isActive = a.ply === currentPly;
-        const moveNumber = Math.floor(a.ply / 2) + 1;
+        const moveNumber = parseInt(a.fenBefore?.split(' ')[5], 10) || Math.floor(a.ply / 2) + 1;
         return (
           <button
             key={a.ply}

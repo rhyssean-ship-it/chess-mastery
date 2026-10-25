@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Chess } from 'chess.js';
 import ChessBoard from '../components/ChessBoard';
@@ -17,11 +17,18 @@ export default function EndgameLesson() {
   const [drillStep, setDrillStep] = useState(0);
   const [drillFeedback, setDrillFeedback] = useState(null);
   const [drillDone, setDrillDone] = useState(false);
+  const [drillSide, setDrillSide] = useState('white');
+  const [boardKey, setBoardKey] = useState(0);
 
   if (!lesson) {
     return <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <p className="text-text-dim">Lesson not found. <Link to="/endgames" className="text-gold">Back to endgames</Link></p>
     </div>;
+  }
+
+  // Resolve a SAN from the data against a position; null if illegal/malformed.
+  function resolveMove(fenStr, san) {
+    try { return new Chess(fenStr).move(san); } catch { return null; }
   }
 
   function startDrill() {
@@ -31,6 +38,7 @@ export default function EndgameLesson() {
     setDrillStep(0);
     setDrillFeedback(null);
     setDrillDone(false);
+    setDrillSide(g.turn() === 'w' ? 'white' : 'black');
     setDrillMode(true);
   }
 
@@ -44,45 +52,53 @@ export default function EndgameLesson() {
     return dests;
   }
 
-  const handleDrillMove = useCallback((from, to) => {
+  function handleDrillMove(from, to) {
     if (!drillGame || drillDone) return;
-    const solution = lesson.drillPosition.solution;
-    const expected = solution[drillStep];
+    const solution = lesson.drillPosition.solution || [];
+    const expected = resolveMove(drillGame.fen(), solution[drillStep]);
+    if (!expected) {
+      // Scripted line ran out or is broken for this position — end gracefully.
+      setDrillDone(true);
+      return;
+    }
 
-    const g = new Chess(drillGame.fen());
-    const m = g.move({ from, to, promotion: 'q' });
-    if (!m) return;
-
-    if (m.san === expected) {
+    // Compare by squares (not SAN text, which may differ in +/# suffixes).
+    if (from === expected.from && to === expected.to) {
+      const g = new Chess(drillGame.fen());
+      const m = g.move(expected.san);
       setDrillGame(g);
       setDrillFen(g.fen());
       setDrillFeedback({ correct: true, message: `Correct! ${m.san}` });
 
       const nextStep = drillStep + 1;
-      if (nextStep >= solution.length) {
+      if (nextStep >= solution.length || g.isGameOver()) {
         setDrillDone(true);
-      } else {
-        // Opponent response
-        setTimeout(() => {
-          const g2 = new Chess(g.fen());
-          const opp = g2.move(solution[nextStep]);
-          if (opp) {
-            setDrillGame(g2);
-            setDrillFen(g2.fen());
-            setDrillStep(nextStep + 1);
-          }
-        }, 400);
-        setDrillStep(nextStep);
+        return;
       }
+      setDrillStep(nextStep);
+      // Opponent response
+      setTimeout(() => {
+        try {
+          const g2 = new Chess(g.fen());
+          g2.move(solution[nextStep]);
+          setDrillGame(g2);
+          setDrillFen(g2.fen());
+          setDrillStep(nextStep + 1);
+          if (nextStep + 1 >= solution.length || g2.isGameOver()) setDrillDone(true);
+        } catch {
+          setDrillDone(true);
+        }
+      }, 400);
     } else {
-      setDrillFeedback({ correct: false, message: `Not quite. The correct move was ${expected}.` });
-      // Reset position
-      const g2 = new Chess(lesson.drillPosition.fen);
-      for (let i = 0; i < drillStep; i++) g2.move(solution[i]);
-      setDrillGame(g2);
-      setDrillFen(g2.fen());
+      const g = new Chess(drillGame.fen());
+      let tried = null;
+      try { tried = g.move({ from, to, promotion: 'q' }); } catch { /* illegal */ }
+      if (!tried) return;
+      setDrillFeedback({ correct: false, message: `Not quite. The correct move was ${expected.san}.` });
+      // Snap the board back to the position before the wrong move.
+      setBoardKey(k => k + 1);
     }
-  }, [drillGame, drillStep, drillDone, lesson]);
+  }
 
   const turnColor = drillGame ? (drillGame.turn() === 'w' ? 'white' : 'black') : 'white';
 
@@ -101,8 +117,10 @@ export default function EndgameLesson() {
         <div className="space-y-4">
           <div className="max-w-[480px] mx-auto board-fit-mobile">
             <ChessBoard
+              key={boardKey}
               fen={drillFen}
-              movable={!drillDone}
+              orientation={drillSide}
+              movable={!drillDone && turnColor === drillSide}
               dests={getLegalDests()}
               turnColor={turnColor}
               onMove={handleDrillMove}

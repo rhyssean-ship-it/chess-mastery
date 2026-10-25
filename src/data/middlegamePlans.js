@@ -12,8 +12,8 @@ const middlegamePlans = [
       },
       {
         "type": "position",
-        "fen": "r1bqkb1r/pp3ppp/2n1pn2/8/2BP4/5N2/PP2QPPP/RNB2RK1 b kq - 0 8",
-        "caption": "A typical IQP position. White's d4 pawn controls e5 and c5. The half-open c-file and the e5 outpost are key features.",
+        "fen": "r1bq1rk1/pp2bppp/2n1pn2/8/2BP4/5N2/PP2QPPP/RNB2RK1 b - - 0 8",
+        "caption": "A typical IQP position. White's d4 pawn controls e5 and c5. The half-open e-file and the e5 outpost are key features for White.",
         "arrows": [
           [
             "d4",
@@ -70,11 +70,17 @@ const middlegamePlans = [
       },
       {
         "type": "position",
-        "fen": "r1bq1rk1/pp2bppp/2n1pn2/3p4/3P4/2N1BN2/PP2BPPP/R2Q1RK1 b - - 0 9",
-        "caption": "Black aims to place a knight on d5 to blockade the IQP. Once blockaded, the pawn is a permanent weakness.",
+        "fen": "r1bq1rk1/pp2bppp/2n1pn2/8/3P4/2N1BN2/PP2BPPP/R2Q1RK1 b - - 0 9",
+        "caption": "Black aims to put a knight on d5 (Nf6-d5) to blockade the isolated pawn on d4. Once blockaded, the pawn is a long-term weakness.",
         "highlights": [
           "d5",
           "d4"
+        ],
+        "arrows": [
+          [
+            "f6",
+            "d5"
+          ]
         ]
       },
       {
@@ -83,7 +89,7 @@ const middlegamePlans = [
       },
       {
         "type": "text",
-        "content": "Plan 3: Control the d-file. Place your rooks on d8 and the semi-open c-file. Pressure the d4 pawn directly. Force White to defend it passively."
+        "content": "Plan 3: Control the files. Put your rooks on the d-file and the open c-file. Pressure the d4 pawn directly and force White to defend it passively."
       }
     ],
     "keyPlans": [
@@ -122,11 +128,11 @@ const middlegamePlans = [
       },
       {
         "type": "text",
-        "content": "The c5 break: This is Black's most common plan. After c5, if White takes cxd4, the pawn chain is dissolved and the d4 pawn can become weak. If White doesn't take, Black plays cxd4 and the c-file opens for counterplay."
+        "content": "The c5 break: this is Black's most common plan. ...c5 attacks d4, the base of White's chain. If White supports it with c3, Black can exchange ...cxd4 cxd4, opening the c-file for counterplay. If White captures dxc5, the e5 pawn loses its support and becomes a target."
       },
       {
         "type": "text",
-        "content": "The f6 break: This attacks the head of the chain. After f6 exf6, the e-file opens and Black gets active play. But f6 weakens the king, so timing is critical — it's best played after castling queenside or when the king is safe."
+        "content": "The f6 break: this attacks the head of the chain on e5. After ...f6 exf6, the f-file opens and Black gets active play. But ...f6 also loosens Black's king, so timing is critical: it is best played when the king is safe."
       },
       {
         "type": "text",
@@ -150,12 +156,12 @@ const middlegamePlans = [
     "content": [
       {
         "type": "text",
-        "content": "The Carlsbad structure arises from the Queen's Gambit Exchange variation. White has pawns on d4+e3 vs Black's d5+e6. On the queenside, White has a pawn minority (a2+b2 vs a7+b7+c6) — but this minority is a strategic weapon."
+        "content": "The Carlsbad structure arises from the Queen's Gambit Exchange Variation. In the centre White has pawns on d4 and e3 against Black's d5 and c6. On the queenside White has a pawn minority (a2+b2 vs a7+b7+c6), but this minority is a strategic weapon."
       },
       {
         "type": "position",
-        "fen": "r1bq1rk1/pppnbppp/5n2/3p2B1/3P4/2NBP3/PP3PPP/R2QK1NR w KQ - 3 8",
-        "caption": "The Carlsbad structure. White will play a4 and b4-b5 on the queenside to create a weakness in Black's pawn structure.",
+        "fen": "r1bqrnk1/pp2bppp/2p2n2/3p2B1/3P4/2NBPN2/PPQ2PPP/R4RK1 w - - 8 11",
+        "caption": "The Carlsbad structure. White will play b4-b5 (often with a4 too) to attack the c6 pawn and leave a weakness in Black's pawn structure.",
         "arrows": [
           [
             "a2",
@@ -169,7 +175,7 @@ const middlegamePlans = [
       },
       {
         "type": "text",
-        "content": "The plan: advance a4, then b4-b5. When Black plays cxb5, White recaptures axb5. Now Black has an isolated a-pawn and a backward c-pawn — permanent weaknesses. White's rooks pour down the a- and c-files to target them."
+        "content": "The plan: advance b4-b5 (often supported by a4). If White captures bxc6 and Black recaptures ...bxc6, Black is left with a backward c-pawn on the half-open c-file, a permanent target. If Black captures ...cxb5 instead, the d5 pawn becomes isolated. White's rooks then attack the weakness along the c-file."
       },
       {
         "type": "text",
@@ -177,9 +183,9 @@ const middlegamePlans = [
       }
     ],
     "keyPlans": [
-      "Advance a4 then b4-b5 to create structural weaknesses",
-      "After cxb5 axb5, target the isolated a-pawn and backward c-pawn",
-      "Use rooks on the a- and c-files",
+      "Advance b4-b5 (often with a4) to create structural weaknesses",
+      "After bxc6 bxc6, target the backward c6 pawn",
+      "Use rooks on the half-open c-file",
       "Be aware of Black's kingside counterplay",
       "This is a slow, strategic plan — patience is key"
     ]
@@ -198,7 +204,7 @@ const middlegamePlans = [
       {
         "type": "position",
         "fen": "r1bq1rk1/pp1pppbp/2n2np1/8/2PNP3/2N1B3/PP3PPP/R2QKB1R w KQ - 5 8",
-        "caption": "The Maroczy Bind. White's c4+e4 pawns clamp down on d5. Black's pieces are cramped behind the pawn chain.",
+        "caption": "The Maroczy Bind. White's pawns on c4 and e4 clamp down on d5, so Black has little space and no easy pawn breaks.",
         "highlights": [
           "c4",
           "e4",
@@ -236,7 +242,7 @@ const middlegamePlans = [
       {
         "type": "position",
         "fen": "rnbqk2r/1p2bppp/p2ppn2/8/3NP3/2N5/PPP1BPPP/R1BQ1RK1 w kq - 2 8",
-        "caption": "A typical Sicilian Najdorf position. White will castle kingside and build an attack with Be3, f4, Qf3, and g4.",
+        "caption": "A Najdorf with ...e6 (a Scheveningen set-up). White has already castled and can build a kingside attack with Be3, f4, Qe1 and g4.",
         "arrows": [
           [
             "f2",
@@ -278,9 +284,13 @@ const middlegamePlans = [
       },
       {
         "type": "position",
-        "fen": "r1bq1rk1/ppp1ppbp/2np1np1/8/2PPP3/2N2N2/PP3PPP/R1BQKB1R w KQ - 0 7",
-        "caption": "Before d5: once White plays d5, Black's plan becomes clear — f5 to blast open the kingside.",
+        "fen": "r1bq1rk1/ppp2pbp/2np1np1/4p3/2PPP3/2N2N2/PP2BPPP/R1BQ1RK1 w - - 2 8",
+        "caption": "The Classical King's Indian. When White plays d5 (here it gains time by hitting the knight on c6), the centre locks and Black's plan becomes clear: ...f5 to blast open the kingside.",
         "arrows": [
+          [
+            "d4",
+            "d5"
+          ],
           [
             "f7",
             "f5"
@@ -317,12 +327,12 @@ const middlegamePlans = [
     "content": [
       {
         "type": "text",
-        "content": "The Hedgehog is a unique defensive setup where Black places pawns on a6, b6, d6, and e6 — all on the third rank. It looks passive, but it's a coiled spring. Black waits for White to overextend, then strikes with b5 or d5 at the critical moment."
+        "content": "The Hedgehog is a unique defensive set-up where Black places pawns on a6, b6, d6 and e6, all on Black's third rank. It looks passive, but it's a coiled spring. Black waits for White to overextend, then strikes with ...b5 or ...d5 at the critical moment."
       },
       {
         "type": "position",
         "fen": "rn1q1rk1/1b2bppp/pp1ppn2/8/2PNP3/2N1BP2/PP4PP/R2QKB1R w KQ - 0 9",
-        "caption": "A typical Hedgehog structure. Black's pawns are on the 6th rank, pieces are flexible behind them. The breaks b5 and d5 are always in the air.",
+        "caption": "A typical Hedgehog structure. Black's pawns sit on a6, b6, d6 and e6 with the pieces flexible behind them. The breaks ...b5 and ...d5 are always in the air.",
         "highlights": [
           "a6",
           "b6",

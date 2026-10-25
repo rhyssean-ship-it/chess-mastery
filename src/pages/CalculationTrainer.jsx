@@ -24,6 +24,7 @@ export default function CalculationTrainer() {
   );
 
   const drill = filtered[currentIdx];
+  const sideToMove = drill?.fen.split(' ')[1] === 'b' ? 'black' : 'white';
 
   function changeDifficulty(level) {
     setDifficulty(level);
@@ -95,7 +96,7 @@ export default function CalculationTrainer() {
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_340px] lg:grid-cols-[1fr_400px] gap-6 sm:gap-8">
         <div className="w-full max-w-[480px]">
-          <ChessBoard fen={drill.fen} movable={false} />
+          <ChessBoard fen={drill.fen} orientation={sideToMove} turnColor={sideToMove} movable={false} />
         </div>
 
         <div className="space-y-4">
@@ -105,6 +106,7 @@ export default function CalculationTrainer() {
           </div>
 
           <div className="card-base p-5">
+            <p className="text-sm font-semibold mb-1">{sideToMove === 'white' ? 'White' : 'Black'} to move</p>
             <p className="font-semibold text-sm mb-2">{drill.question}</p>
             <p className="text-text-dim text-xs">Calculate in your head before revealing the answer.</p>
           </div>

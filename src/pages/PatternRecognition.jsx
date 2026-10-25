@@ -3,16 +3,16 @@ import ChessBoard from '../components/ChessBoard';
 import { progressService } from '../services/progressService';
 
 const positions = [
-  { fen: 'r1bq1rk1/pp2bppp/2n1pn2/2pp4/3P4/2NBPN2/PP3PPP/R1BQ1RK1 w - - 0 8', better: 'equal', reason: 'Roughly equal. White has a slight space edge but Black is solid with no weaknesses.' },
-  { fen: 'r1bq1rk1/ppp2ppp/2n1pn2/3p4/1bPP4/2N1PN2/PP3PPP/R1BQKB1R w KQ - 0 6', better: 'white', reason: 'White is slightly better due to the central pawn duo and more space. Black\'s bishop on b4 may have to retreat.' },
-  { fen: 'rnbq1rk1/pp2ppbp/5np1/2pp4/2PP4/2N2NP1/PP2PPBP/R1BQ1RK1 w - - 0 7', better: 'equal', reason: 'A typical Grunfeld position — dynamically equal. Black has counterplay against d4 while White has central space.' },
+  { fen: 'r1bq1rk1/pp2bppp/2n1pn2/2pp4/2PP4/2NBPN2/PP3PPP/R1BQ1RK1 w - - 0 8', better: 'white', reason: 'White is slightly better. Both sides have central tension, but White moves first and can resolve it (cxd5 or dxc5) on favourable terms with more active pieces.' },
+  { fen: 'r1bq1rk1/ppp2ppp/2n1pn2/3p4/1bPP4/2N1PN2/PP3PPP/R1BQKB1R w KQ - 0 6', better: 'equal', reason: 'Roughly equal. White has the central pawn duo and a little more space, but Black\'s pin with ...Bb4 and quick development give full counterplay.' },
+  { fen: 'rnbq1rk1/pp2ppbp/5np1/2pp4/2PP4/2N2NP1/PP2PPBP/R1BQ1RK1 w - - 0 7', better: 'white', reason: 'White is slightly better. Black has pushed both ...c5 and ...d5 early, and White can take on c5 and hunt the loose c4 pawn with Qa4, winning time.' },
   { fen: 'r1bqk2r/ppp1bppp/2n1pn2/3p4/2PP4/2N2N2/PP2PPPP/R1BQKB1R w KQkq - 4 5', better: 'white', reason: 'White has a slight opening advantage with the two central pawns and better development. Black is solid but passive.' },
   { fen: 'r2q1rk1/pp2bppp/2n1bn2/3pp3/8/1BN1PN2/PPP2PPP/R1BQ1RK1 w - - 0 9', better: 'black', reason: 'Black has a strong central pawn duo (d5+e5) and active pieces. White\'s pawn on e3 is passive.' },
   { fen: 'r1bq1rk1/1pp2ppp/p1np1n2/4p1B1/2B1P1b1/2NP1N2/PPP2PPP/R2Q1RK1 w - - 0 8', better: 'white', reason: 'White has a strong grip on the position. The Bg5 pin is annoying, the Bc4 eyes f7, and White\'s pieces are more actively placed.' },
   { fen: 'r1b2rk1/ppq1bppp/2n1pn2/2pp4/3P4/1PN1PN2/P1P1BPPP/R1BQ1RK1 w - - 0 8', better: 'equal', reason: 'A balanced position from the Nimzo-Indian. Both sides have completed development and have no weaknesses.' },
-  { fen: 'r1bq1rk1/pp1n1ppp/4pn2/2ppP3/3P4/2PB1N2/PP1N1PPP/R1BQ1RK1 b - - 0 9', better: 'white', reason: 'White has more space with the e5 pawn and a typical French Advance advantage. Black is cramped but solid.' },
-  { fen: 'r2qr1k1/ppp1bppp/2n2n2/3p1b2/3P1B2/2N1PN2/PPP1BPPP/R2QK2R w KQ - 6 8', better: 'equal', reason: 'Symmetrical development — both sides have similar piece activity. White has a tiny edge due to first-move advantage.' },
-  { fen: 'r2q1rk1/1b2bppp/ppn1pn2/2pp4/3P1B2/1QN1PN2/PP2BPPP/R4RK1 w - - 0 10', better: 'black', reason: 'Black has a strong position: solid centre, bishop pair potential, active minor pieces. White\'s queen on b3 is well placed but Black has more long-term potential.' },
+  { fen: 'r1bq1rk1/pp1nbppp/2n1p3/2ppP3/3P4/2PB1N2/PP1N1PPP/R1BQ1RK1 w - - 0 9', better: 'white', reason: 'White has more space with the e5 pawn and a typical French Advance advantage. Black is cramped but solid.' },
+  { fen: 'r2q1rk1/ppp1bppp/2n1pn2/3p1b2/3P1B2/2N1PN2/PPP1BPPP/R2Q1RK1 b - - 6 8', better: 'equal', reason: 'Roughly equal. The position is completely symmetrical — both sides have the same pawns and identical piece activity.' },
+  { fen: 'r2q1rk1/1b2bppp/ppn1pn2/2pp4/3P1B2/1QN1PN2/PP2BPPP/R4RK1 w - - 0 10', better: 'black', reason: 'Black is slightly better: an extra pawn (White has no c-pawn) plus a solid c5/d5 centre and active minor pieces. White\'s queen on b3 is active but can\'t make up the material.' },
 ];
 
 export default function PatternRecognition() {

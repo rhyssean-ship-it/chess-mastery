@@ -132,7 +132,7 @@ class StockfishService {
     if (!this.ready || !this.worker) return;
     this.send('stop');
     this.send(`position fen ${fen}`);
-    this.send('go depth 8 movetime 300');
+    this.send('go depth 14 movetime 1200'); // deep enough to be reliable; hints are teaching
   }
 
   // Bot "personality". Strength is still governed by the ELO preset (depth/movetime/skill);
@@ -254,6 +254,17 @@ class StockfishService {
     return new Promise((resolve) => {
       if (!this.ready || !this.worker) { resolve(null); return; }
 
+      // Checkmate/stalemate: this Stockfish build never sends "bestmove" for a position with no
+      // legal moves, so answer directly (mate 0 = side to move is mated).
+      try {
+        const g = new Chess(fen);
+        if (g.isGameOver()) {
+          const mate = g.isCheckmate() ? 0 : null;
+          resolve({ bestMove: null, scoreCp: mate === null ? 0 : null, mate, pv: [], lines: [] });
+          return;
+        }
+      } catch { /* let the engine try */ }
+
       const linesByPv = {};
       const prevOnMessage = this.worker.onmessage;
 
@@ -279,6 +290,7 @@ class StockfishService {
         }
 
         if (msg.startsWith('bestmove')) {
+          clearTimeout(watchdog);
           const move = msg.split(' ')[1];
           const bestMove = (move && move !== '(none)') ? move : null;
           const primary = linesByPv[1] || {};
@@ -295,6 +307,9 @@ class StockfishService {
           resolve(result);
         }
       };
+
+      // Safety net: if no answer arrives, stop the search so "bestmove" is forced out.
+      const watchdog = setTimeout(() => this.send('stop'), movetime ? movetime + 5000 : 30000);
 
       // Full strength, configurable MultiPV
       this.send(`setoption name Skill Level value 20`);

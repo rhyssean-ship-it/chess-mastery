@@ -131,12 +131,14 @@ export function explainPlayedMove(analysis) {
   // After the move, did we leave material hanging?
   const hang = checkHangingAfterMove(fenAfter, verbose);
   if (hang) {
-    const sqName = hang.square.toUpperCase();
+    const side = hang.piece.color === 'w' ? 'White' : 'Black';
     const pieceLabel = pieceName(hang.piece.type);
-    if (PIECE_VALUE[hang.attacker.piece] < PIECE_VALUE[hang.piece.type]) {
-      return `Your ${pieceLabel} on ${sqName} is undefended — it can be won by a lower-valued piece.`;
+    const defended = new Chess(fenAfter).attackers(hang.square, hang.piece.color).length > 0;
+    const by = pieceName(hang.attacker.piece);
+    if (defended && PIECE_VALUE[hang.attacker.piece] < PIECE_VALUE[hang.piece.type]) {
+      return `It leaves ${side}’s ${pieceLabel} on ${hang.square} attacked by a ${by}. It’s defended, but trading it for a ${by} still loses material.`;
     }
-    return `Your ${pieceLabel} on ${sqName} is hanging.`;
+    return `It leaves ${side}’s ${pieceLabel} on ${hang.square} undefended: the ${by} can take it for free.`;
   }
 
   // Generic severity-based fallback
@@ -181,7 +183,7 @@ export function explainBestMove(analysis) {
     const fork = detectFork(fenAfterBest, verbose.to);
     if (fork) {
       const piece = pieceName(fork.fromPiece.type, true);
-      const targets = fork.targets.slice(0, 2).map(t => `${pieceName(t.piece.type)} on ${t.square.toUpperCase()}`).join(' and the ');
+      const targets = fork.targets.slice(0, 2).map(t => `${pieceName(t.piece.type)} on ${t.square}`).join(' and the ');
       return `${san} — ${piece} forks the ${targets}.`;
     }
   }
@@ -197,8 +199,13 @@ export function explainBestMove(analysis) {
 
   // Fallback: show the engine's principal variation as a continuation
   if (analysis.bestMovePv?.length > 1) {
-    const pv = analysis.bestMovePv.slice(0, 5).join(' ');
-    return `${san} — engine's line continues ${pv}…`;
+    // The engine's line is in UCI (e2e4); show it in normal notation.
+    const g = new Chess(analysis.fenBefore);
+    const sans = [];
+    for (const u of analysis.bestMovePv.slice(0, 5)) {
+      try { sans.push(g.move({ from: u.slice(0, 2), to: u.slice(2, 4), promotion: u[4] || undefined }).san); } catch { break; }
+    }
+    if (sans.length > 1) return `${san}: the engine’s line continues ${sans.slice(1).join(' ')}…`;
   }
   return `${san} keeps the position best.`;
 }

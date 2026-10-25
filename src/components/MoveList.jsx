@@ -1,7 +1,9 @@
 import { useEffect, useRef, memo } from 'react';
 import { CLASS_META } from '../services/moveClassification';
 
-function MoveList({ history, currentIndex, onSelectMove, classifications = null, maxHeightClass = 'max-h-[28rem]' }) {
+// startFen: the position the moves start from. When Black moves first (a game started from a
+// position), the first row shows "N. …" with Black's move in the right-hand column.
+function MoveList({ history, currentIndex, onSelectMove, classifications = null, maxHeightClass = 'max-h-[28rem]', startFen = null }) {
   const interactive = typeof onSelectMove === 'function';
   const activeRef = useRef(null);
   const containerRef = useRef(null);
@@ -18,11 +20,16 @@ function MoveList({ history, currentIndex, onSelectMove, classifications = null,
     }
   }, [currentIndex, classifications]);
 
+  const [, sideToStart, , , , fullmove] = (startFen || 'x w - - 0 1').split(' ');
+  const firstNumber = parseInt(fullmove, 10) || 1;
+  const blackFirst = sideToStart === 'b';
   const pairs = [];
-  for (let i = 0; i < history.length; i += 2) {
+  // With Black first, ply 0 sits in the black column of the first row; idx -1 is an empty white cell.
+  const offset = blackFirst ? 1 : 0;
+  for (let i = -offset; i < history.length; i += 2) {
     pairs.push({
-      number: Math.floor(i / 2) + 1,
-      white: history[i],
+      number: firstNumber + Math.floor((i + offset) / 2),
+      white: i >= 0 ? history[i] : null,
       black: history[i + 1] || null,
       whiteIdx: i,
       blackIdx: i + 1,
@@ -73,10 +80,10 @@ function MoveList({ history, currentIndex, onSelectMove, classifications = null,
               <td
                 ref={currentIndex === p.whiteIdx ? activeRef : null}
                 className={cellClass(currentIndex === p.whiteIdx)}
-                {...cellProps(p.whiteIdx, true)}
+                {...cellProps(p.whiteIdx, !!p.white)}
               >
-                <span>{p.white?.move?.san || p.white?.san || ''}</span>
-                {renderTag(p.whiteIdx)}
+                <span>{p.white ? (p.white.move?.san || p.white.san || '') : '…'}</span>
+                {p.white && renderTag(p.whiteIdx)}
               </td>
               <td
                 ref={p.black && currentIndex === p.blackIdx ? activeRef : null}

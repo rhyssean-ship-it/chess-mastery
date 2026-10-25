@@ -11,7 +11,10 @@ import ChessBoard from './ChessBoard';
 //   showHint — boolean      — when true, draws an arrow on the next correct move
 //   onReady  — () => void  — called once the opponent's setup move has been played
 //   compact  — boolean      — render with smaller padding for embedded use
-export default function PuzzleSolver({ puzzle, onSolved, onFailed, showHint = false, onReady, compact = false }) {
+//   setup    — boolean      — false when puzzle.fen is already the solver's position and moves[0]
+//                             is the solver's first move (e.g. My Mistakes entries)
+// Any move that delivers checkmate is accepted, not just the stored one.
+export default function PuzzleSolver({ puzzle, onSolved, onFailed, showHint = false, onReady, compact = false, setup = true }) {
   const gameRef = useRef(null);
   const [fen, setFen] = useState(puzzle.fen);
   const [moveIdx, setMoveIdx] = useState(0); // index into puzzle.moves
@@ -29,6 +32,11 @@ export default function PuzzleSolver({ puzzle, onSolved, onFailed, showHint = fa
     setStatus('loading');
     setFeedback(null);
 
+    if (!setup) {
+      setStatus('playing');
+      onReady?.();
+      return;
+    }
     const setupMove = puzzle.moves[0];
     const t = setTimeout(() => {
       try {
@@ -45,7 +53,8 @@ export default function PuzzleSolver({ puzzle, onSolved, onFailed, showHint = fa
     return () => clearTimeout(t);
   }, [puzzle]);
 
-  const playerColor = new Chess(puzzle.fen).turn() === 'w' ? 'black' : 'white';
+  const startTurn = new Chess(puzzle.fen).turn();
+  const playerColor = setup ? (startTurn === 'w' ? 'black' : 'white') : (startTurn === 'w' ? 'white' : 'black');
 
   function getLegalDests() {
     const g = gameRef.current;
@@ -65,6 +74,21 @@ export default function PuzzleSolver({ puzzle, onSolved, onFailed, showHint = fa
     const expectedFrom = expected.slice(0, 2);
     const expectedTo = expected.slice(2, 4);
 
+    // A different move that also mates is just as correct.
+    if (from !== expectedFrom || to !== expectedTo) {
+      const probe = new Chess(g.fen());
+      let alt = null;
+      try { alt = probe.move({ from, to, promotion: 'q' }); } catch { alt = null; }
+      if (alt && probe.isCheckmate()) {
+        g.move({ from, to, promotion: 'q' });
+        setFen(g.fen());
+        setLastMove([from, to]);
+        setFeedback('correct');
+        setStatus('solved');
+        onSolved?.();
+        return;
+      }
+    }
     if (from !== expectedFrom || to !== expectedTo) {
       // Wrong move — but allow auto-promotion misses to be corrected
       setFeedback('wrong');
@@ -130,6 +154,9 @@ export default function PuzzleSolver({ puzzle, onSolved, onFailed, showHint = fa
         lastMove={lastMove}
         arrows={hintArrow}
       />
+      {status === 'playing' && feedback === null && (
+        <div className="mt-2 text-xs text-text-dim">You play {playerColor}. Find the best move.</div>
+      )}
       {feedback === 'correct' && status === 'playing' && (
         <div className="mt-2 text-xs text-correct font-medium">✓ Correct — keep going</div>
       )}

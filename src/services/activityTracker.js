@@ -1,4 +1,5 @@
 // Tracks the user's most recent activity (route + label) for the Home dashboard's "continue" card.
+import { localDateKey, localDateKeyDaysAgo } from '../utils/dateKey';
 
 const KEY = 'chess-mastery:lastActivity';
 const STREAK_KEY = 'chess-mastery:dayStreak';
@@ -66,7 +67,7 @@ function labelFor(path) {
 // Section that the route belongs to — used to highlight bottom-nav tabs.
 export function sectionFor(path) {
   if (path === '/' || path === '') return 'home';
-  if (path.startsWith('/play') || path.startsWith('/practice-play') || path.startsWith('/game-review')) return 'play';
+  if (path.startsWith('/play') || path.startsWith('/practice-play') || path.startsWith('/game-review') || path.startsWith('/lab')) return 'play';
   if (
     path.startsWith('/learn') || path.startsWith('/learning-path') || path.startsWith('/focus') ||
     path.startsWith('/openings') || path.startsWith('/opening-traps') || path.startsWith('/move-order') || path.startsWith('/repertoire') ||
@@ -120,7 +121,7 @@ export function recentRoutes() {
   try { return JSON.parse(localStorage.getItem(ROUTE_HISTORY_KEY) || '[]'); } catch { return []; }
 }
 
-function dateKey(d = new Date()) { return d.toISOString().slice(0, 10); }
+const dateKey = localDateKey;
 
 function updateStreak() {
   try {
@@ -128,7 +129,7 @@ function updateStreak() {
     const s = raw ? JSON.parse(raw) : { lastDay: null, streak: 0 };
     const today = dateKey();
     if (s.lastDay === today) return; // already counted today
-    const yesterday = dateKey(new Date(Date.now() - 86400000));
+    const yesterday = localDateKeyDaysAgo(1);
     s.streak = s.lastDay === yesterday ? s.streak + 1 : 1;
     s.lastDay = today;
     localStorage.setItem(STREAK_KEY, JSON.stringify(s));
@@ -140,7 +141,7 @@ export function dayStreak() {
     const s = JSON.parse(localStorage.getItem(STREAK_KEY) || '{}');
     if (!s.lastDay) return 0;
     const today = dateKey();
-    const yesterday = dateKey(new Date(Date.now() - 86400000));
+    const yesterday = localDateKeyDaysAgo(1);
     if (s.lastDay === today || s.lastDay === yesterday) return s.streak || 0;
     return 0;
   } catch { return 0; }

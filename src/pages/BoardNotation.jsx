@@ -11,6 +11,34 @@ function getRandomSquare() {
   return files[Math.floor(Math.random() * 8)] + ranks[Math.floor(Math.random() * 8)];
 }
 
+// Pick a random square other than `except` (for distractor options).
+function otherSquare(except) {
+  let sq = getRandomSquare();
+  while (sq === except) sq = getRandomSquare();
+  return sq;
+}
+
+// Board grid with rank labels down the left and file labels underneath,
+// so the coordinates stay readable after "Flip board".
+function LabelledBoard({ displayRanks, displayFiles, children }) {
+  return (
+    <div className="max-w-[400px] mx-auto">
+      <div className="flex items-stretch gap-1">
+        <div className="flex flex-col w-3 shrink-0">
+          {displayRanks.map(r => <div key={r} className="flex-1 flex items-center justify-center text-xs text-text-dim">{r}</div>)}
+        </div>
+        <div className="flex-1 min-w-0">{children}</div>
+      </div>
+      <div className="flex gap-1 mt-1">
+        <div className="w-3 shrink-0" />
+        <div className="flex-1 grid grid-cols-8">
+          {displayFiles.map(f => <div key={f} className="text-center text-xs text-text-dim">{f}</div>)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SquareNameDrill() {
   const [target, setTarget] = useState(getRandomSquare);
   const [selected, setSelected] = useState(null);
@@ -65,7 +93,7 @@ function SquareNameDrill() {
       </div>
 
       {/* Board grid */}
-      <div className="max-w-[400px] mx-auto">
+      <LabelledBoard displayRanks={displayRanks} displayFiles={displayFiles}>
         <div className="grid grid-cols-8 rounded-lg overflow-hidden board-frame">
           {displayRanks.map(r => displayFiles.map(f => {
             const sq = f + r;
@@ -87,12 +115,7 @@ function SquareNameDrill() {
             );
           }))}
         </div>
-        {/* File labels */}
-        <div className="grid grid-cols-8 mt-1">
-          {displayFiles.map(f => <div key={f} className="text-center text-xs text-text-dim">{f}</div>)}
-        </div>
-      </div>
-      {/* Rank labels are implicit from the grid */}
+      </LabelledBoard>
     </div>
   );
 }
@@ -141,7 +164,7 @@ function NameSquareDrill() {
       </div>
 
       {/* Board with highlighted square */}
-      <div className="max-w-[400px] mx-auto">
+      <LabelledBoard displayRanks={displayRanks} displayFiles={displayFiles}>
         <div className="grid grid-cols-8 rounded-lg overflow-hidden board-frame">
           {displayRanks.map(r => displayFiles.map(f => {
             const sq = f + r;
@@ -156,10 +179,7 @@ function NameSquareDrill() {
             );
           }))}
         </div>
-        <div className="grid grid-cols-8 mt-1">
-          {displayFiles.map(f => <div key={f} className="text-center text-xs text-text-dim">{f}</div>)}
-        </div>
-      </div>
+      </LabelledBoard>
 
       <p className="text-center text-sm text-text-dim">What square is highlighted?</p>
 
@@ -202,7 +222,7 @@ function NotationDrill() {
       options = [
         { text: explanation, correct: true },
         { text: `${pieceNames[pieces[(pieces.indexOf(piece) + 1) % pieces.length]]} moves to ${sq}`, correct: false },
-        { text: `${pieceNames[piece]} moves to ${files[Math.floor(Math.random() * 8)]}${ranks[Math.floor(Math.random() * 8)]}`, correct: false },
+        { text: `${pieceNames[piece]} moves to ${otherSquare(sq)}`, correct: false },
         { text: `${pieceNames[piece]} captures on ${sq}`, correct: false },
       ];
     } else if (type === 'capture') {
@@ -215,7 +235,7 @@ function NotationDrill() {
         { text: explanation, correct: true },
         { text: `${pieceNames[piece]} moves to ${sq}`, correct: false },
         { text: `Pawn captures on ${sq}`, correct: false },
-        { text: `${pieceNames[piece]} captures on ${files[Math.floor(Math.random() * 8)]}${ranks[Math.floor(Math.random() * 8)]}`, correct: false },
+        { text: `${pieceNames[piece]} captures on ${otherSquare(sq)}`, correct: false },
       ];
     } else if (type === 'check') {
       const pieces = ['N', 'B', 'R', 'Q'];
@@ -241,6 +261,9 @@ function NotationDrill() {
       ];
     }
 
+    // Never show a distractor that reads the same as another option.
+    const seen = new Set();
+    options = options.filter(o => !seen.has(o.text) && seen.add(o.text));
     setQuestion({ notation, explanation, options: options.sort(() => Math.random() - 0.5) });
   }
 

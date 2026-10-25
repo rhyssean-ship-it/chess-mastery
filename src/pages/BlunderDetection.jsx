@@ -50,7 +50,7 @@ export default function BlunderDetection() {
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] lg:grid-cols-[1fr_380px] gap-6 sm:gap-8">
         <div className="w-full max-w-[480px]">
-          <ChessBoard fen={puzzle.fen} movable={false} />
+          <ChessBoard fen={puzzle.fen} movable={false} orientation={puzzle.fen.split(' ')[1] === 'b' ? 'black' : 'white'} />
         </div>
         <div className="space-y-4">
           <div className="card-base p-5">
@@ -58,9 +58,12 @@ export default function BlunderDetection() {
             <p className="font-semibold">{puzzle.question}</p>
           </div>
 
-          <div className="card-base p-4">
-            <span className={`text-xs px-2 py-0.5 rounded-full ${diffColors[puzzle.difficulty]}`}>{puzzle.blunderType}</span>
-          </div>
+          {/* the blunder type is part of the answer, so it only shows once revealed */}
+          {revealed && (
+            <div className="card-base p-4">
+              <span className={`text-xs px-2 py-0.5 rounded-full ${diffColors[puzzle.difficulty]}`}>{puzzle.blunderType}</span>
+            </div>
+          )}
 
           {!revealed ? (
             <button onClick={() => setRevealed(true)} className="w-full bg-gold text-bg py-2.5 rounded-lg font-semibold hover:bg-gold-dim transition-all btn-press">

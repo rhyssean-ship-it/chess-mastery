@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Chess } from 'chess.js';
 import ChessBoard from '../components/ChessBoard';
 import { pickPuzzles } from '../services/lichessPuzzleService';
-import { opponentThreats, forcingMoves, safetyCheck, STEPS, pieceName } from '../services/spyScanSafe';
+import { opponentThreats, forcingMoves, safetyCheck, pieceSafety, STEPS, pieceName } from '../services/spyScanSafe';
 import { recordDrill, drillStats } from '../services/thinkingDrillStore';
 import { markItemDone } from '../services/dailyPlanService';
 
@@ -32,9 +32,12 @@ function spyRound(p) {
   if (!threats.length) return null;
   const targets = new Set();
   for (const t of threats) {
-    if (t.mate || t.kind === 'mate') targets.add(kingSquare(g, me));
+    if (t.mate || t.kind === 'mate') { targets.add(kingSquare(g, me)); if (t.captured) targets.add(t.to); }
     else targets.add(t.to);
   }
+  // Any of your pieces that is genuinely in danger (undefended, outnumbered, or attacked by
+  // something cheaper) is also a fair answer.
+  for (const h of pieceSafety(g.fen(), me).hanging) if (h.type !== 'p') targets.add(h.square);
   if (g.inCheck()) targets.add(kingSquare(g, me));
   return {
     fen: g.fen(), lastMove: [m.from, m.to], orientation: me === 'w' ? 'white' : 'black',
@@ -52,7 +55,8 @@ function scanRound(p) {
   const setup = play(g, p.moves[0]);
   const me = g.turn();
   const f = forcingMoves(g.fen(), me);
-  const forcing = [...new Map([...f.checks, ...f.captures].map(x => [x.san, x])).values()];
+  // Underpromotions are left out: the board always promotes to a queen, so they can't be played.
+  const forcing = [...new Map([...f.checks, ...f.captures].filter(x => !/=[NRB]/.test(x.san)).map(x => [x.san, x])).values()];
   if (forcing.length < 2 || forcing.length > 7) return null;
   const sol = new Chess(g.fen()).move({ from: p.moves[1].slice(0, 2), to: p.moves[1].slice(2, 4), promotion: p.moves[1][4] || undefined });
   return {

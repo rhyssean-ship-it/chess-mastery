@@ -10,7 +10,7 @@ const themes = {
     '--color-gold': '#C9A84C',
     '--color-gold-dim': '#a68a3a',
     '--color-text': '#E8E4DC',
-    '--color-text-dim': '#8A8680',
+    '--color-text-dim': '#9d9890', // matches index.css; AA on the dark background
     '--color-correct': '#4CAF50',
     '--color-incorrect': '#E57373',
     '--color-amber': '#FFA726',
@@ -25,7 +25,7 @@ const themes = {
     '--color-gold': '#4d4538',
     '--color-gold-dim': '#363026',
     '--color-text': '#2a2622',
-    '--color-text-dim': '#8a8478',
+    '--color-text-dim': '#6b655a', // ~5:1 on the light background (AA)
     '--color-correct': '#2e8b3a',
     '--color-incorrect': '#d43030',
     '--color-amber': '#d48806',

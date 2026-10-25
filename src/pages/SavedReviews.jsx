@@ -57,7 +57,11 @@ export default function SavedReviews() {
         {entries.map(e => {
           const whiteAcc = e.summary?.white?.accuracy?.toFixed(0);
           const blackAcc = e.summary?.black?.accuracy?.toFixed(0);
-          const blunders = (e.summary?.white?.blunder || 0) + (e.summary?.black?.blunder || 0);
+          // the player's own numbers first; the engine's blunders aren't yours
+          const mine = e.playerColor === 'black' ? 'black' : 'white';
+          const blunders = e.summary?.[mine]?.blunder || 0;
+          const yourAcc = mine === 'white' ? whiteAcc : blackAcc;
+          const oppAcc = mine === 'white' ? blackAcc : whiteAcc;
           return (
             <div key={e.id} className="card-base p-4 flex items-center justify-between gap-3 hover:bg-bg-hover/30 transition-all">
               <button onClick={() => openReview(e)} className="flex-1 text-left min-w-0">
@@ -67,8 +71,8 @@ export default function SavedReviews() {
                 </div>
                 <div className="flex flex-wrap gap-3 text-xs text-text-dim">
                   <span>{formatDate(e.savedAt)}</span>
-                  <span>{e.moveCount} moves</span>
-                  {whiteAcc && <span>Acc <span className="text-text">{whiteAcc}%</span> / {blackAcc}%</span>}
+                  <span>{Math.ceil(e.moveCount / 2)} moves</span>
+                  {yourAcc && <span>Accuracy: you <span className="text-text">{yourAcc}%</span> · opponent {oppAcc}%</span>}
                   {blunders > 0 && <span className="text-incorrect">{blunders} blunder{blunders === 1 ? '' : 's'}</span>}
                 </div>
               </button>

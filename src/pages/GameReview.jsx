@@ -4,6 +4,9 @@ import ChessBoard from '../components/ChessBoard';
 import MoveList from '../components/MoveList';
 import openings from '../data/openings';
 import { progressService } from '../services/progressService';
+import { useNavigate } from 'react-router-dom';
+
+const STANDARD_START = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
 const tagLabels = [
   { value: 'blunder', label: 'Blunder', color: 'bg-incorrect/20 text-incorrect' },
@@ -30,7 +33,8 @@ export default function GameReview() {
   const [annotations, setAnnotations] = useState({});
   const [noteText, setNoteText] = useState('');
   const [matchedOpening, setMatchedOpening] = useState(null);
-  const [startFen] = useState('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
+  const [startFen, setStartFen] = useState(STANDARD_START);
+  const navigate = useNavigate();
 
   function loadGame() {
     setError('');
@@ -40,8 +44,11 @@ export default function GameReview() {
       const history = game.history({ verbose: true });
       if (history.length === 0) { setError('No moves found in PGN.'); return; }
 
-      // Build move list with FENs
-      const g2 = new Chess();
+      // Build move list with FENs, starting from the PGN's own [FEN] position if it has one
+      const headerFen = game.getHeaders?.().FEN || game.header?.().FEN;
+      const fromFen = headerFen || STANDARD_START;
+      setStartFen(fromFen);
+      const g2 = new Chess(fromFen);
       const moveList = history.map(m => {
         g2.move(m.san);
         return { move: m, fen: g2.fen(), san: m.san };
@@ -57,9 +64,10 @@ export default function GameReview() {
       if (saved) setAnnotations(saved);
       else setAnnotations({});
 
-      // Match opening
+      // Match opening (only meaningful from the normal starting position)
       const gameMoves = history.map(m => m.san);
-      for (const op of openings) {
+      setMatchedOpening(null);
+      if (!headerFen) for (const op of openings) {
         const opMoves = op.moves.map(m => m.move);
         const matchLen = Math.min(opMoves.length, gameMoves.length);
         let matched = true;
@@ -75,9 +83,22 @@ export default function GameReview() {
     }
   }
 
+  function analyseAs(side) {
+    sessionStorage.setItem('enpassant:reviewGame', JSON.stringify({
+      history: moves.map(m => ({ san: m.san, fen: m.fen })),
+      playerColor: side,
+      result: null,
+      label: 'Imported PGN',
+      startingFen: startFen,
+    }));
+    navigate('/play/analysis');
+  }
+
   useEffect(() => {
     const handler = (e) => {
       if (!loaded) return;
+      // typing a note: arrow keys move the cursor, not the game
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
       if (e.key === 'ArrowRight') setCurrentIndex(i => Math.min(i + 1, moves.length - 1));
       if (e.key === 'ArrowLeft') setCurrentIndex(i => Math.max(i - 1, -1));
       if (e.key === 'Home') setCurrentIndex(-1);
@@ -159,7 +180,15 @@ export default function GameReview() {
 
         <div className="space-y-4">
           {/* Move list */}
-          <MoveList history={historyWithTags} currentIndex={currentIndex} onSelectMove={setCurrentIndex} />
+          <MoveList history={historyWithTags} currentIndex={currentIndex} onSelectMove={setCurrentIndex}
+            startFen={startFen} classifications={moves.map(() => null)} />
+
+          {/* Full engine review, the same as for games played in the app */}
+          <div className="flex gap-2">
+            {['white', 'black'].map(side => (
+              <button key={side} onClick={() => analyseAs(side)} className="btn btn-secondary btn-sm flex-1">Analyse as {side}</button>
+            ))}
+          </div>
 
           {/* Tag buttons */}
           {currentIndex >= 0 && (

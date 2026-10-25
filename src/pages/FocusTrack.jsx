@@ -6,13 +6,14 @@ import { dueCount } from '../services/mistakeStore';
 import { useFocusMode, setFocusMode } from '../services/focusMode';
 import masterGames from '../data/masterGames';
 import endgameDrills from '../data/endgameDrills';
+import { localDateKey } from '../utils/dateKey';
 
 const ENDGAME_BASICS = ['kqk', 'krk', 'kpk-1'];
 
 function loadJson(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
 }
-function dateKey(d) { return d.toISOString().slice(0, 10); }
+const dateKey = localDateKey;
 
 // Monday-to-Sunday of the current week, as YYYY-MM-DD strings.
 function thisWeek() {
@@ -20,7 +21,8 @@ function thisWeek() {
   const monday = new Date(now);
   monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
   monday.setHours(0, 0, 0, 0);
-  return { start: monday.getTime(), days: new Set(Array.from({ length: 7 }, (_, i) => dateKey(new Date(monday.getTime() + i * 86400000)))) };
+  // build each day from calendar parts, not +86400000ms, so DST weeks stay Monday to Sunday
+  return { start: monday.getTime(), days: new Set(Array.from({ length: 7 }, (_, i) => dateKey(new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i)))) };
 }
 
 function Habit({ title, why, done, target, unit, to, cta, complete }) {

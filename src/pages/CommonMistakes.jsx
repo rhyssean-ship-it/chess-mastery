@@ -50,7 +50,7 @@ export default function CommonMistakes() {
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] lg:grid-cols-[1fr_400px] gap-6 sm:gap-8">
         <div className="w-full max-w-[480px]">
-          <ChessBoard fen={puzzle.fen} movable={false} />
+          <ChessBoard fen={puzzle.fen} orientation={puzzle.fen.split(' ')[1] === 'b' ? 'black' : 'white'} movable={false} />
         </div>
         <div className="space-y-4">
           <div className="card-base p-5">

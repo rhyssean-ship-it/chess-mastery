@@ -32,10 +32,10 @@ const gamePhases = [
       },
       {
         type: 'position',
-        fen: 'r1bqk2r/ppppbppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',
-        caption: 'Both sides have developed knights and bishops. White should castle next.',
+        fen: 'r1bqk2r/ppppbppp/2n2n2/4p3/2B1P3/2N2N2/PPPP1PPP/R1BQK2R w KQkq - 6 5',
+        caption: 'Both sides have developed both knights and a bishop. White should castle next.',
         arrows: [['e1', 'g1']],
-        highlights: ['c6', 'f6', 'c4', 'f3'],
+        highlights: ['c6', 'f6', 'e7', 'c3', 'f3', 'c4'],
       },
       {
         type: 'heading',
@@ -47,8 +47,8 @@ const gamePhases = [
       },
       {
         type: 'position',
-        fen: 'rnbqkb1r/pp3ppp/4pn2/2pp4/2PP4/2N2N2/PP2PPPP/R1BQKB1R w KQkq - 0 4',
-        caption: 'The Queen\'s Gambit pawn structure. White controls more central space with pawns on c4 and d4. Black\'s structure is solid but slightly cramped.',
+        fen: 'rnbqkb1r/pp3ppp/4pn2/2pp4/2PP4/2N2N2/PP2PPPP/R1BQKB1R w KQkq - 2 5',
+        caption: 'A Queen\'s Gambit pawn structure (the Tarrasch Defence). Pawns on c4 and d4 face pawns on c5 and d5, and how this central tension is resolved will decide the character of the game.',
         arrows: [['c4', 'd5']],
         highlights: ['c4', 'd4', 'c5', 'd5'],
       },
@@ -73,7 +73,7 @@ const gamePhases = [
       },
       {
         type: 'position',
-        fen: 'r1bq1rk1/pppn1ppp/4pn2/3p4/1bPP4/2N1PN2/PP3PPP/R1BQKB1R w KQ - 0 6',
+        fen: 'r1bq1rk1/pppn1ppp/4pn2/3p4/1bPP4/2NBPN2/PP3PPP/R1BQK2R w KQ - 4 7',
         caption: 'Black has developed purposefully: knights to natural squares, bishop actively pinning, castled early. White still needs to develop the dark-squared bishop and castle.',
         highlights: ['b4', 'f6', 'd7'],
       },
@@ -132,8 +132,8 @@ const gamePhases = [
       {
         type: 'position',
         fen: 'r1bq1rk1/pp2bppp/2n1pn2/2pp4/3P1B2/2PBPN2/PP1N1PPP/R2Q1RK1 w - - 0 8',
-        caption: 'A typical middlegame position. White should plan e4 to challenge the centre, or place rooks on open files.',
-        arrows: [['e3', 'e4'], ['a1', 'd1']],
+        caption: 'A typical London System middlegame. White\'s natural plan is the e3-e4 break to challenge Black\'s centre, often prepared by Re1.',
+        arrows: [['e3', 'e4'], ['f1', 'e1']],
         highlights: ['d4', 'd5', 'c5'],
       },
       {
@@ -150,9 +150,9 @@ const gamePhases = [
       },
       {
         type: 'position',
-        fen: 'r1b2rk1/pp1nqppp/2n1p3/2ppP3/3P4/2PB1N2/PP2QPPP/RNB2RK1 w - - 0 10',
-        caption: 'A French Advance structure. White\'s space advantage on the kingside suggests an attack there. Plans include Qe3-Qh3, bringing pieces toward h7, or a pawn storm with f4-f5.',
-        arrows: [['e2', 'h5'], ['f2', 'f4']],
+        fen: 'r1b2rk1/ppqnbppp/2n1p3/2ppP3/3P4/2PB1N2/PP2QPPP/RNB2RK1 w - - 0 10',
+        caption: 'A French Advance structure. White\'s extra space on the kingside points to an attack there: the bishop on d3 already aims at h7, and the queen can line up behind it from c2.',
+        arrows: [['d3', 'h7'], ['e2', 'c2']],
         highlights: ['e5', 'h7'],
       },
       {
@@ -169,10 +169,10 @@ const gamePhases = [
       },
       {
         type: 'position',
-        fen: 'r2q1rk1/pb2bppp/1pn1pn2/2pp4/3P1B2/1QN1PN2/PP2BPPP/R4RK1 w - - 0 10',
-        caption: 'White has the bishop pair in a semi-open position. The strategic plan is to open the position with dxc5 to unleash the bishops\' long-range power.',
+        fen: 'r2q1rk1/p3bppp/1pn1pn2/2pp4/3P4/1P1BPN2/PBP2PPP/R2Q1RK1 w - - 0 10',
+        caption: 'Black has traded the light-squared bishop for a knight, so White has the bishop pair in a semi-open position. The strategic plan is to open the position with dxc5 to unleash the bishops\' long-range power.',
         arrows: [['d4', 'c5']],
-        highlights: ['f4', 'e2'],
+        highlights: ['b2', 'd3'],
       },
       {
         type: 'text',
@@ -192,7 +192,7 @@ const gamePhases = [
       },
       {
         type: 'position',
-        fen: 'r1bq1rk1/pp2bppp/2n1pn2/3p4/3P4/2NBPN2/PP3PPP/R1BQ1RK1 w - - 0 8',
+        fen: 'r1bq1rk1/pp2bppp/2n1pn2/8/3P4/2NB1N2/PP3PPP/R1BQ1RK1 w - - 0 9',
         caption: 'A classic IQP position. White has active piece play and a central outpost on e5. The d4 pawn controls c5 and e5, but could become weak if pieces are traded off.',
         arrows: [['f3', 'e5'], ['d3', 'h7']],
         highlights: ['d4', 'e5', 'c5'],
@@ -203,10 +203,10 @@ const gamePhases = [
       },
       {
         type: 'position',
-        fen: 'r4rk1/pp2bppp/2n1pn2/q1Bp4/3P4/2N1PN2/PP3PPP/R2Q1RK1 w - - 0 10',
-        caption: 'White\'s bishop on c5 is actively placed. The rooks should aim for the open or semi-open files.',
-        arrows: [['f1', 'e1'], ['a1', 'c1']],
-        highlights: ['c5', 'e1', 'c1'],
+        fen: 'r4rk1/pp1qbppp/2n1pn2/2Bp4/3P4/2N1PN2/PP3PPP/R2Q1RK1 w - - 0 10',
+        caption: 'White\'s bishop on c5 is actively placed, supported by the d4 pawn. Neither side has a c-pawn, so the c-file is open: Rc1 puts a rook on it.',
+        arrows: [['a1', 'c1']],
+        highlights: ['c5', 'c1'],
       },
       {
         type: 'text',
@@ -263,10 +263,10 @@ const gamePhases = [
       },
       {
         type: 'position',
-        fen: '8/5kpp/8/5pP1/5P2/6K1/8/8 w - - 0 1',
-        caption: 'A king and pawn endgame. White\'s king must advance to support the passed pawn. The concept of "opposition" is critical here.',
-        arrows: [['g3', 'f3'], ['g3', 'h4']],
-        highlights: ['g5', 'f4', 'f5'],
+        fen: '8/3k4/8/8/3K4/8/3P4/8 w - - 0 1',
+        caption: 'A king and pawn endgame. White\'s king is well ahead of its d-pawn. The winning plan is to advance the king first (Kd5, Kc5 or Ke5) to take the key squares in front of the pawn, and only then push it. The concept of "opposition" is critical here.',
+        arrows: [['d4', 'd5'], ['d4', 'e5']],
+        highlights: ['d4', 'd2'],
       },
       {
         type: 'text',
@@ -282,14 +282,14 @@ const gamePhases = [
       },
       {
         type: 'position',
-        fen: '8/8/8/8/8/4k3/4P3/4K3 w - - 0 1',
-        caption: 'Black has the opposition. If White pushes e4, Black plays Ke4. White must find a way to outflank with the king.',
-        arrows: [['e1', 'd2'], ['e1', 'f2']],
-        highlights: ['e3', 'e1'],
+        fen: '8/8/4k3/8/4K3/4P3/8/8 w - - 0 1',
+        caption: 'Black has the opposition: the kings face each other with one square between them, and it is White to move. White\'s king cannot step forward to d5, e5 or f5, and the pawn on e3 is blocked by its own king, so with best play this is a draw. With Black to move, White would win.',
+        arrows: [['e4', 'd4'], ['e4', 'f4']],
+        highlights: ['e6', 'e4'],
       },
       {
         type: 'text',
-        content: 'Key squares: every pawn has "key squares" that, if the attacking king reaches, guarantee promotion. For a pawn on e5, the key squares are d7, e7, and f7. If you can get your king to a key square, you win — regardless of where the defending king is.',
+        content: 'Key squares: every pawn has "key squares" that, if the attacking king reaches, guarantee promotion. For a pawn on e4, the key squares are d6, e6 and f6. If you can get your king to a key square, you win — regardless of where the defending king is.',
       },
       {
         type: 'text',
@@ -305,9 +305,9 @@ const gamePhases = [
       },
       {
         type: 'position',
-        fen: '3K4/3P1k2/8/8/8/8/8/4R3 w - - 0 1',
-        caption: 'The Lucena Position. White wins by "building a bridge": Re4 (rook to the 4th rank), then Kc7, and when checked from behind, the rook interposes on d4.',
-        arrows: [['e1', 'e4']],
+        fen: '3K4/3P4/6k1/8/8/8/2r5/5R2 w - - 0 1',
+        caption: 'The Lucena Position. Black\'s king is cut off by the rook on f1, and Black\'s rook stops White\'s king escaping to the c-file. White wins by "building a bridge": Rf4! (rook to the 4th rank), then Ke7. When Black checks on the e- and d-files, the king walks down towards its rook and the rook blocks a check on the 4th rank (for example Rd4), so the pawn queens.',
+        arrows: [['f1', 'f4']],
         highlights: ['d8', 'd7'],
       },
       {
@@ -328,9 +328,9 @@ const gamePhases = [
       },
       {
         type: 'position',
-        fen: '8/pp3kpp/4p3/3pP3/PP1n4/4BK2/8/8 b - - 0 1',
-        caption: 'The knight dominates this closed position. It occupies a beautiful outpost on d4 while the bishop is restricted by its own pawns on the same colour.',
-        highlights: ['d4', 'e3'],
+        fen: '8/3b1k2/p3p1p1/1p1pP2p/1P1N1P1P/P5P1/5K2/8 w - - 0 1',
+        caption: 'The knight dominates this closed position. It sits on a secure outpost on d4, where no black pawn can attack it, while Black\'s bishop on d7 is hemmed in by its own pawns on light squares (b5, d5, e6, g6 and h5).',
+        highlights: ['d4', 'd7'],
       },
       {
         type: 'text',
@@ -350,10 +350,10 @@ const gamePhases = [
       },
       {
         type: 'position',
-        fen: '8/8/1pk5/1p6/1P4K1/8/1PK5/8 w - - 0 1',
-        caption: 'Zugzwang in action. After Kf4!, Black must move but every king move allows White\'s king to penetrate. The beauty of zugzwang — sometimes the best move is to pass.',
-        arrows: [['g4', 'f4']],
-        highlights: ['c6', 'f4'],
+        fen: '3k4/3P4/8/4K3/8/8/8/8 w - - 0 1',
+        caption: 'Zugzwang in action. White plays Ke6! and now Black must move. The only legal move is ...Kc7, which lets White\'s king go to e7, guard d8 and promote the pawn. If Black could pass, it would be a draw. (Kd6? instead would be stalemate.)',
+        arrows: [['e5', 'e6']],
+        highlights: ['d8', 'e6'],
       },
       {
         type: 'text',

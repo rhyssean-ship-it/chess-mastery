@@ -243,12 +243,20 @@ export async function analyzeGame({
     // A position needs pass 2 if the player's move from it was the engine's pass-1 best move
     // (so we need MultiPV=2 to distinguish Best vs Great vs Brilliant).
     // We refine the BEFORE position of those plies.
+    // Also re-check every move pass 1 flagged as an error: depth 10 is noisy, and a "mistake"
+    // verdict should never rest on it alone. Both the before and after positions are refined.
+    const FLAGGED = new Set([CLASS.INACCURACY, CLASS.MISTAKE, CLASS.BLUNDER, CLASS.MISS]);
     const refinePositionIdxs = new Set();
     for (let i = 0; i < plies.length; i++) {
       if (bookFlags[i]) continue;
       const before = rawAnalyses[i];
       if (before?.bestMove && before.bestMove === plies[i].uci) {
         refinePositionIdxs.add(i);
+      }
+      const prelim = buildAnalysis(plies[i], i, rawAnalyses[i], rawAnalyses[i + 1], false);
+      if (prelim && FLAGGED.has(prelim.classification)) {
+        refinePositionIdxs.add(i);
+        refinePositionIdxs.add(i + 1);
       }
     }
     const pass2Tasks = Array.from(refinePositionIdxs).map(posIdx => ({

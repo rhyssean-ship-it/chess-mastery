@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
+import { localDateKey } from '../utils/dateKey';
 
 const DEFAULT_STATE = {
   easeFactor: 2.5,
@@ -19,7 +20,7 @@ export function useSpacedRepetition() {
   const isDue = useCallback((puzzleId) => {
     const state = srData[puzzleId];
     if (!state || !state.nextReview) return true;
-    return new Date().toISOString().slice(0, 10) >= state.nextReview;
+    return localDateKey() >= state.nextReview;
   }, [srData]);
 
   const getDueCount = useCallback((puzzleIds) => {
@@ -34,7 +35,7 @@ export function useSpacedRepetition() {
     // quality: 'easy' | 'medium' | 'hard'
     setSrData(prev => {
       const state = prev[puzzleId] || { ...DEFAULT_STATE };
-      const today = new Date().toISOString().slice(0, 10);
+      const today = localDateKey();
       let { easeFactor, interval, repetitions } = state;
 
       if (quality === 'hard') {
@@ -65,7 +66,7 @@ export function useSpacedRepetition() {
           interval,
           repetitions,
           lastSeen: today,
-          nextReview: nextDate.toISOString().slice(0, 10),
+          nextReview: localDateKey(nextDate),
         },
       };
     });

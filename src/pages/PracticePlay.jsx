@@ -51,8 +51,11 @@ export default function PracticePlay() {
   const [boardKey, setBoardKey] = useState(0);          // remount to snap a held-back piece home
   const hintModeRef = useRef('hint');                   // 'hint' | 'pass'
   const passFenRef = useRef(null);
+  const passGameFenRef = useRef(null);                  // real position the Pass question was asked in
 
   const engineRef = useRef(null);
+  const inBookRef = useRef(true);         // still following the chosen opening's book line
+  const lastAlertRef = useRef(null);      // last tactical-alert level shown, so info lines don't spam it
   const hintEngineRef = useRef(null);
 
   const preset = ELO_PRESETS[levelIndex];
@@ -75,6 +78,8 @@ export default function PracticePlay() {
     setResult(null);
     setEvaluation(0);
     setOpeningPhase(true);
+    inBookRef.current = true;
+    lastAlertRef.current = null;
     setOpeningMoveIdx(0);
     setCoachMessage({ type: 'info', text: `Playing the ${opening?.name || 'selected opening'}. Follow the opening moves to build a strong position.` });
     setHintArrows([]);
@@ -114,13 +119,20 @@ export default function PracticePlay() {
 
       // Tactical alerts need player's perspective (positive = good for player)
       const playerScore = -score; // always negate since engine is opponent
-      if (showTactics) {
-        if (playerScore > 2 && playerScore < 100) {
-          setCoachMessage({ type: 'tip', text: 'You have a significant advantage! Look for tactical opportunities to convert it.' });
-        } else if (playerScore < -2 && playerScore > -100) {
-          setCoachMessage({ type: 'warning', text: 'You\'re in trouble. Play carefully and look for defensive resources.' });
-        } else if (playerScore > 100) {
-          setCoachMessage({ type: 'tip', text: 'Checkmate is near! Find the winning combination.' });
+      if (showTactics && !inBookRef.current) {
+        const level = playerScore >= 100 ? 'mate-for' : playerScore <= -100 ? 'mate-against'
+          : playerScore > 2 ? 'ahead' : playerScore < -2 ? 'behind' : null;
+        if (level && level !== lastAlertRef.current) {
+          lastAlertRef.current = level;
+          const ALERTS = {
+            'mate-for': { type: 'tip', text: 'There’s a forced checkmate for you. Scan every check.' },
+            'mate-against': { type: 'warning', text: 'They have a mating attack. Spy first: what are they threatening?' },
+            ahead: { type: 'tip', text: 'You have a significant advantage. Trade pieces and look for tactics to convert it.' },
+            behind: { type: 'warning', text: 'You’re in trouble. Play carefully and look for defensive resources.' },
+          };
+          setCoachMessage(ALERTS[level]);
+        } else if (!level) {
+          lastAlertRef.current = null;
         }
       }
     };
@@ -129,10 +141,11 @@ export default function PracticePlay() {
       // Also init a hint engine
       const hintEng = new StockfishService();
       hintEngineRef.current = hintEng;
-      hintEng.setLevel(7);
+      hintEng.setLevel(ELO_PRESETS.length - 1); // full strength: hints must be right
       hintEng.onMove = (uci) => {
         if (hintModeRef.current === 'pass') {
           hintModeRef.current = 'hint';
+          if (gameRef.current?.fen() !== passGameFenRef.current) return; // you've moved since asking
           try {
             const m = new Chess(passFenRef.current).move({ from: uci.slice(0, 2), to: uci.slice(2, 4), promotion: uci[4] || undefined });
             setPassText(`If it were their move, they’d play ${m.san}.`);
@@ -147,7 +160,7 @@ export default function PracticePlay() {
 
       if (playerColor === 'black') {
         setThinking(true);
-        engine.getBestMove(g.fen());
+        requestEngineMove(g.fen());
       } else if (showHints && opening) {
         showOpeningHint(0);
       }
@@ -156,6 +169,7 @@ export default function PracticePlay() {
 
   function showOpeningHint(idx) {
     if (!opening || idx >= opening.moves.length) {
+      inBookRef.current = false;
       setOpeningPhase(false);
       setCoachMessage({ type: 'info', text: 'Opening phase complete. You\'re on your own now! Use the hint button if you need guidance.' });
       setHintArrows([]);
@@ -263,7 +277,10 @@ export default function PracticePlay() {
     if (openingPhase && opening && openingMoveIdx < opening.moves.length) {
       const expected = opening.moves[openingMoveIdx];
       if (m.san !== expected.move) {
-        setCoachMessage({ type: 'warning', text: `That's not the book move. The opening recommends ${expected.move}: ${expected.explanation}` });
+        // Leaving the book ends the book coaching: its explanations no longer match the board.
+        inBookRef.current = false;
+        setOpeningPhase(false);
+        setCoachMessage({ type: 'warning', text: `You’ve left the book: the ${opening.name} plays ${expected.move} here. From now on play on principles and run Spy, Scan, Safe.` });
       } else {
         setCoachMessage({ type: 'tip', text: `Correct! ${expected.explanation}` });
       }
@@ -280,7 +297,23 @@ export default function PracticePlay() {
     if (g2.isGameOver()) { checkGameEnd(g2); return; }
 
     setThinking(true);
-    setTimeout(() => engineRef.current?.getBestMove(g2.fen()), 300);
+    setTimeout(() => requestEngineMove(g2.fen()), 300);
+  }
+
+  // While the game is still in the chosen opening, the computer plays the book move so the
+  // coaching always matches the board; after that it plays its own moves.
+  function requestEngineMove(fen) {
+    const [, turn, , , , fullmove] = fen.split(' ');
+    const ply = (parseInt(fullmove, 10) - 1) * 2 + (turn === 'b' ? 1 : 0);
+    const book = inBookRef.current && opening?.moves[ply];
+    if (book) {
+      try {
+        const m = new Chess(fen).move(book.move);
+        engineRef.current?.onMove?.(m.from + m.to + (m.promotion || ''));
+        return;
+      } catch { inBookRef.current = false; }
+    }
+    engineRef.current?.getBestMove(fen);
   }
 
   // After engine moves, show next opening hint
@@ -299,6 +332,7 @@ export default function PracticePlay() {
     const nf = nullMoveFen(g.fen());
     if (!nf) { setPassText('You’re in check, so answer it first.'); return; }
     passFenRef.current = nf;
+    passGameFenRef.current = g.fen();
     hintModeRef.current = 'pass';
     hintEngineRef.current.getQuickHint(nf);
   }
@@ -550,7 +584,7 @@ export default function PracticePlay() {
             <div className="flex gap-2">
               {showEval && (
                 <div className="w-4 rounded-full overflow-hidden bg-bg-hover flex-shrink-0 relative">
-                  <div className="absolute bottom-0 left-0 right-0 bg-white transition-all duration-500 ease-out rounded-full" style={{ height: `${evalPct}%` }} />
+                  <div className="absolute bottom-0 left-0 right-0 bg-white transition-all duration-500 ease-out rounded-full" style={{ height: `${playerColor === 'white' ? evalPct : (100 - evalPct)}%` }} />
                 </div>
               )}
               <div className="flex-1">

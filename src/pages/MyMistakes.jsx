@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { listMistakes, recordAttempt, deleteMistake } from '../services/mistakeStore';
+import { markItemDone } from '../services/dailyPlanService';
 import PuzzleSolver from '../components/PuzzleSolver';
 import EmptyState from '../components/EmptyState';
 import { CLASS_META } from '../services/moveClassification';
@@ -26,6 +27,7 @@ export default function MyMistakes() {
   function handleSolved() {
     if (!active) return;
     recordAttempt(active.id, true);
+    markItemDone('review-mistakes');
     refresh();
     const idx = filtered.findIndex(e => e.id === active.id);
     const next = filtered[idx + 1];
@@ -34,6 +36,7 @@ export default function MyMistakes() {
   function handleFailed() {
     if (!active) return;
     recordAttempt(active.id, false);
+    markItemDone('review-mistakes');
     refresh();
   }
   function handleDelete(id) {
@@ -83,7 +86,7 @@ export default function MyMistakes() {
         <div className="mx-auto w-full max-w-[560px]">
           {active ? (
             <>
-              <PuzzleSolver key={active.id} puzzle={active} onSolved={handleSolved} onFailed={handleFailed} />
+              <PuzzleSolver key={active.id} puzzle={active} setup={false} onSolved={handleSolved} onFailed={handleFailed} />
               <div className="mt-3 card-base p-4">
                 <div className="text-xs text-text-dim mb-2">You played: <span className="text-incorrect font-semibold">{active.youPlayed}</span></div>
                 <div className="text-xs text-text-dim">Find the engine's recommended move.</div>
@@ -108,10 +111,14 @@ export default function MyMistakes() {
             const meta = CLASS_META[e.classification];
             const isActive = active?.id === e.id;
             return (
-              <button
+              // a div, not a button: it contains the delete button, and buttons can't nest
+              <div
                 key={e.id}
+                role="button"
+                tabIndex={0}
                 onClick={() => setActiveId(e.id)}
-                className={`w-full text-left card-base p-3 transition-all flex justify-between items-center gap-2 ${isActive ? 'border-gold ring-1 ring-gold/20' : ''}`}
+                onKeyDown={(ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); setActiveId(e.id); } }}
+                className={`w-full text-left card-base p-3 transition-all flex justify-between items-center gap-2 cursor-pointer ${isActive ? 'border-gold ring-1 ring-gold/20' : ''}`}
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline gap-2">
@@ -129,7 +136,7 @@ export default function MyMistakes() {
                   className="text-text-dim hover:text-incorrect px-2 text-sm"
                   aria-label="Delete"
                 >×</button>
-              </button>
+              </div>
             );
           })}
           {filtered.length === 0 && <div className="text-center text-text-dim text-sm py-8">No entries match this filter.</div>}

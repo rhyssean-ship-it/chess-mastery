@@ -61,6 +61,16 @@ function pieceImg(p) {
   return `/pieces/cburnett/${colour}${type.toUpperCase()}.svg`;
 }
 
+// Engine lines arrive in UCI (e2e4); show them in normal notation.
+function pvToSan(fen, pv = []) {
+  const g = new Chess(fen);
+  const out = [];
+  for (const u of pv.slice(0, 6)) {
+    try { out.push(g.move({ from: u.slice(0, 2), to: u.slice(2, 4), promotion: u[4] || undefined }).san); } catch { break; }
+  }
+  return out.join(' ');
+}
+
 export default function PositionLab() {
   const [board, setBoard] = useState(() => fenToBoard(STARTING_FEN));
   const [stm, setStm] = useState('w');
@@ -73,39 +83,47 @@ export default function PositionLab() {
   const [fenInputOpen, setFenInputOpen] = useState(false);
   const [fenInput, setFenInput] = useState('');
   const engineRef = useRef(null);
-  const lastFenRef = useRef(null);
+  const queueRef = useRef(Promise.resolve()); // one engine search at a time
+  const [engineReady, setEngineReady] = useState(false);
 
   const fen = useMemo(() => boardToFen(board, stm, castling, ep), [board, stm, castling, ep]);
 
-  // Validate the FEN — chess.js throws if invalid; we want to know so we can skip analysis.
-  const fenValid = useMemo(() => {
-    try { new Chess(fen); return true; }
-    catch { return false; }
+  // Validate the FEN — chess.js throws if invalid. Also reject positions where the side NOT to
+  // move is in check: that can't arise in a game, and the engine gives nonsense for it.
+  const fenProblem = useMemo(() => {
+    try { new Chess(fen); } catch { return 'invalid'; }
+    const parts = fen.split(' ');
+    parts[1] = parts[1] === 'w' ? 'b' : 'w';
+    parts[3] = '-';
+    try { if (new Chess(parts.join(' ')).inCheck()) return 'opponent-in-check'; } catch { /* fine */ }
+    return null;
   }, [fen]);
+  const fenValid = fenProblem === null;
 
   // Init engine once
   useEffect(() => {
     const eng = new StockfishService();
     engineRef.current = eng;
-    eng.init();
+    eng.init().then(() => setEngineReady(true));
     return () => { eng.destroy(); engineRef.current = null; };
   }, []);
 
   // Re-analyse whenever FEN changes (debounced)
   useEffect(() => {
-    if (!fenValid || !engineRef.current) { setLines([]); return; }
-    if (lastFenRef.current === fen) return;
-    lastFenRef.current = fen;
-    setAnalyzing(true);
-    const handle = setTimeout(async () => {
-      const result = await engineRef.current.analyzePosition(fen, { depth: 14, multiPv: 3 });
-      if (lastFenRef.current === fen) {
-        setLines(result?.lines || []);
-        setAnalyzing(false);
-      }
+    if (!fenValid || !engineReady) return;
+    let cancelled = false;
+    const handle = setTimeout(() => {
+      setAnalyzing(true);
+      // Chain searches so two never overlap on the one engine (a stale "bestmove" would
+      // otherwise resolve the newer request with the old position's lines).
+      queueRef.current = queueRef.current.then(async () => {
+        if (cancelled || !engineRef.current) return;
+        const result = await engineRef.current.analyzePosition(fen, { depth: 14, multiPv: 3 });
+        if (!cancelled) { setLines(result?.lines || []); setAnalyzing(false); }
+      });
     }, 350);
-    return () => clearTimeout(handle);
-  }, [fen, fenValid]);
+    return () => { cancelled = true; clearTimeout(handle); };
+  }, [fen, fenValid, engineReady]);
 
   function clickSquare(r, c) {
     const next = board.map(row => row.slice());
@@ -287,18 +305,25 @@ export default function PositionLab() {
               <div className="text-[10px] text-text-dim uppercase tracking-wide font-semibold">Engine</div>
               {analyzing && <span className="text-[10px] text-text-dim">analysing…</span>}
             </div>
-            {lines.length === 0 && !analyzing && (
-              <div className="text-xs text-text-dim">Set up a legal position to see the engine's lines.</div>
+            {!fenValid && (
+              <div className="text-xs text-text-dim">
+                {fenProblem === 'opponent-in-check'
+                  ? 'The side not to move is in check. That can’t happen in a game, so fix the position or the side to move.'
+                  : 'Set up a legal position (one king each, no pawns on the back ranks) to see the engine’s lines.'}
+              </div>
             )}
+            {fenValid && !engineReady && <div className="text-xs text-text-dim">Starting the engine…</div>}
             <div className="space-y-1.5">
-              {lines.map(line => {
+              {fenValid && lines.map(line => {
+                // engine scores are from the side to move; show them from White's view like a normal eval bar
+                const sign = stm === 'w' ? 1 : -1;
                 const evalText = line.mate != null
-                  ? `#${line.mate > 0 ? line.mate : -line.mate}${line.mate < 0 ? '-' : ''}`
-                  : (line.scoreCp != null ? ((line.scoreCp > 0 ? '+' : '') + (line.scoreCp / 100).toFixed(2)) : '—');
+                  ? (line.mate * sign > 0 ? `#${Math.abs(line.mate)}` : `-#${Math.abs(line.mate)}`)
+                  : (line.scoreCp != null ? (((line.scoreCp * sign) > 0 ? '+' : '') + ((line.scoreCp * sign) / 100).toFixed(2)) : '—');
                 return (
                   <div key={line.multipv} className="flex items-baseline gap-2 text-xs">
                     <span className={`tabular-nums font-bold w-12 ${line.multipv === 1 ? 'text-gold' : 'text-text-dim'}`}>{evalText}</span>
-                    <span className="font-mono text-text-dim/80 truncate">{(line.pv || []).slice(0, 6).join(' ')}</span>
+                    <span className="font-mono text-text-dim/80 truncate">{pvToSan(fen, line.pv)}</span>
                   </div>
                 );
               })}

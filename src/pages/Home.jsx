@@ -6,11 +6,12 @@ import { listSavedGames } from '../services/savedGames';
 import { listDue as repertoireDue } from '../services/repertoireSRS';
 import DailyPlanCard from '../components/DailyPlanCard';
 import BlunderTrendCard from '../components/BlunderTrendCard';
+import { localDateKey, localDateKeyDaysAgo } from '../utils/dateKey';
 
 function loadJson(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
 }
-function dateKey(d = new Date()) { return d.toISOString().slice(0, 10); }
+const dateKey = localDateKey;
 
 function timeGreeting() {
   const h = new Date().getHours();
@@ -64,10 +65,11 @@ export default function Home() {
       <div className="mb-5">
         <h1 className="text-2xl sm:text-3xl font-display">{timeGreeting()}.</h1>
         <p className="text-text-dim text-sm mt-1">
-          {streak > 0 ? <>Day <span className="text-gold font-semibold">{streak}</span> streak · </> : null}
-          {totalMistakes > 0 && <>{totalMistakes} saved mistakes</>}
-          {totalMistakes > 0 && lastRating ? ' · ' : ''}
-          {lastRating && <>Est. rating <span className="text-gold font-semibold">{lastRating.estimated}</span></>}
+          {[
+            streak > 0 && <>Day <span className="text-gold font-semibold">{streak}</span> streak</>,
+            totalMistakes > 0 && <>{totalMistakes} saved mistakes</>,
+            lastRating && <>Est. rating <span className="text-gold font-semibold">{lastRating.estimated}</span></>,
+          ].filter(Boolean).map((part, i) => <span key={i}>{i > 0 && ' · '}{part}</span>)}
         </p>
       </div>
 
@@ -118,7 +120,7 @@ export default function Home() {
           <div>
             <div className="text-xs text-text-dim mb-1">Daily Calculation</div>
             <div className="text-base font-semibold">{dailyCalcDone ? 'Solved today' : '5-min clock starts now'}</div>
-            {dailyCalc.streak > 0 && <div className="text-xs text-text-dim mt-1">🔥 {dailyCalc.streak} day streak</div>}
+            {dailyCalc.streak > 0 && [dateKey(), localDateKeyDaysAgo(1)].includes(dailyCalc.lastSolved) && <div className="text-xs text-text-dim mt-1">🔥 {dailyCalc.streak} day streak</div>}
           </div>
           <div className={`text-sm mt-2 ${dailyCalcDone ? 'text-correct' : 'text-gold'}`}>
             {dailyCalcDone ? '✓ Done' : 'Start →'}
@@ -172,7 +174,7 @@ export default function Home() {
         <div className="flex flex-wrap gap-2">
           <Link to="/play" className="btn btn-primary">▶ Play a game</Link>
           <Link to="/tactics" className="btn btn-secondary">10 tactics</Link>
-          <Link to="/pattern-dojo" className="btn btn-secondary">Pattern flash</Link>
+          <Link to="/thinking-drills" className="btn btn-secondary">Spy, Scan, Safe drill</Link>
           <Link to="/learning-path" className="btn btn-secondary">Learning path</Link>
         </div>
       </div>

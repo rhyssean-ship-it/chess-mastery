@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import conceptCards from '../data/conceptCards';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
@@ -23,6 +23,18 @@ export default function ConceptFlashcards() {
 
   function next() { setIdx(i => (i + 1) % filtered.length); setFlipped(false); }
   function prev() { setIdx(i => (i - 1 + filtered.length) % filtered.length); setFlipped(false); }
+
+  // ←/→ step through cards (matches the kbd hints on the Prev/Next buttons).
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.target instanceof HTMLElement && e.target.closest('input, textarea, select')) return;
+      if (filtered.length === 0) return;
+      if (e.key === 'ArrowRight') { setIdx(i => (i + 1) % filtered.length); setFlipped(false); }
+      if (e.key === 'ArrowLeft') { setIdx(i => (i - 1 + filtered.length) % filtered.length); setFlipped(false); }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [filtered.length]);
 
   function toggleMastered() {
     if (!card) return;
@@ -50,8 +62,8 @@ export default function ConceptFlashcards() {
         {categories.map(cat => (
           <button key={cat} onClick={() => { setFilter(cat); setIdx(0); setFlipped(false); }} className={`text-xs px-3 py-1.5 rounded-lg transition-all btn-press ${filter === cat ? 'bg-gold text-bg' : 'bg-bg-card border border-bg-hover text-text-dim hover:text-text'}`}>{cat}</button>
         ))}
-        <button onClick={() => setShowMastered(!showMastered)} className={`text-xs px-3 py-1.5 rounded-lg transition-all btn-press ml-auto ${showMastered ? 'bg-correct/20 text-correct' : 'bg-bg-card border border-bg-hover text-text-dim'}`}>
-          {showMastered ? 'Hiding mastered' : 'Show mastered'}
+        <button onClick={() => setShowMastered(!showMastered)} aria-pressed={showMastered} className={`text-xs px-3 py-1.5 rounded-lg transition-all btn-press ml-auto ${showMastered ? 'bg-correct/20 text-correct' : 'bg-bg-card border border-bg-hover text-text-dim'}`}>
+          {showMastered ? 'Hide mastered' : 'Show mastered'}
         </button>
       </div>
 

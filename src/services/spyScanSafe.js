@@ -219,7 +219,9 @@ function lineTactic(g, square) {
 function captureVerdict(g, m) {
   const tv = PIECE_VALUE[m.captured];
   const av = PIECE_VALUE[m.piece];
-  const recapturers = g.attackers(m.to, other(m.color));
+  // The king can only recapture on an undefended square.
+  const defended = g.attackers(m.to, m.color).length > 0;
+  const recapturers = g.attackers(m.to, other(m.color)).filter(sq => !(defended && g.get(sq)?.type === 'k'));
   if (recapturers.length === 0) return { verdict: 'wins', reply: null };
   const low = cheapest(g, recapturers);
   const reply = `${low.type === 'p' ? low.square[0] : low.type.toUpperCase()}x${m.to}`;
@@ -468,6 +470,10 @@ export function failedStep(analysis) {
 
     const safe = safetyCheck(analysis.fenBefore, move);
     const threatsBefore = opponentThreats(analysis.fenBefore, me);
+    // A fresh blunder (a newly hung piece or newly allowed tactic, not one of the threats that
+    // were already there) is a Safe failure even if an older threat is also being ignored.
+    const oldTargets = new Set(threatsBefore.map(t => t.to));
+    if (safe.issues.some(i => i.severity >= 2 && !i.squares.some(sq => oldTargets.has(sq)))) return 'safe';
     if (threatsBefore.length && safe.fenAfter) {
       const after = new Chess(safe.fenAfter);
       const stillThere = threatsBefore.some(t => {

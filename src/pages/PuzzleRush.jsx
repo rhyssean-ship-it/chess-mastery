@@ -4,6 +4,7 @@ import { pickNearRating, pickPuzzles, THEME_GROUPS, updateRating } from '../serv
 import { progressService } from '../services/progressService';
 import { markItemDone } from '../services/dailyPlanService';
 import { useSearchParams } from 'react-router-dom';
+import { localDateKey } from '../utils/dateKey';
 
 const STORE_KEY = 'chess-mastery:puzzleRush';
 const RUSH_DURATION = 300; // 5 minutes
@@ -38,12 +39,21 @@ export default function PuzzleRush() {
   const [seenIds, setSeenIds] = useState(() => new Set());
   const [showHint, setShowHint] = useState(false);
   const timerRef = useRef(null);
+  const finishedRef = useRef(false);
+  const [newBest, setNewBest] = useState(false);
+  const [endReason, setEndReason] = useState(null);
 
   const store = loadStore();
+  // Latest values for finish(): the 5-minute timer calls it from a closure made at the start.
+  const live = useRef({});
+  useEffect(() => { live.current = { solved, bestStreak, rating }; });
 
   useEffect(() => () => clearInterval(timerRef.current), []);
 
   function startRush() {
+    finishedRef.current = false;
+    setNewBest(false);
+    setEndReason(null);
     setPhase('playing');
     setSolved(0);
     setStreak(0);
@@ -62,14 +72,7 @@ export default function PuzzleRush() {
 
     if (mode.timed) {
       timerRef.current = setInterval(() => {
-        setTimeLeft(t => {
-          if (t <= 1) {
-            clearInterval(timerRef.current);
-            finish();
-            return 0;
-          }
-          return t - 1;
-        });
+        setTimeLeft(t => Math.max(0, t - 1));
       }, 1000);
     }
   }
@@ -80,17 +83,23 @@ export default function PuzzleRush() {
       : theme
         ? pickPuzzles({ theme, n: 1, exclude })[0]
         : pickNearRating(currentRating, exclude);
+    if (!next) { setEndReason('Out of puzzles for this theme.'); finish(); return; }
     setPuzzle(next);
     setShowHint(false);
   }
 
-  function finish() {
+  function finish(final = {}) {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+    const { solved, bestStreak, rating } = { ...live.current, ...final };
     clearInterval(timerRef.current);
+    setNewBest(solved > 0 && solved > (loadStore().bestSolved || 0));
     setPhase('done');
     progressService.logActivity?.(`Puzzle Rush: ${solved} solved, best streak ${bestStreak}`);
-    markItemDone('puzzles');
+    const sprintDone = mode.id === 'easy' && solved >= mode.fixedCount;
+    if (sprintDone) markItemDone('puzzles'); // the plan item is "20 easy tactics"
     const s = loadStore();
-    const today = new Date().toISOString().slice(0, 10);
+    const today = localDateKey();
     const newStore = {
       ...s,
       rating,
@@ -98,10 +107,15 @@ export default function PuzzleRush() {
       bestStreak: Math.max(s.bestStreak || 0, bestStreak),
       totalSolved: (s.totalSolved || 0) + solved,
       // days an easy sprint was finished (the focus track counts these per week)
-      easyDays: mode.id === 'easy' ? [...new Set([...(s.easyDays || []), today])].slice(-60) : (s.easyDays || []),
+      easyDays: sprintDone ? [...new Set([...(s.easyDays || []), today])].slice(-60) : (s.easyDays || []),
     };
     saveStore(newStore);
   }
+
+  // Time's up: finish once, outside any state updater.
+  useEffect(() => {
+    if (phase === 'playing' && mode.timed && timeLeft === 0) finish();
+  }, [timeLeft]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleSolved() {
     const newRating = updateRating(rating, puzzle.rating, true);
@@ -115,7 +129,7 @@ export default function PuzzleRush() {
     saveStore({ ...store, rating: newRating });
 
     if (mode.fixedCount && solved + 1 >= mode.fixedCount) {
-      finish();
+      finish({ solved: solved + 1, bestStreak: Math.max(bestStreak, streak + 1), rating: newRating });
       return;
     }
 
@@ -219,14 +233,17 @@ export default function PuzzleRush() {
   if (phase === 'done') {
     return (
       <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-6 lg:py-10 text-center">
-        <h1 className="text-2xl sm:text-3xl font-display mb-3">Time's up</h1>
+        <h1 className="text-2xl sm:text-3xl font-display mb-3">
+          {mode.timed && timeLeft === 0 ? 'Time’s up' : lives <= 0 ? 'Out of lives' : mode.fixedCount && solved >= mode.fixedCount ? 'Sprint complete' : 'Round over'}
+        </h1>
+        {endReason && <p className="text-sm text-text-dim mb-3">{endReason}</p>}
         <div className="card-base p-6 mb-6">
           <div className="grid grid-cols-3 gap-4 mb-4">
             <Stat label="Solved" value={solved} accent />
             <Stat label="Best streak" value={bestStreak} />
             <Stat label="Rating" value={rating} />
           </div>
-          {solved > (store.bestSolved || 0) && solved > 0 && (
+          {newBest && (
             <div className="text-sm text-correct font-semibold">New personal best!</div>
           )}
         </div>
@@ -248,7 +265,12 @@ export default function PuzzleRush() {
         <Stat label="Solved" value={solved} accent />
         <Stat label="Rating" value={rating} />
         <Stat label="Streak" value={streak} />
-        <Stat label={mode.timed ? 'Time' : 'Lives'} value={mode.timed ? `${minutes}:${seconds.toString().padStart(2, '0')}` : '♥'.repeat(lives)} warn={mode.timed && timeLeft < 30} />
+        {/* sprints have unlimited lives: show progress instead of 99 hearts */}
+        <Stat
+          label={mode.timed ? 'Time' : mode.fixedCount ? 'Progress' : 'Lives'}
+          value={mode.timed ? `${minutes}:${seconds.toString().padStart(2, '0')}` : mode.fixedCount ? `${solved}/${mode.fixedCount}` : '♥'.repeat(Math.max(0, lives))}
+          warn={mode.timed && timeLeft < 30}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">

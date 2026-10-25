@@ -11,6 +11,14 @@ function buildShapes(arrows, highlights) {
 
 const FILES = 'abcdefgh';
 
+// Board preferences from Settings (chess-mastery:settings).
+function boardPrefs() {
+  try {
+    const s = JSON.parse(localStorage.getItem('chess-mastery:settings')) || {};
+    return { coordinates: s.showCoordinates !== false, animation: s.moveAnimation !== false };
+  } catch { return { coordinates: true, animation: true }; }
+}
+
 // Map a pointer position over the board element to an algebraic square.
 function squareAt(el, clientX, clientY, orientation) {
   const rect = el.getBoundingClientRect();
@@ -64,13 +72,14 @@ export default function ChessBoard({
     }
 
     const destsMap = movable && dests ? dests : new Map();
+    const prefs = boardPrefs();
 
     const config = {
       fen,
       orientation,
       turnColor,
-      coordinates,
-      animation: { enabled: true, duration: 280 },
+      coordinates: coordinates && prefs.coordinates,
+      animation: { enabled: prefs.animation, duration: 280 },
       highlight: { lastMove: true, check: true },
       movable: {
         free: false,

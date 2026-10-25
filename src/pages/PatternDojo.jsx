@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { Chess } from 'chess.js';
 import ChessBoard from '../components/ChessBoard';
 import { pickPuzzles, THEME_GROUPS } from '../services/lichessPuzzleService';
 
@@ -16,6 +17,19 @@ function saveStore(s) { localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
 function primaryMotif(puzzle) {
   for (const m of MOTIFS) if (puzzle.themes.includes(m.key)) return m.key;
   return null;
+}
+
+// Lichess puzzles store the position BEFORE the opponent's setup move
+// (moves[0]). The position the solver actually faces is after that move.
+function solverPosition(puzzle) {
+  try {
+    const g = new Chess(puzzle.fen);
+    const m = puzzle.moves?.[0];
+    if (m) g.move({ from: m.slice(0, 2), to: m.slice(2, 4), promotion: m[4] || 'q' });
+    return { fen: g.fen(), setupMove: m ? [m.slice(0, 2), m.slice(2, 4)] : undefined };
+  } catch {
+    return { fen: puzzle.fen, setupMove: undefined };
+  }
 }
 
 export default function PatternDojo() {
@@ -43,7 +57,8 @@ export default function PatternDojo() {
 
     // Build 4 options: the correct motif + 3 distractors
     const correct = primaryMotif(p) || MOTIFS[0].key;
-    const distractors = MOTIFS.filter(m => m.key !== correct).sort(() => Math.random() - 0.5).slice(0, 3);
+    // Never offer a motif the puzzle also has — that would make the question ambiguous.
+    const distractors = MOTIFS.filter(m => m.key !== correct && !p.themes.includes(m.key)).sort(() => Math.random() - 0.5).slice(0, 3);
     const opts = [...distractors.map(d => d.key), correct].sort(() => Math.random() - 0.5);
     setOptions(opts);
 
@@ -85,7 +100,10 @@ export default function PatternDojo() {
   function start() { setStreak(0); newPuzzle(); }
   function next() { newPuzzle(); }
 
-  const playerColor = puzzle ? (puzzle.fen.split(' ')[1] === 'w' ? 'black' : 'white') : 'white';
+  const solver = useMemo(() => (puzzle ? solverPosition(puzzle) : null), [puzzle]);
+  const playerColor = solver ? (solver.fen.split(' ')[1] === 'w' ? 'white' : 'black') : 'white';
+  const solutionMove = puzzle?.moves?.[1];
+  const solutionArrow = phase === 'reveal' && solutionMove ? [[solutionMove.slice(0, 2), solutionMove.slice(2, 4), 'green']] : [];
   const correct = puzzle ? primaryMotif(puzzle) : null;
 
   if (phase === 'idle') {
@@ -110,8 +128,13 @@ export default function PatternDojo() {
         <div className="text-sm text-text-dim">Streak <span className="text-gold font-bold tabular-nums">{streak}</span> · Best {store.best}</div>
       </div>
 
+      <p className="text-center text-sm text-text-dim mb-2">
+        <span className="font-semibold text-text">{playerColor === 'white' ? 'White' : 'Black'} to move</span>
+        {phase === 'reveal' && solutionMove ? ' · the arrow shows the key move' : ''}
+      </p>
+
       <div className="mx-auto w-full max-w-[480px] relative">
-        <ChessBoard fen={puzzle.fen} orientation={playerColor} movable={false} />
+        <ChessBoard fen={solver.fen} orientation={playerColor} turnColor={playerColor} lastMove={solver.setupMove} arrows={solutionArrow} movable={false} />
         {phase === 'choosing' && (
           <div className="absolute inset-0 bg-bg-card flex items-center justify-center rounded-xl">
             <div className="text-text-dim text-center">

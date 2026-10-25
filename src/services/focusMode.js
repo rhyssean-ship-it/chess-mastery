@@ -14,7 +14,7 @@ export const FOCUS_ROUTES = new Set([
   // Play
   '/practice-play', '/play/analysis',
   // Train
-  '/daily', '/puzzle-rush', '/thinking-drills', '/my-mistakes', '/endgame-drills',
+  '/daily', '/daily-calculation', '/tactics', '/puzzle-rush', '/thinking-drills', '/my-mistakes', '/endgame-drills',
   // Profile
   '/progress', '/weakness', '/profile/reviews',
 ]);

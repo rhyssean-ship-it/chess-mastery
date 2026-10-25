@@ -52,7 +52,7 @@ export default function HangingPieces() {
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] lg:grid-cols-[1fr_360px] gap-6 sm:gap-8">
         <div className="w-full max-w-[480px]">
-          <ChessBoard fen={puzzle.fen} movable={false} highlights={revealed ? [puzzle.hangingSquare] : []} />
+          <ChessBoard fen={puzzle.fen} movable={false} orientation={puzzle.fen.split(' ')[1] === 'b' ? 'black' : 'white'} highlights={revealed ? [puzzle.hangingSquare] : []} />
         </div>
         <div className="space-y-4">
           <div className="card-base p-5">
