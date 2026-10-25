@@ -1,4 +1,5 @@
 import { Chess } from 'chess.js';
+import { chooseHumanMove, profileFor } from './humanBot';
 
 const ELO_PRESETS = [
   { label: 'Beginner', elo: 400, depth: 1, skill: 0, moveTime: 50 },
@@ -195,6 +196,15 @@ class StockfishService {
     this.send('setoption name MultiPV value 4');
     this.send(`position fen ${fen}`);
     this.send(`go depth ${preset.depth} movetime ${preset.moveTime}`);
+  }
+
+  // Human-style persona move (see humanBot.js): score the top candidates, let the persona choose.
+  async getHumanMove(fen, persona) {
+    if (!this.ready || !this.worker) return;
+    const r = await this.analyzePosition(fen, { depth: profileFor(persona.elo).depth, multiPv: 10, movetime: 1500 });
+    if (!r || !this.worker) return;
+    const chosen = chooseHumanMove(fen, r.lines, persona) || r.bestMove;
+    if (chosen && this.onMove) this.onMove(chosen);
   }
 
   _pickStyledMove(lines, style, fen) {

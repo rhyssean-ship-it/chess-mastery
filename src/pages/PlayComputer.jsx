@@ -8,6 +8,7 @@ import StockfishService, { ELO_PRESETS } from '../services/stockfishService';
 import { toCpScore } from '../services/moveClassification';
 import { progressService } from '../services/progressService';
 import { currentRating, listRatedGames, recordRatedGame } from '../services/ratingHistory';
+import { PERSONAS, PERSONA_LEVELS, personaById, nearestPersona, nearestLevel } from '../services/humanBot';
 
 const STANDARD_INITIAL = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 const PLAY_FROM_FEN_KEY = 'enpassant:playFromFen';
@@ -35,8 +36,22 @@ function loadRatedPref() {
 }
 
 // ?elo= wins; otherwise the bot nearest your rating once you have rated games.
+function targetElo(searchParams) {
+  return parseInt(searchParams.get('elo')) || (listRatedGames().length ? currentRating() : null);
+}
+
+// Human personas cover up to 1200; above that it's Stockfish levels.
+function getInitialMode(searchParams) {
+  const elo = targetElo(searchParams);
+  return elo && elo > PERSONA_LEVELS[PERSONA_LEVELS.length - 1] + 50 ? 'engine' : 'persona';
+}
+
+function getInitialPersona(searchParams) {
+  return nearestPersona(targetElo(searchParams) || PERSONA_LEVELS[0]).id;
+}
+
 function getInitialLevel(searchParams) {
-  const elo = parseInt(searchParams.get('elo')) || (listRatedGames().length ? currentRating() : null);
+  const elo = targetElo(searchParams);
   if (!elo) return 4;
   // Find the closest ELO preset
   let best = 0;
@@ -80,6 +95,8 @@ export default function PlayComputer() {
   const [colorChoice, setColorChoice] = useState('white');
   const [playerColor, setPlayerColor] = useState('white');
   const [levelIndex, setLevelIndex] = useState(() => getInitialLevel(searchParams));
+  const [opponentMode, setOpponentMode] = useState(() => getInitialMode(searchParams)); // 'persona' | 'engine'
+  const [personaId, setPersonaId] = useState(() => getInitialPersona(searchParams));
   const [personality, setPersonality] = useState('balanced');
   const [coachMode, setCoachMode] = useState(true);
   const [rated, setRated] = useState(loadRatedPref);
@@ -104,6 +121,7 @@ export default function PlayComputer() {
   const playerColorRef = useRef('white');
   const coachModeRef = useRef(true);
   const ratedRef = useRef(null);          // { elo, label } of the bot while a rated game is in progress
+  const personaRef = useRef(null);        // the human-style persona for this game, or null for Stockfish levels
   const playerMovesRef = useRef(0);
   const personalityRef = useRef('balanced');
   const startFenRef = useRef(STANDARD_INITIAL);
@@ -121,6 +139,11 @@ export default function PlayComputer() {
   const lastTickRef = useRef(null);
 
   const preset = ELO_PRESETS[levelIndex];
+  const persona = opponentMode === 'persona' ? personaById(personaId) : null;
+  // One description of the opponent for labels, logs and the rating history.
+  const opponent = persona
+    ? { elo: persona.elo, label: persona.name, short: `${persona.name} (${persona.elo})`, long: `${persona.name} (${persona.elo})` }
+    : { elo: preset.elo, label: preset.label, short: `Stockfish (${preset.label} — ${preset.elo})`, long: `Stockfish (${preset.label} — ${preset.elo} ELO)` };
   const timeControl = TIME_CONTROLS.find(t => t.id === tcId) || TIME_CONTROLS[0];
   const isTimed = timeControl.initial != null;
 
@@ -225,7 +248,7 @@ export default function PlayComputer() {
     setResult(loserColor === pc ? 'Lost on time' : 'Computer lost on time');
     setPhase('ended');
     finishRated(loserColor === pc ? 0 : 1, loserColor === pc ? 'Lost on time' : 'Won on time');
-    progressService.logActivity?.(`Played vs computer (${preset.label}) — ${loserColor === pc ? 'Lost on time' : 'Won on time'}`);
+    progressService.logActivity?.(`Played vs ${opponent.label} — ${loserColor === pc ? 'Lost on time' : 'Won on time'}`);
   }
 
   function startGame() {
@@ -241,7 +264,8 @@ export default function PlayComputer() {
     playerColorRef.current = resolvedColor;
     // Rated games are unassisted, and only count from the standard start.
     const isRated = rated && !customStartFen;
-    ratedRef.current = isRated ? { elo: preset.elo, label: preset.label } : null;
+    ratedRef.current = isRated ? { elo: opponent.elo, label: opponent.label } : null;
+    personaRef.current = persona;
     playerMovesRef.current = 0;
     setRatingRow(null);
     coachModeRef.current = coachMode && !isRated;
@@ -354,6 +378,7 @@ export default function PlayComputer() {
   function requestEngineMove(fen) {
     const eng = engineRef.current;
     if (!eng) return;
+    if (personaRef.current) { eng.getHumanMove(fen, personaRef.current); return; }
     if (personalityRef.current && personalityRef.current !== 'balanced') eng.getStyledMove(fen);
     else eng.getBestMove(fen);
   }
@@ -386,7 +411,7 @@ export default function PlayComputer() {
       const winner = g.turn() === 'w' ? 'black' : 'white';
       setResult(winner === pc ? 'You win!' : 'Computer wins!');
       setPhase('ended');
-      progressService.logActivity(`Played vs computer (${preset.label}) — ${winner === pc ? 'Won' : 'Lost'}`);
+      progressService.logActivity(`Played vs ${opponent.label} — ${winner === pc ? 'Won' : 'Lost'}`);
       progressService.recordActivity();
       finishRated(winner === pc ? 1 : 0, winner === pc ? 'Won by checkmate' : 'Lost to checkmate');
     } else if (g.isDraw() || g.isStalemate() || g.isThreefoldRepetition() || g.isInsufficientMaterial()) {
@@ -537,7 +562,7 @@ export default function PlayComputer() {
     gameEndedRef.current = true;
     setResult('You resigned');
     setPhase('ended');
-    progressService.logActivity(`Played vs computer (${preset.label}) — Resigned`);
+    progressService.logActivity(`Played vs ${opponent.label} — Resigned`);
     progressService.recordActivity();
     finishRated(0, 'Resigned');
   }
@@ -554,7 +579,7 @@ export default function PlayComputer() {
       history: history.map(h => ({ san: h.san, fen: h.fen })),
       playerColor,
       result,
-      label: `vs Stockfish (${preset.label}, ${preset.elo} ELO)`,
+      label: persona ? `vs ${persona.name} (${persona.elo})` : `vs Stockfish (${preset.label}, ${preset.elo} ELO)`,
       startingFen: startFenRef.current,
     }));
     navigate('/play/analysis');
@@ -579,6 +604,7 @@ export default function PlayComputer() {
   const evalPct = ((evalClamped + 5) / 10) * 100;
 
   const ratedSetup = rated && !customStartFen;
+  const yourLevel = listRatedGames().length ? nearestLevel(currentRating()) : null;
   // What the subtitle says about the rating: in progress, the change at the end, or an abort.
   const ratingNote = ratingRow
     ? (ratingRow.aborted ? 'Aborted: not rated'
@@ -589,7 +615,7 @@ export default function PlayComputer() {
     return (
       <div className="page-enter max-w-2xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
         <h1 className="text-2xl sm:text-3xl font-display mb-1">Play vs Computer</h1>
-        <p className="text-text-dim text-sm mb-6">Challenge Stockfish at any level.</p>
+        <p className="text-text-dim text-sm mb-6">Play club-style opponents from 400 to 1200, or Stockfish at any level.</p>
         {customStartFen && (
           <div className="card-base p-3 mb-4 flex items-center justify-between gap-3 bg-gold/5">
             <div className="text-sm">
@@ -617,28 +643,66 @@ export default function PlayComputer() {
           </div>
           <div>
             <div className="flex justify-between items-baseline mb-3">
-              <label className="text-sm text-text-dim font-medium">Difficulty</label>
-              <span className="text-gold font-bold tabular-nums">{preset.elo} ELO</span>
+              <label className="text-sm text-text-dim font-medium">Opponent</label>
+              <div className="flex gap-1 text-xs">
+                {[{ id: 'persona', label: 'Club players' }, { id: 'engine', label: 'Stockfish' }].map(m => (
+                  <button key={m.id} onClick={() => setOpponentMode(m.id)}
+                    className={`px-2.5 py-1 rounded-md transition-all ${opponentMode === m.id ? 'bg-bg-hover text-text' : 'text-text-dim hover:text-text'}`}>
+                    {m.label}
+                  </button>
+                ))}
+              </div>
             </div>
-            <input type="range" min={0} max={ELO_PRESETS.length - 1} value={levelIndex} onChange={e => setLevelIndex(parseInt(e.target.value))} className="w-full accent-gold h-3 sm:h-2 rounded-full appearance-none bg-bg-hover cursor-pointer" />
-            <div className="flex justify-between mt-2">
-              <span className="text-xs text-text-dim">400</span>
-              <span className="text-base font-semibold text-text">{preset.label}</span>
-              <span className="text-xs text-text-dim">2600</span>
-            </div>
-          </div>
-          <div>
-            <label className="text-sm text-text-dim block mb-3 font-medium">Opponent style</label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {PERSONALITIES.map(p => (
-                <button key={p.id} onClick={() => setPersonality(p.id)}
-                  title={p.desc}
-                  className={`py-2 rounded-lg text-sm font-medium transition-all btn-press ${personality === p.id ? 'bg-gold text-bg' : 'bg-bg-hover text-text-dim hover:text-text'}`}>
-                  {p.label}
-                </button>
-              ))}
-            </div>
-            <p className="text-xs text-text-dim mt-2">{PERSONALITIES.find(p => p.id === personality)?.desc}</p>
+            {opponentMode === 'persona' ? (
+              <>
+                <div className="space-y-2">
+                  {PERSONA_LEVELS.map(level => (
+                    <div key={level} className="flex items-center gap-2">
+                      <span className={`w-16 shrink-0 text-xs tabular-nums ${level === yourLevel ? 'text-gold' : 'text-text-dim'}`}>
+                        {level}{level === yourLevel && <span className="block leading-tight">your level</span>}
+                      </span>
+                      <div className="flex-1 grid grid-cols-3 gap-2">
+                        {PERSONAS.filter(p => p.elo === level).map(p => (
+                          <button key={p.id} onClick={() => setPersonaId(p.id)} aria-pressed={personaId === p.id}
+                            className={`py-2 rounded-lg text-sm font-medium transition-all btn-press ${personaId === p.id ? 'bg-gold text-bg' : 'bg-bg-hover text-text-dim hover:text-text'}`}>
+                            {p.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-text-dim mt-2">Each one plays differently. Work out how as you go. Ratings are estimates.</p>
+              </>
+            ) : (
+              <div className="space-y-6">
+              <div>
+                <div className="flex justify-between items-baseline mb-3">
+                  <label className="text-sm text-text-dim font-medium">Difficulty</label>
+                  <span className="text-gold font-bold tabular-nums">{preset.elo} ELO</span>
+                </div>
+                <input type="range" min={0} max={ELO_PRESETS.length - 1} value={levelIndex} onChange={e => setLevelIndex(parseInt(e.target.value))} className="w-full accent-gold h-3 sm:h-2 rounded-full appearance-none bg-bg-hover cursor-pointer" />
+                <div className="flex justify-between mt-2">
+                  <span className="text-xs text-text-dim">400</span>
+                  <span className="text-base font-semibold text-text">{preset.label}</span>
+                  <span className="text-xs text-text-dim">2600</span>
+                </div>
+              </div>
+              <div>
+                <label className="text-sm text-text-dim block mb-3 font-medium">Opponent style</label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {PERSONALITIES.map(p => (
+                    <button key={p.id} onClick={() => setPersonality(p.id)}
+                      title={p.desc}
+                      className={`py-2 rounded-lg text-sm font-medium transition-all btn-press ${personality === p.id ? 'bg-gold text-bg' : 'bg-bg-hover text-text-dim hover:text-text'}`}>
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-text-dim mt-2">{PERSONALITIES.find(p => p.id === personality)?.desc}</p>
+              </div>
+              </div>
+            )}
           </div>
           <div>
             <label className="text-sm text-text-dim block mb-3 font-medium">Time control</label>
@@ -710,7 +774,7 @@ export default function PlayComputer() {
             <div role="heading" aria-level={1} className="text-base font-display text-gold truncate">
               {phase === 'ended' ? result : coachChecking ? 'Checking your move…' : thinking ? 'Engine thinking...' : isPlayerTurn ? 'Your move' : ''}
             </div>
-            <p className="text-text-dim text-[11px]">vs Stockfish ({preset.label} — {preset.elo}){ratingNote && <> · <span className="text-gold">{ratingNote}</span></>}</p>
+            <p className="text-text-dim text-[11px]">vs {opponent.short}{ratingNote && <> · <span className="text-gold">{ratingNote}</span></>}</p>
           </div>
           {inCheck && (
             <span className="bg-incorrect/15 text-incorrect border border-incorrect/20 px-2 py-0.5 rounded text-xs font-semibold">Check!</span>
@@ -736,7 +800,7 @@ export default function PlayComputer() {
         {/* Opponent clock (above board) */}
         {isTimed && (
           <ClockChip
-            label="Engine"
+            label={persona ? persona.name : 'Engine'}
             ms={playerColor === 'white' ? blackTime : whiteTime}
             active={turnColor !== playerColor && phase === 'playing'}
             className="mb-1"
@@ -811,7 +875,7 @@ export default function PlayComputer() {
             <h1 className="text-2xl font-display text-gold mb-0.5">
               {phase === 'ended' ? result : coachChecking ? 'Checking your move…' : thinking ? 'Engine thinking...' : isPlayerTurn ? 'Your move' : ''}
             </h1>
-            <p className="text-text-dim text-sm">vs Stockfish ({preset.label} — {preset.elo} ELO){ratingNote && <> · <span className="text-gold">{ratingNote}</span></>}</p>
+            <p className="text-text-dim text-sm">vs {opponent.long}{ratingNote && <> · <span className="text-gold">{ratingNote}</span></>}</p>
           </div>
           {inCheck && (
             <span className="bg-incorrect/15 text-incorrect border border-incorrect/20 px-3 py-1 rounded-lg text-sm font-semibold">Check!</span>
@@ -822,7 +886,7 @@ export default function PlayComputer() {
             {/* Opponent clock above board */}
             {isTimed && (
               <ClockChip
-                label={`Stockfish (${preset.label})`}
+                label={persona ? persona.name : `Stockfish (${preset.label})`}
                 ms={playerColor === 'white' ? blackTime : whiteTime}
                 active={turnColor !== playerColor && phase === 'playing'}
                 className="mb-2"
@@ -879,7 +943,7 @@ export default function PlayComputer() {
             <div className="card-base p-4">
               <div className="flex justify-between text-sm mb-2"><span className="text-text-dim">Moves</span><span className="tabular-nums">{Math.ceil(history.length / 2)}</span></div>
               <div className="flex justify-between text-sm mb-2"><span className="text-text-dim">Evaluation</span><span className={`tabular-nums font-medium ${evaluation > 0.5 ? 'text-correct' : evaluation < -0.5 ? 'text-incorrect' : 'text-text-dim'}`}>{fmtEval(evaluation)}</span></div>
-              <div className="flex justify-between text-sm"><span className="text-text-dim">Engine</span><span>{preset.label} ({preset.elo})</span></div>
+              <div className="flex justify-between text-sm"><span className="text-text-dim">Opponent</span><span>{persona ? `${persona.name} (${persona.elo})` : `${preset.label} (${preset.elo})`}</span></div>
             </div>
             {thinking && (
               <div className="card-base p-4 flex items-center gap-3">
@@ -888,7 +952,7 @@ export default function PlayComputer() {
                   <div className="w-2 h-2 rounded-full bg-gold animate-bounce" style={{ animationDelay: '150ms' }} />
                   <div className="w-2 h-2 rounded-full bg-gold animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
-                <span className="text-sm text-text-dim">Stockfish is calculating...</span>
+                <span className="text-sm text-text-dim">{persona ? `${persona.name} is thinking…` : 'Stockfish is calculating...'}</span>
               </div>
             )}
             {phase === 'playing' && !ratedRef.current && (
