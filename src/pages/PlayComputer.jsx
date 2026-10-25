@@ -7,8 +7,10 @@ import OpeningExplorer from '../components/OpeningExplorer';
 import StockfishService, { ELO_PRESETS } from '../services/stockfishService';
 import { toCpScore } from '../services/moveClassification';
 import { progressService } from '../services/progressService';
-import { currentRating, listRatedGames, recordRatedGame } from '../services/ratingHistory';
-import { PERSONAS, PERSONA_LEVELS, personaById, nearestPersona, nearestLevel } from '../services/humanBot';
+import QuickReviewPanel from '../components/QuickReviewPanel';
+import { currentRating, listRatedGames, recordRatedGame, annotateRatedGame, beatenPersonaIds } from '../services/ratingHistory';
+import { PERSONAS, PERSONA_LEVELS, personaById, nearestPersona, nearestLevel, nextLadderPersona } from '../services/humanBot';
+import { runQuickReview, tallyReview } from '../services/quickReview';
 
 const STANDARD_INITIAL = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 const PLAY_FROM_FEN_KEY = 'enpassant:playFromFen';
@@ -37,11 +39,14 @@ function targetElo(searchParams) {
 
 // Human personas cover up to 1200; above that it's Stockfish levels.
 function getInitialMode(searchParams) {
+  if (searchParams.get('ladder')) return 'persona';
   const elo = targetElo(searchParams);
   return elo && elo > PERSONA_LEVELS[PERSONA_LEVELS.length - 1] + 50 ? 'engine' : 'persona';
 }
 
+// ?ladder=1 (the daily plan's rated game) picks the next opponent on the ladder.
 function getInitialPersona(searchParams) {
+  if (searchParams.get('ladder')) return nextLadderPersona(currentRating(), beatenPersonaIds()).id;
   return nearestPersona(targetElo(searchParams) || PERSONA_LEVELS[0]).id;
 }
 
@@ -83,6 +88,12 @@ function fmtEval(e) {
   return (e > 0 ? '+' : '') + e.toFixed(1);
 }
 
+function describeOpponent(persona, preset) {
+  return persona
+    ? { id: persona.id, elo: persona.elo, label: persona.name, short: `${persona.name} (${persona.elo})`, long: `${persona.name} (${persona.elo})` }
+    : { id: null, elo: preset.elo, label: preset.label, short: `Stockfish (${preset.label} — ${preset.elo})`, long: `Stockfish (${preset.label} — ${preset.elo} ELO)` };
+}
+
 export default function PlayComputer() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -110,6 +121,9 @@ export default function PlayComputer() {
   const [coachChecking, setCoachChecking] = useState(false);
   const [pendingMove, setPendingMove] = useState(null); // { from, to, promotion, san, threat } when a blunder is flagged
   const [customStartFen, setCustomStartFen] = useState(null); // set when arriving via "Play from here"
+  const [review, setReview] = useState(null);   // quick review of the last rated game: { status, progress, moments, … }
+  const [retry, setRetry] = useState(null);     // the review moment being replayed, if this game is a retry
+  const [retryFeedback, setRetryFeedback] = useState(null); // 'best' | 'same' | 'other' after your first retry move
   const gameRef = useRef(null);
   // Engine callbacks (onMove) are created once in startGame, before setPlayerColor
   // has committed, so they'd capture a stale playerColor. Read colour from this ref instead.
@@ -117,6 +131,11 @@ export default function PlayComputer() {
   const coachModeRef = useRef(false);
   const ratedRef = useRef(null);          // { elo, label } of the bot while a rated game is in progress
   const personaRef = useRef(null);        // the human-style persona for this game, or null for Stockfish levels
+  const opponentRef = useRef(null);       // the opponent description for this game (engine callbacks outlive renders)
+  const retryRef = useRef(null);
+  const lastStartOptsRef = useRef({});    // so Rematch repeats a retry rather than starting fresh
+  const reviewAbortRef = useRef({ aborted: false });
+  const reviewedAtRef = useRef(null);     // the rated game (by timestamp) the current review belongs to
   const playerMovesRef = useRef(0);
   const personalityRef = useRef('balanced');
   const startFenRef = useRef(STANDARD_INITIAL);
@@ -136,9 +155,7 @@ export default function PlayComputer() {
   const preset = ELO_PRESETS[levelIndex];
   const persona = opponentMode === 'persona' ? personaById(personaId) : null;
   // One description of the opponent for labels, logs and the rating history.
-  const opponent = persona
-    ? { elo: persona.elo, label: persona.name, short: `${persona.name} (${persona.elo})`, long: `${persona.name} (${persona.elo})` }
-    : { elo: preset.elo, label: preset.label, short: `Stockfish (${preset.label} — ${preset.elo})`, long: `Stockfish (${preset.label} — ${preset.elo} ELO)` };
+  const opponent = describeOpponent(persona, preset);
   const timeControl = TIME_CONTROLS.find(t => t.id === tcId) || TIME_CONTROLS[0];
   const isTimed = timeControl.initial != null;
 
@@ -173,8 +190,41 @@ export default function PlayComputer() {
       if (hintEngineRef.current) hintEngineRef.current.destroy();
       if (coachEngineRef.current) coachEngineRef.current.destroy();
       if (tickRef.current) clearInterval(tickRef.current);
+      reviewAbortRef.current.aborted = true;
     };
   }, []);
+
+  // After a rated game, review it straight away. It keeps running if you start another game
+  // (so its mistakes are still saved) and only stops if you leave the page.
+  useEffect(() => {
+    if (phase !== 'ended' || !ratingRow?.at || reviewedAtRef.current === ratingRow.at) return;
+    const at = ratingRow.at;
+    reviewedAtRef.current = at;
+    const token = { aborted: false };
+    reviewAbortRef.current = token;
+    const game = {
+      history: history.map(h => ({ san: h.san, fen: h.fen })),
+      playerColor,
+      startingFen: startFenRef.current,
+      label: `vs ${opponentRef.current?.long || 'computer'}`,
+      result,
+    };
+    const epoch = startEpochRef.current;
+    const mine = () => reviewedAtRef.current === at;
+    setReview({ status: 'running', progress: 0, epoch, game });
+    runQuickReview({
+      ...game,
+      shouldAbort: () => token.aborted,
+      onProgress: p => { if (mine()) setReview(r => (r ? { ...r, progress: p } : r)); },
+    }).then(res => {
+      annotateRatedGame(at, tallyReview(res.analyses, game.playerColor));
+      if (mine()) setReview({ status: 'done', epoch, game, ...res });
+    }).catch(e => {
+      if (e.message !== 'aborted' && mine()) setReview(r => (r ? { ...r, status: 'error' } : r));
+    });
+    // Runs once per rated game (guarded by reviewedAtRef); history/result are read as they stand at the end.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, ratingRow]);
 
   // "Play from here": GameAnalysis stashes a FEN, we consume it once and pre-fill setup.
   useEffect(() => {
@@ -243,30 +293,41 @@ export default function PlayComputer() {
     setResult(loserColor === pc ? 'Lost on time' : 'Computer lost on time');
     setPhase('ended');
     finishRated(loserColor === pc ? 0 : 1, loserColor === pc ? 'Lost on time' : 'Won on time');
-    progressService.logActivity?.(`Played vs ${opponent.label} — ${loserColor === pc ? 'Lost on time' : 'Won on time'}`);
+    progressService.logActivity?.(`Played vs ${opponentRef.current.label} — ${loserColor === pc ? 'Lost on time' : 'Won on time'}`);
   }
 
-  function startGame() {
+  // opts: { persona } to switch opponent (Next opponent), { retry } to replay a review moment.
+  function startGame(opts = {}) {
     if (engineRef.current) engineRef.current.destroy();
     if (hintEngineRef.current) hintEngineRef.current.destroy();
     if (coachEngineRef.current) coachEngineRef.current.destroy();
+    lastStartOptsRef.current = opts;
+
+    const gamePersona = opts.persona !== undefined ? opts.persona : persona;
+    const opp = describeOpponent(gamePersona, preset);
+    opponentRef.current = opp;
+    retryRef.current = opts.retry || null;
+    setRetry(opts.retry || null);
+    setRetryFeedback(null);
+    if (!opts.retry) setReview(null); // a fresh game clears the last review (it still saves in the background)
 
     // Resolve the colour choice now so rematch with "random" re-rolls each time.
-    const resolvedColor = colorChoice === 'random'
+    // A retry plays the side that made the move being retried.
+    const resolvedColor = opts.retry ? opts.retry.color : colorChoice === 'random'
       ? (Math.random() < 0.5 ? 'white' : 'black')
       : colorChoice;
     setPlayerColor(resolvedColor);
     playerColorRef.current = resolvedColor;
     // Rated games are unassisted, and only count from the standard start.
-    const isRated = rated && !customStartFen;
-    ratedRef.current = isRated ? { elo: opponent.elo, label: opponent.label } : null;
-    personaRef.current = persona;
+    const isRated = rated && !customStartFen && !opts.retry;
+    ratedRef.current = isRated ? { id: opp.id, elo: opp.elo, label: opp.label } : null;
+    personaRef.current = gamePersona;
     playerMovesRef.current = 0;
     setRatingRow(null);
     coachModeRef.current = coachMode && !isRated;
     personalityRef.current = personality;
 
-    const startFen = customStartFen || STANDARD_INITIAL;
+    const startFen = opts.retry?.fenBefore || customStartFen || STANDARD_INITIAL;
     startFenRef.current = startFen;
     evalBeforeRef.current = null;
     coachQueueRef.current = null;
@@ -406,7 +467,7 @@ export default function PlayComputer() {
       const winner = g.turn() === 'w' ? 'black' : 'white';
       setResult(winner === pc ? 'You win!' : 'Computer wins!');
       setPhase('ended');
-      progressService.logActivity(`Played vs ${opponent.label} — ${winner === pc ? 'Won' : 'Lost'}`);
+      progressService.logActivity(`Played vs ${opponentRef.current.label} — ${winner === pc ? 'Won' : 'Lost'}`);
       progressService.recordActivity();
       finishRated(winner === pc ? 1 : 0, winner === pc ? 'Won by checkmate' : 'Lost to checkmate');
     } else if (g.isDraw() || g.isStalemate() || g.isThreefoldRepetition() || g.isInsufficientMaterial()) {
@@ -424,7 +485,7 @@ export default function PlayComputer() {
     if (!bot) return;
     ratedRef.current = null;
     if (playerMovesRef.current < 2) { setRatingRow({ aborted: true }); return; }
-    setRatingRow(recordRatedGame({ botElo: bot.elo, botLabel: bot.label, score, result }));
+    setRatingRow(recordRatedGame({ botId: bot.id, botElo: bot.elo, botLabel: bot.label, score, result }));
   }
 
   async function handleMove(from, to) {
@@ -478,6 +539,12 @@ export default function PlayComputer() {
 
     gameRef.current = g2;
     playerMovesRef.current++;
+    // A retry: was the first move better than what you played in the game?
+    const rt = retryRef.current;
+    if (rt && playerMovesRef.current === 1) {
+      const uci = m.from + m.to + (m.promotion || '');
+      setRetryFeedback(uci === rt.bestMove ? 'best' : uci === rt.uci ? 'same' : 'other');
+    }
     setFen(g2.fen());
     setLastMove([from, to]);
     setHintArrow(null);
@@ -557,7 +624,7 @@ export default function PlayComputer() {
     gameEndedRef.current = true;
     setResult('You resigned');
     setPhase('ended');
-    progressService.logActivity(`Played vs ${opponent.label} — Resigned`);
+    progressService.logActivity(`Played vs ${opponentRef.current.label} — Resigned`);
     progressService.recordActivity();
     finishRated(0, 'Resigned');
   }
@@ -569,7 +636,29 @@ export default function PlayComputer() {
     hintEngineRef.current.getQuickHint(gameRef.current.fen());
   }
 
+  // Replay a review moment; the button sits below the board, so bring the board back into view.
+  function retryMoment(m) {
+    startGame({ retry: m });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function nextOpponent() {
+    const p = nextLadderPersona(currentRating(), beatenPersonaIds());
+    setOpponentMode('persona');
+    setPersonaId(p.id);
+    startGame({ persona: p });
+  }
+
   function handleAnalyze() {
+    // The quick review already analysed and saved this game: open it without re-analysing.
+    if (review?.status === 'done' && review.epoch === startEpochRef.current) {
+      const { game, analyses, summary } = review;
+      sessionStorage.setItem('enpassant:reviewGame', JSON.stringify({
+        ...game, restoredFromSave: true, savedAnalyses: analyses, savedSummary: summary,
+      }));
+      navigate('/play/analysis');
+      return;
+    }
     sessionStorage.setItem('enpassant:reviewGame', JSON.stringify({
       history: history.map(h => ({ san: h.san, fen: h.fen })),
       playerColor,
@@ -599,6 +688,12 @@ export default function PlayComputer() {
   const evalPct = ((evalClamped + 5) / 10) * 100;
 
   const ratedSetup = rated && !customStartFen;
+  const beaten = beatenPersonaIds();
+  const retryNote = retry && (
+    retryFeedback === 'best' ? `Spot on: ${retry.bestMoveSan} is the engine's top move.`
+      : retryFeedback === 'same' ? `Same as in the game. ${retry.bestMoveSan} was stronger.`
+      : retryFeedback === 'other' ? `Different from the game. The engine's pick was ${retry.bestMoveSan}. Play on and see.`
+      : `Try again: you played ${retry.san} here. Find something better.`);
   const yourLevel = listRatedGames().length ? nearestLevel(currentRating()) : null;
   // What the subtitle says about the rating: in progress, the change at the end, or an abort.
   const ratingNote = ratingRow
@@ -660,7 +755,7 @@ export default function PlayComputer() {
                         {PERSONAS.filter(p => p.elo === level).map(p => (
                           <button key={p.id} onClick={() => setPersonaId(p.id)} aria-pressed={personaId === p.id}
                             className={`py-2 rounded-lg text-sm font-medium transition-all btn-press ${personaId === p.id ? 'bg-gold text-bg' : 'bg-bg-hover text-text-dim hover:text-text'}`}>
-                            {p.name}
+                            {p.name}{beaten.has(p.id) && <span className="ml-1 text-xs" aria-label="beaten">✓</span>}
                           </button>
                         ))}
                       </div>
@@ -746,7 +841,7 @@ export default function PlayComputer() {
               <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-bg transition-transform ${coachMode && !ratedSetup ? 'translate-x-5' : ''}`} />
             </button>
           </label>
-          <button onClick={startGame} className="w-full bg-gold text-bg py-3 rounded-lg font-semibold text-lg hover:bg-gold-dim transition-all btn-press shadow-lg shadow-gold/10">
+          <button onClick={() => startGame()} className="w-full bg-gold text-bg py-3 rounded-lg font-semibold text-lg hover:bg-gold-dim transition-all btn-press shadow-lg shadow-gold/10">
             Start Game
           </button>
         </div>
@@ -837,11 +932,17 @@ export default function PlayComputer() {
           {phase === 'ended' && (
             <>
               <button onClick={handleAnalyze} disabled={history.length === 0} className="flex-1 py-3 rounded-lg bg-gold text-bg font-semibold text-base hover:bg-gold-dim transition-all btn-press disabled:opacity-40">Analyse</button>
-              <button onClick={startGame} className="flex-1 py-3 rounded-lg bg-bg-card border border-bg-hover text-sm font-medium hover:bg-bg-hover transition-all btn-press">Rematch</button>
+              <button onClick={() => startGame(lastStartOptsRef.current)} className="flex-1 py-3 rounded-lg bg-bg-card border border-bg-hover text-sm font-medium hover:bg-bg-hover transition-all btn-press">{retry ? 'Again' : 'Rematch'}</button>
               <button onClick={() => setPhase('setup')} className="flex-1 py-3 rounded-lg bg-bg-card border border-bg-hover text-sm font-medium hover:bg-bg-hover transition-all btn-press">New</button>
             </>
           )}
         </div>
+
+        {retryNote && <div className={`mt-2 text-sm rounded-lg px-3 py-2 ${retryFeedback === 'best' ? 'bg-correct/10 text-correct' : 'bg-gold/10 text-text'}`}>{retryNote}</div>}
+        {phase === 'ended' && persona && !retry && (
+          <button onClick={nextOpponent} className="w-full mt-2 py-2.5 rounded-lg bg-bg-card border border-bg-hover text-gold text-sm font-medium hover:bg-bg-hover transition-all btn-press">Next opponent on the ladder →</button>
+        )}
+        <QuickReviewPanel review={review} onRetry={retryMoment} retrying={retry} className="mt-2" />
 
         {/* Info strip + notation */}
         <div className="mt-2 flex gap-3 items-center text-xs card-base px-3 py-2">
@@ -851,7 +952,7 @@ export default function PlayComputer() {
         <div className="mt-1 max-h-20 overflow-y-auto">
           <MoveList history={history} currentIndex={moveIndex} />
         </div>
-        {phase === 'playing' && !ratedRef.current && (
+        {phase === 'playing' && !ratedRef.current && !retry && (
           <OpeningExplorer
             fen={fen}
             className="mt-2"
@@ -924,13 +1025,18 @@ export default function PlayComputer() {
               {phase === 'ended' && (
                 <>
                   <button onClick={handleAnalyze} disabled={history.length === 0} className="flex-1 py-2.5 rounded-lg bg-gold text-bg font-semibold text-base hover:bg-gold-dim transition-all btn-press disabled:opacity-40">Analyse Game</button>
-                  <button onClick={startGame} className="flex-1 py-2.5 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press">Rematch</button>
+                  <button onClick={() => startGame(lastStartOptsRef.current)} className="flex-1 py-2.5 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press">{retry ? 'Try again' : 'Rematch'}</button>
                   <button onClick={() => setPhase('setup')} className="flex-1 py-2.5 rounded-lg bg-bg-card border border-bg-hover text-base hover:bg-bg-hover transition-all btn-press">New Game</button>
                 </>
               )}
             </div>
           </div>
           <div className="space-y-4">
+            {retryNote && <div className={`text-sm rounded-lg px-3 py-2 ${retryFeedback === 'best' ? 'bg-correct/10 text-correct' : 'bg-gold/10 text-text'}`}>{retryNote}</div>}
+            {phase === 'ended' && persona && !retry && (
+              <button onClick={nextOpponent} className="w-full py-2.5 rounded-lg bg-bg-card border border-bg-hover text-gold text-base font-medium hover:bg-bg-hover transition-all btn-press">Next opponent on the ladder →</button>
+            )}
+            <QuickReviewPanel review={review} onRetry={retryMoment} retrying={retry} />
             <MoveList history={history} currentIndex={moveIndex} />
             <div className="card-base p-4">
               <div className="flex justify-between text-sm mb-2"><span className="text-text-dim">Moves</span><span className="tabular-nums">{Math.ceil(history.length / 2)}</span></div>
@@ -947,7 +1053,7 @@ export default function PlayComputer() {
                 <span className="text-sm text-text-dim">{persona ? `${persona.name} is thinking…` : 'Stockfish is calculating...'}</span>
               </div>
             )}
-            {phase === 'playing' && !ratedRef.current && (
+            {phase === 'playing' && !ratedRef.current && !retry && (
               <OpeningExplorer
                 fen={fen}
                 onPlayMove={handleExplorerMove}

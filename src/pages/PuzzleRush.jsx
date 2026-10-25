@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import PuzzleSolver from '../components/PuzzleSolver';
 import { pickNearRating, pickPuzzles, THEME_GROUPS, updateRating } from '../services/lichessPuzzleService';
 import { progressService } from '../services/progressService';
-import { markItemDone } from '../services/dailyPlanService';
+import { markItemDone, tacticsTarget } from '../services/dailyPlanService';
 import { useSearchParams } from 'react-router-dom';
 import { localDateKey } from '../utils/dateKey';
 
@@ -14,11 +14,16 @@ function loadStore() {
 }
 function saveStore(s) { localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
 
-// Easy sprint: short (one- or two-move) tactics rated up to 1000, for pattern speed.
-const EASY = { ratingMax: 1000, maxMoves: 4 };
+// Sprint: short (one- or two-move) tactics for pattern speed.
+// The sprint is pitched around your game rating + 200. The pool is thin below 800, so the window
+// never tops out under 900.
+function easyWindow() {
+  const t = tacticsTarget();
+  return { ratingMin: t - 200, ratingMax: Math.max(900, t + 200), maxMoves: 4 };
+}
 
 const MODES = [
-  { id: 'easy', label: 'Easy sprint', desc: '20 short puzzles rated 600–1000. Quick wins that build pattern speed: hanging pieces, forks, mate in one.', timed: false, maxLives: 99, fixedCount: 20 },
+  { id: 'easy', label: 'Sprint at your level', desc: '20 short puzzles pitched a little above your rating. Quick wins that build pattern speed: hanging pieces, forks, mate in one.', timed: false, maxLives: 99, fixedCount: 20 },
   { id: 'rush5', label: '5-minute Rush', desc: 'Solve as many as you can in 5 minutes. Three strikes and you\'re out.', timed: true, maxLives: 3 },
   { id: 'survival', label: 'Survival', desc: 'No timer — just keep solving until you make 3 mistakes.', timed: false, maxLives: 3 },
   { id: 'themed', label: 'Themed sprint', desc: 'Pick one tactical motif and drill 20 puzzles in a row.', timed: false, maxLives: 99, fixedCount: 20 },
@@ -64,7 +69,7 @@ export default function PuzzleRush() {
     setShowHint(false);
 
     const first = mode.id === 'easy'
-      ? pickPuzzles({ ...EASY, n: 1 })[0]
+      ? pickPuzzles({ ...easyWindow(), n: 1 })[0]
       : theme
         ? pickPuzzles({ theme, n: 1 })[0]
         : pickNearRating(rating, new Set());
@@ -79,7 +84,7 @@ export default function PuzzleRush() {
 
   function nextPuzzle(currentRating, exclude) {
     const next = mode.id === 'easy'
-      ? pickPuzzles({ ...EASY, n: 1, exclude })[0]
+      ? pickPuzzles({ ...easyWindow(), n: 1, exclude })[0]
       : theme
         ? pickPuzzles({ theme, n: 1, exclude })[0]
         : pickNearRating(currentRating, exclude);

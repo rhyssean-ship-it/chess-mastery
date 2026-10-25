@@ -20,6 +20,7 @@ import { tallySteps, STEP_META } from './spyScanSafe';
 import { drillStats } from './thinkingDrillStore';
 import { blunderTrend } from './gameLog';
 import { localDateKey } from '../utils/dateKey';
+import { currentRating, ratedGamesToday } from './ratingHistory';
 
 const STORE_KEY = 'chess-mastery:dailyPlanState';
 
@@ -80,6 +81,11 @@ function stepToDrill() {
   return { step: ['spy', 'scan', 'safe'].sort((a, b) => score(a) - score(b))[0], fromGames: false };
 }
 
+// Tactics pitched about 200 above your game rating: hard enough to stretch, easy enough to solve.
+export function tacticsTarget() {
+  return currentRating() + 200;
+}
+
 export function generatePlan() {
   const today = dateKey();
   const plan = [];
@@ -122,6 +128,16 @@ export function generatePlan() {
     });
   }
 
+  // 3a. One rated game against the next opponent on the ladder
+  plan.push({
+    id: 'rated-game',
+    title: 'Rated game at your level',
+    blurb: 'The next opponent on your ladder, then the quick review',
+    route: '/play?ladder=1',
+    minutes: 20,
+    done: ratedGamesToday() > 0,
+  });
+
   // 3b. Spy, Scan, Safe drill on the weakest step
   const { step, fromGames } = stepToDrill();
   plan.push({
@@ -149,8 +165,8 @@ export function generatePlan() {
   // 5. Tactics — puzzle rush short sprint (always good)
   plan.push({
     id: 'puzzles',
-    title: '20 easy tactics',
-    blurb: 'Short puzzles rated 600–1000 for pattern speed',
+    title: '20 tactics at your level',
+    blurb: `Short puzzles around ${tacticsTarget()}, a little above your rating`,
     route: '/puzzle-rush?mode=easy',
     minutes: 5,
     done: !!todayMarkers.puzzles,

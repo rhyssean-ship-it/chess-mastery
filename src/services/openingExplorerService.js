@@ -1,47 +1,48 @@
-// Lichess Opening Explorer API — free, CORS-enabled, no auth.
-// Docs: https://lichess.org/api#tag/Opening-Explorer
-// We query the aggregated "lichess games" database (improver rating bands) so the
-// move stats reflect the kind of games the user actually faces.
+// Opening book built from the app's own openings library. (Lichess's explorer API now needs a
+// login token, so it can't be called from here.) Positions are matched on placement, side to
+// move, castling and en passant, so transpositions between lines are found too.
 
-const ENDPOINT = 'https://explorer.lichess.ovh/lichess';
-const CACHE = new Map(); // fen -> result (positions are immutable, safe to cache for the session)
-const CACHE_MAX = 300;   // every distinct mid-game position is a key — cap to avoid unbounded growth
+import { Chess } from 'chess.js';
+import openings from '../data/openings';
 
-export async function fetchExplorer(fen, { signal } = {}) {
-  if (CACHE.has(fen)) return CACHE.get(fen);
+const posKey = fen => fen.split(' ').slice(0, 4).join(' ');
 
-  const params = new URLSearchParams({
-    fen,
-    moves: '12',
-    topGames: '0',
-    recentGames: '0',
-    speeds: 'blitz,rapid,classical',
-    ratings: '1200,1400,1600,1800',
-  });
-
-  const res = await fetch(`${ENDPOINT}?${params.toString()}`, { signal });
-  if (!res.ok) throw new Error(`Explorer ${res.status}`);
-  const data = await res.json();
-
-  const total = (data.white || 0) + (data.draws || 0) + (data.black || 0);
-  const result = {
-    opening: data.opening || null, // { eco, name } or null
-    total,
-    moves: (data.moves || []).map(m => {
-      const games = (m.white || 0) + (m.draws || 0) + (m.black || 0);
-      return {
-        uci: m.uci,
-        san: m.san,
-        games,
-        pct: total > 0 ? (games / total) * 100 : 0,
-        whitePct: games > 0 ? (m.white / games) * 100 : 0,
-        drawPct: games > 0 ? (m.draws / games) * 100 : 0,
-        blackPct: games > 0 ? (m.black / games) * 100 : 0,
-      };
-    }),
+// position -> { names: openings passing through, ends: openings whose line ends here, next: Map san -> { uci, names } }
+let INDEX = null;
+function buildIndex() {
+  const index = new Map();
+  const node = key => {
+    if (!index.has(key)) index.set(key, { names: new Set(), ends: new Set(), next: new Map() });
+    return index.get(key);
   };
+  for (const op of openings) {
+    const g = new Chess();
+    for (const step of op.moves) {
+      const here = node(posKey(g.fen()));
+      let m;
+      try { m = g.move(step.move); } catch { break; }
+      if (!m) break;
+      const entry = here.next.get(m.san) || { uci: m.from + m.to + (m.promotion || ''), names: new Set() };
+      entry.names.add(op.name);
+      here.next.set(m.san, entry);
+      node(posKey(g.fen())).names.add(op.name);
+    }
+    node(posKey(g.fen())).ends.add(op.name);
+  }
+  return index;
+}
 
-  if (CACHE.size >= CACHE_MAX) CACHE.delete(CACHE.keys().next().value); // evict oldest (insertion order)
-  CACHE.set(fen, result);
-  return result;
+// { opening: name of a line reaching this position | null, moves: [{ san, uci, openings: [names] }] }
+// Moves are ordered by how many library openings continue with them.
+export function lookupBook(fen) {
+  if (!INDEX) INDEX = buildIndex();
+  const n = INDEX.get(posKey(fen));
+  if (!n) return { opening: null, moves: [] };
+  const moves = [...n.next.entries()]
+    .map(([san, e]) => ({ san, uci: e.uci, openings: [...e.names] }))
+    .sort((a, b) => b.openings.length - a.openings.length);
+  // Name the position after a line that ends here, else the only line passing through it.
+  const ends = [...n.ends];
+  const names = [...n.names];
+  return { opening: ends[0] || (names.length === 1 ? names[0] : null), moves };
 }

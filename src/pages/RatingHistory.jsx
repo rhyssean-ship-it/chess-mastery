@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
-import { ratingSummary, PROVISIONAL_GAMES, START_RATING } from '../services/ratingHistory';
+import { ratingSummary, beatenPersonaIds, PROVISIONAL_GAMES, START_RATING } from '../services/ratingHistory';
+import { PERSONAS, PERSONA_LEVELS, nearestLevel } from '../services/humanBot';
 import RatingChart from '../components/RatingChart';
+import WeeklySummary from '../components/WeeklySummary';
 
 function fmtDate(ts) {
   return new Date(ts).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
@@ -37,10 +39,14 @@ export default function RatingHistory() {
             ))}
           </div>
 
+          <WeeklySummary className="mb-4" />
+
           <div className="card-base p-4 mb-4">
             <RatingChart rows={rows} />
             <p className="text-xs text-text-dim mt-2">Dots: green win, red loss, grey draw.</p>
           </div>
+
+          <Ladder rating={rating} />
 
           <div className="card-base divide-y divide-bg-hover">
             {[...rows].reverse().map((r, i) => {
@@ -64,6 +70,35 @@ export default function RatingHistory() {
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+// Every persona, by rating: ticks for the ones you've beaten, your current level marked.
+function Ladder({ rating }) {
+  const beaten = beatenPersonaIds();
+  const level = nearestLevel(rating);
+  return (
+    <div className="card-base p-4 mb-4">
+      <div className="flex items-baseline justify-between gap-2">
+        <div className="text-sm font-semibold">Ladder</div>
+        <div className="text-xs text-text-dim">{beaten.size} of {PERSONAS.length} beaten</div>
+      </div>
+      <p className="text-xs text-text-dim mt-1">Beat all three at your level, then move up.</p>
+      <div className="space-y-1.5 mt-3">
+        {[...PERSONA_LEVELS].reverse().map(l => (
+          <div key={l} className={`flex items-center gap-2 rounded-lg px-2 py-1 ${l === level ? 'bg-gold/10' : ''}`}>
+            <span className={`w-12 text-xs tabular-nums ${l === level ? 'text-gold' : 'text-text-dim'}`}>{l}</span>
+            <div className="flex-1 grid grid-cols-3 gap-2">
+              {PERSONAS.filter(p => p.elo === l).map(p => (
+                <span key={p.id} className={`text-sm ${beaten.has(p.id) ? 'text-correct' : 'text-text-dim'}`}>
+                  {beaten.has(p.id) ? '✓ ' : ''}{p.name}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

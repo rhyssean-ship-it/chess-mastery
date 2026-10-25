@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ratingSummary, PROVISIONAL_GAMES, START_RATING } from '../services/ratingHistory';
+import { ratingSummary, weeklyLine, PROVISIONAL_GAMES, START_RATING } from '../services/ratingHistory';
 import RatingChart from './RatingChart';
 
 // Your enPassant rating, the week's movement and a sparkline of the last 30 rated games.
@@ -40,6 +40,7 @@ export default function RatingCard({ className = '' }) {
         </div>
       </div>
       <RatingChart rows={rows.slice(-30)} compact className="mt-3" />
+      {weeklyLine() && <p className="text-xs text-text-dim mt-2 leading-snug">{weeklyLine()}</p>}
       <div className="text-sm text-gold mt-2">See history →</div>
     </Link>
   );

@@ -83,10 +83,10 @@ export default function FocusTrack() {
           to="/practice-play?coach=sharp" cta="Play a coached game"
         />
         <Habit
-          title="Easy tactics, most days"
-          why="Twenty short puzzles you can solve in seconds. At this level, pattern speed comes from volume, not hard puzzles."
+          title="Tactics at your level, most days"
+          why="Twenty short puzzles pitched a little above your rating. At this level, pattern speed comes from volume, not hard puzzles."
           done={easyDays} target={5} unit="days"
-          to="/puzzle-rush?mode=easy" cta="Start an easy sprint"
+          to="/puzzle-rush?mode=easy" cta="Start a sprint"
         />
         <Habit
           title="Drill the routine"

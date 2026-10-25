@@ -39,6 +39,17 @@ export function nearestPersona(elo, rng = Math.random) {
   return pool[Math.floor(rng() * pool.length)];
 }
 
+// The ladder: someone you haven't beaten yet at your level, else the next level up (the top level
+// repeats once everything is beaten). Random among the candidates so it isn't predictable.
+export function nextLadderPersona(rating, beatenIds, rng = Math.random) {
+  const start = PERSONA_LEVELS.indexOf(nearestLevel(rating));
+  for (let i = start; i < PERSONA_LEVELS.length; i++) {
+    const pool = PERSONAS.filter(p => p.elo === PERSONA_LEVELS[i] && !beatenIds.has(p.id));
+    if (pool.length) return pool[Math.floor(rng() * pool.length)];
+  }
+  return nearestPersona(rating, rng);
+}
+
 const lerp = (a, b, t) => a + (b - a) * t;
 
 // Everything that scales with rating, interpolated linearly from 400 to 1200.
