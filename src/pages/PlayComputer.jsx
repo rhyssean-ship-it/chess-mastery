@@ -98,7 +98,7 @@ export default function PlayComputer() {
   const [opponentMode, setOpponentMode] = useState(() => getInitialMode(searchParams)); // 'persona' | 'engine'
   const [personaId, setPersonaId] = useState(() => getInitialPersona(searchParams));
   const [personality, setPersonality] = useState('balanced');
-  const [coachMode, setCoachMode] = useState(true);
+  const [coachMode, setCoachMode] = useState(false);
   const [rated, setRated] = useState(loadRatedPref);
   const [ratingRow, setRatingRow] = useState(null); // { before, after } once a rated game ends, or { aborted: true }
   const [tcId, setTcId] = useState(DEFAULT_TC_ID);
@@ -119,7 +119,7 @@ export default function PlayComputer() {
   // Engine callbacks (onMove) are created once in startGame, before setPlayerColor
   // has committed, so they'd capture a stale playerColor. Read colour from this ref instead.
   const playerColorRef = useRef('white');
-  const coachModeRef = useRef(true);
+  const coachModeRef = useRef(false);
   const ratedRef = useRef(null);          // { elo, label } of the bot while a rated game is in progress
   const personaRef = useRef(null);        // the human-style persona for this game, or null for Stockfish levels
   const playerMovesRef = useRef(0);
