@@ -58,7 +58,7 @@ export function LearnIndex() {
         { to: '/critical-moments', label: 'Critical Moments' },
         { to: '/pattern-recognition', label: 'Pattern Recognition' },
         { to: '/pawn-structures', label: 'Pawn Structures' },
-        { to: '/master-games', label: 'Master Games' },
+        { to: '/master-games', label: 'Annotated Games', desc: 'Famous games, every move explained' },
       ]} />
 
       <Section title="Endgames" items={[

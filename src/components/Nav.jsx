@@ -34,7 +34,7 @@ const sections = [
       { to: '/critical-moments', label: 'Critical Moments' },
       { to: '/pattern-recognition', label: 'Pattern Recognition' },
       { to: '/pawn-structures', label: 'Pawn Structures' },
-      { to: '/master-games', label: 'Master Games' },
+      { to: '/master-games', label: 'Annotated Games' },
       { divider: 'Endgames' },
       { to: '/endgames', label: 'Endgame Lessons' },
       { to: '/theoretical-endgames', label: 'Key Positions' },

@@ -28,7 +28,7 @@ const ROUTE_LABELS = {
   '/middlegame': 'Middlegame Plans',
   '/critical-moments': 'Critical Moments',
   '/pattern-recognition': 'Pattern Recognition',
-  '/master-games': 'Master Games',
+  '/master-games': 'Annotated Games',
   '/pawn-structures': 'Pawn Structures',
   '/endgames': 'Endgame Lessons',
   '/theoretical-endgames': 'Theoretical Endgames',
