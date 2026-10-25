@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Chess } from 'chess.js';
 import ChessBoard from '../components/ChessBoard';
 import MoveList from '../components/MoveList';
@@ -18,6 +18,7 @@ const COACH_MODES = [
 
 export default function PracticePlay() {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const [phase, setPhase] = useState('setup');
   const [playerColor, setPlayerColor] = useState('white');
   const [levelIndex, setLevelIndex] = useState(4);
@@ -43,7 +44,7 @@ export default function PracticePlay() {
   const [previewSquare, setPreviewSquare] = useState(null);
 
   // Spy, Scan, Safe coach
-  const [coachMode, setCoachMode] = useState('every');
+  const [coachMode, setCoachMode] = useState(() => (COACH_MODES.some(c => c.id === params.get('coach')) ? params.get('coach') : 'every'));
   const [coachMarks, setCoachMarks] = useState({ fen: null, arrows: [], highlights: [] });
   const [pendingMove, setPendingMove] = useState(null); // move held back by the Safe check
   const [passText, setPassText] = useState(null);

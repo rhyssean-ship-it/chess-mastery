@@ -17,7 +17,7 @@ function save(entries) {
 
 // Insert a mistake derived from a GameAnalysis entry.
 // `analysis` is one item from gameAnalysisService.analyses[].
-export function saveMistake(analysis, context = {}) {
+export function saveMistake(analysis, context = {}, prev = null) {
   if (!analysis?.bestMove || !analysis?.fenBefore) return false;
   const entries = load();
   const id = `${analysis.fenBefore}|${analysis.bestMove}`;
@@ -33,6 +33,8 @@ export function saveMistake(analysis, context = {}) {
     cpl: analysis.cpl,
     color: analysis.color,
     failedStep: analysis.failedStep || null, // spy | scan | safe
+    prevFen: prev?.fenBefore || null,        // before the opponent's last move (for Spy's "Shift")
+    lastMove: prev ? [prev.from, prev.to] : null,
     context,                                // { label, result, date }
     savedAt: Date.now(),
     timesAttempted: 0,
@@ -44,14 +46,16 @@ export function saveMistake(analysis, context = {}) {
   return true;
 }
 
-// Bulk-save mistakes/blunders from an analysis result.
+// Bulk-save mistakes/blunders from an analysis result. With context.playerColor set, only the
+// player's own mistakes are saved (not the engine's or the opponent's).
 export function saveAnalysisMistakes(analyses, context = {}) {
   let added = 0;
-  for (const a of analyses) {
+  analyses.forEach((a, i) => {
+    if (!a || (context.playerColor && a.color !== context.playerColor)) return;
     if (a.classification === 'mistake' || a.classification === 'blunder') {
-      if (saveMistake(a, context)) added++;
+      if (saveMistake(a, context, analyses[i - 1])) added++;
     }
-  }
+  });
   return added;
 }
 

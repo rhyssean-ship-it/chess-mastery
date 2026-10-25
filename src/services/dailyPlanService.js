@@ -18,6 +18,7 @@ import { listDue as repertoireDue } from './repertoireSRS';
 import drills from '../data/endgameDrills';
 import { tallySteps, STEP_META } from './spyScanSafe';
 import { drillStats } from './thinkingDrillStore';
+import { blunderTrend } from './gameLog';
 
 const STORE_KEY = 'chess-mastery:dailyPlanState';
 
@@ -64,10 +65,14 @@ function endgameDrillToPractice() {
   return candidates[0];
 }
 
-// The Spy, Scan, Safe step to drill today: the one your games break down at most, else the
-// one with the weakest (or least) drill practice.
+// The Spy, Scan, Safe step to drill today: the one your last 10 games break down at most (same
+// numbers as the Home trend card), else all saved mistakes, else the least-practised drill.
 function stepToDrill() {
-  const { weakest } = tallySteps(listMistakes());
+  const { steps } = blunderTrend();
+  const recentTotal = steps.spy + steps.scan + steps.safe;
+  const weakest = recentTotal
+    ? Object.keys(steps).sort((a, b) => steps[b] - steps[a])[0]
+    : tallySteps(listMistakes()).weakest;
   if (weakest) return { step: weakest, fromGames: true };
   const stats = drillStats();
   const score = s => (stats[s].played ? stats[s].correct / stats[s].played : -1);
@@ -142,9 +147,9 @@ export function generatePlan() {
   // 5. Tactics — puzzle rush short sprint (always good)
   plan.push({
     id: 'puzzles',
-    title: '15 tactics',
-    blurb: 'Quick Puzzle Rush at your level',
-    route: '/puzzle-rush',
+    title: '20 easy tactics',
+    blurb: 'Short puzzles rated 600–1000 for pattern speed',
+    route: '/puzzle-rush?mode=easy',
     minutes: 5,
     done: !!todayMarkers.puzzles,
   });
@@ -164,13 +169,13 @@ export function generatePlan() {
     });
   }
 
-  // 7. One game vs Computer (encouraged, not required)
+  // 7. One slow, coached game, then review it (marked done when its analysis finishes)
   plan.push({
     id: 'play-game',
-    title: 'Play a game',
-    blurb: 'vs Stockfish — try a 10+5',
-    route: '/play',
-    minutes: 12,
+    title: 'Coached game + review',
+    blurb: 'Take your time with the Spy, Scan, Safe coach, then analyse it',
+    route: '/practice-play?coach=sharp',
+    minutes: 25,
     done: !!todayMarkers['play-game'],
   });
 

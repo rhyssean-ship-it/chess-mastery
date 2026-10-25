@@ -5,6 +5,7 @@ import { dueCount as mistakesDueCount, listMistakes } from '../services/mistakeS
 import { listSavedGames } from '../services/savedGames';
 import { listDue as repertoireDue } from '../services/repertoireSRS';
 import DailyPlanCard from '../components/DailyPlanCard';
+import BlunderTrendCard from '../components/BlunderTrendCard';
 
 function loadJson(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
@@ -72,6 +73,18 @@ export default function Home() {
 
       {/* Today's plan */}
       <DailyPlanCard />
+
+      {/* The one number to watch, and the track it belongs to */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+        <BlunderTrendCard />
+        <Link to="/focus" className="card-base p-4 hover:bg-bg-hover/30 transition-all flex flex-col justify-between">
+          <div>
+            <div className="text-sm font-semibold">Your 500 → 900 track</div>
+            <p className="text-sm text-text-dim mt-1 leading-snug">Coached games, easy tactics, the routine, three endgames. This week’s progress at a glance.</p>
+          </div>
+          <div className="text-sm text-gold mt-2">Open the track →</div>
+        </Link>
+      </div>
 
       {/* Hero: continue */}
       {activity && (

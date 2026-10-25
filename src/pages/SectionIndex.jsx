@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom';
+import { useFocusMode, setFocusMode, inFocus } from '../services/focusMode';
 
-function Section({ title, items }) {
+function Section({ title, items: allItems }) {
+  const focus = useFocusMode();
+  const items = focus ? allItems.filter(it => inFocus(it.to)) : allItems;
+  if (items.length === 0) return null;
   return (
     <div className="mb-6">
       {/* sentence-case label rendered as a div so the global h2 serif rule doesn't apply */}
@@ -21,13 +25,28 @@ function Section({ title, items }) {
   );
 }
 
+function FocusBanner() {
+  const focus = useFocusMode();
+  return (
+    <div className="text-sm text-text-dim mb-5 -mt-2">
+      {focus ? (
+        <>Showing what matters for <Link to="/focus" className="text-gold">your 500 → 900 track</Link>. <button onClick={() => setFocusMode(false)} className="text-gold">Show everything</button></>
+      ) : (
+        <>Showing every feature. <button onClick={() => setFocusMode(true)} className="text-gold">Focus on the 500 → 900 track</button></>
+      )}
+    </div>
+  );
+}
+
 export function LearnIndex() {
   return (
     <div className="page-enter page page-wide">
       <h1 className="text-2xl sm:text-3xl font-display mb-1">Learn</h1>
       <p className="text-text-dim text-sm mb-6">Absorb chess knowledge — concepts, openings, master games.</p>
+      <FocusBanner />
 
       <Section title="Start here" items={[
+        { to: '/focus', label: 'Your 500 → 900 track', desc: 'The habits that matter right now' },
         { to: '/learning-path', label: 'Learning Path', desc: '500 → 2000 ELO roadmap' },
       ]} />
 
@@ -80,6 +99,7 @@ export function TrainIndex() {
     <div className="page-enter page page-wide">
       <h1 className="text-2xl sm:text-3xl font-display mb-1">Train</h1>
       <p className="text-text-dim text-sm mb-6">Sharpen your edge — high-volume tactics, calculation, pattern drills.</p>
+      <FocusBanner />
 
       <Section title="Daily" items={[
         { to: '/daily', label: 'Daily Challenge', desc: 'Curated tactical + positional' },
@@ -112,6 +132,7 @@ export function PlayIndex() {
     <div className="page-enter max-w-3xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <h1 className="text-2xl sm:text-3xl font-display mb-1">Play</h1>
       <p className="text-text-dim text-sm mb-6">Real games — vs Stockfish at any strength.</p>
+      <FocusBanner />
 
       <Section title="Game modes" items={[
         { to: '/play', label: 'vs Computer', desc: 'Pick your level, just play' },
@@ -130,6 +151,7 @@ export function ProfileIndex() {
     <div className="page-enter page page-wide">
       <h1 className="text-2xl sm:text-3xl font-display mb-1">Profile</h1>
       <p className="text-text-dim text-sm mb-6">Your progress, ratings, and saved work.</p>
+      <FocusBanner />
 
       <Section title="Progress" items={[
         { to: '/progress', label: 'Dashboard', desc: 'Stats, accuracy, activity' },

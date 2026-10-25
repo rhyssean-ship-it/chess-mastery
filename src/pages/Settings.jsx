@@ -1,8 +1,10 @@
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useTheme } from '../hooks/useTheme';
+import { useFocusMode, setFocusMode } from '../services/focusMode';
 
 export default function Settings() {
   const [theme, setTheme] = useTheme();
+  const focus = useFocusMode();
   const [settings, setSettings] = useLocalStorage('settings', {
     soundEnabled: false,
     showCoordinates: true,
@@ -52,6 +54,19 @@ export default function Settings() {
       <section className="mb-10">
         <h2 className="text-xl font-display mb-4">Preferences</h2>
         <div className="space-y-4">
+          <div className="card-base p-5 flex items-center justify-between gap-4">
+            <div>
+              <p className="font-medium text-base">Focus mode</p>
+              <p className="text-sm text-text-dim mt-0.5">Only show features on your 500 → 900 track. Turn off to see everything.</p>
+            </div>
+            <button
+              onClick={() => setFocusMode(!focus)}
+              role="switch" aria-checked={focus} aria-label="Focus mode"
+              className={`w-14 h-8 sm:w-12 sm:h-7 rounded-full transition-all duration-200 relative shrink-0 ${focus ? 'bg-gold' : 'bg-bg-hover'}`}
+            >
+              <div className={`w-6 h-6 sm:w-5 sm:h-5 rounded-full bg-white shadow absolute top-1 transition-all duration-200 ${focus ? 'left-7 sm:left-6' : 'left-1'}`} />
+            </button>
+          </div>
           {[
             { key: 'showCoordinates', label: 'Show board coordinates', desc: 'Display a-h and 1-8 along the edges of the board.' },
             { key: 'moveAnimation', label: 'Animate piece movement', desc: 'Smooth animation when pieces move on the board.' },

@@ -46,6 +46,7 @@ const ROUTE_LABELS = {
   '/common-mistakes': 'Common Mistakes',
   '/pre-move-checklist': 'Spy, Scan, Safe',
   '/thinking-drills': 'Spy, Scan, Safe drills',
+  '/focus': 'Your 500 → 900 track',
   '/game-phases': 'Game Phases',
   '/blunder-detection': 'Blunder Detection',
   '/practice-play': 'Practice Play',
@@ -67,7 +68,7 @@ export function sectionFor(path) {
   if (path === '/' || path === '') return 'home';
   if (path.startsWith('/play') || path.startsWith('/practice-play') || path.startsWith('/game-review')) return 'play';
   if (
-    path.startsWith('/learn') || path.startsWith('/learning-path') ||
+    path.startsWith('/learn') || path.startsWith('/learning-path') || path.startsWith('/focus') ||
     path.startsWith('/openings') || path.startsWith('/opening-traps') || path.startsWith('/move-order') || path.startsWith('/repertoire') ||
     path.startsWith('/strategy') || path.startsWith('/middlegame') || path.startsWith('/critical-moments') ||
     path.startsWith('/pattern-recognition') || path.startsWith('/master-games') || path.startsWith('/pawn-structures') ||

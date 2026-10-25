@@ -3,6 +3,8 @@ import { Chess } from 'chess.js';
 import ChessBoard from '../components/ChessBoard';
 import StockfishService from '../services/stockfishService';
 import drills from '../data/endgameDrills';
+import { markItemDone } from '../services/dailyPlanService';
+import { Link, useSearchParams } from 'react-router-dom';
 
 const STORE_KEY = 'chess-mastery:endgameDrills';
 
@@ -12,6 +14,9 @@ function loadStore() {
 function saveStore(s) { localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
 
 export default function EndgameDrills() {
+  const [params] = useSearchParams();
+  const focusIds = params.get('focus')?.split(',') || null; // ?focus=kqk,krk shows just those drills
+  const shown = focusIds ? drills.filter(d => focusIds.includes(d.id)) : drills;
   const [store, setStore] = useState(loadStore);
   const [selected, setSelected] = useState(null);
   const [phase, setPhase] = useState('idle'); // idle | playing | success | failed
@@ -85,6 +90,7 @@ export default function EndgameDrills() {
 
   function finish(success, drill) {
     setPhase(success ? 'success' : 'failed');
+    if (success) markItemDone('endgame-drill');
     const cur = store[drill.id] || { consecutive: 0, attempts: 0, completions: 0 };
     const next = {
       consecutive: success ? cur.consecutive + 1 : 0,
@@ -215,9 +221,12 @@ export default function EndgameDrills() {
   return (
     <div className="page-enter max-w-4xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <h1 className="text-2xl sm:text-3xl font-display mb-1">Endgame Drills</h1>
-      <p className="text-text-dim text-sm mb-5">Play these endings vs Stockfish at full strength. Three wins in a row earns mastery.</p>
+      <p className="text-text-dim text-sm mb-5">
+        Play these endings vs Stockfish at full strength. Three wins in a row earns mastery.
+        {focusIds && <> Showing the {shown.length} you need first. <Link to="/endgame-drills" className="text-gold">Show all</Link></>}
+      </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {drills.map(d => {
+        {shown.map(d => {
           const progress = progressFor(d);
           const mastered = masteredFor(d);
           return (

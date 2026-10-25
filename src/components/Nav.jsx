@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useFocusMode, inFocus } from '../services/focusMode';
 
 const I = (d) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-[18px] h-[18px]"><path d={d} strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
@@ -12,6 +13,7 @@ const sections = [
   { id: 'learn', label: 'Learn', icon: I('M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25'),
     children: [
       { to: '/learn', label: 'Learn Overview' },
+      { to: '/focus', label: 'Your 500 → 900 track' },
       { to: '/learning-path', label: 'Learning Path' },
       { divider: 'Fundamentals' },
       { to: '/game-phases', label: 'Game Phases' },
@@ -84,6 +86,17 @@ const sections = [
     ]},
 ];
 
+// Focus mode hides routes that aren't on the 500 → 900 track, then drops empty dividers.
+function visibleSections(focus) {
+  if (!focus) return sections;
+  return sections.map(s => {
+    if (!s.children) return s;
+    const kept = s.children.filter(c => c.divider || inFocus(c.to));
+    const children = kept.filter((c, i) => !c.divider || (kept[i + 1] && !kept[i + 1].divider));
+    return { ...s, children };
+  });
+}
+
 function getActiveSection(pathname) {
   for (const s of sections) {
     if (s.link && pathname === s.link) return s.id;
@@ -101,6 +114,8 @@ export default function Nav() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const activeSection = getActiveSection(location.pathname);
+  const focus = useFocusMode();
+  const shownSections = visibleSections(focus);
   const [expanded, setExpanded] = useState(activeSection);
 
   useEffect(() => {
@@ -133,7 +148,7 @@ export default function Nav() {
 
       {/* Accordion nav — scrolls when its content exceeds viewport height */}
       <nav className="flex-1 min-h-0 overflow-y-auto px-3 py-1 space-y-0.5" role="navigation">
-        {sections.map(section => {
+        {shownSections.map(section => {
           const isOpen = expanded === section.id;
           const sectionActive = activeSection === section.id;
 

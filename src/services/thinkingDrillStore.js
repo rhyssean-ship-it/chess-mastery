@@ -16,6 +16,12 @@ export function recordDrill(step, correct) {
   const s = drillStats();
   s[step].played++;
   if (correct) s[step].correct++;
-  s[step].lastPlayed = new Date().toISOString().slice(0, 10);
+  const today = new Date().toISOString().slice(0, 10);
+  s[step].lastPlayed = today;
+  s.days = [...new Set([...(load().days || []), today])].slice(-60); // any-step practice days
   try { localStorage.setItem(KEY, JSON.stringify(s)); } catch { /* storage unavailable */ }
+}
+
+export function drillDays() {
+  return load().days || [];
 }

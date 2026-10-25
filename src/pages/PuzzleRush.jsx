@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import PuzzleSolver from '../components/PuzzleSolver';
 import { pickNearRating, pickPuzzles, THEME_GROUPS, updateRating } from '../services/lichessPuzzleService';
 import { progressService } from '../services/progressService';
+import { markItemDone } from '../services/dailyPlanService';
+import { useSearchParams } from 'react-router-dom';
 
 const STORE_KEY = 'chess-mastery:puzzleRush';
 const RUSH_DURATION = 300; // 5 minutes
@@ -11,15 +13,20 @@ function loadStore() {
 }
 function saveStore(s) { localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
 
+// Easy sprint: short (one- or two-move) tactics rated up to 1000, for pattern speed.
+const EASY = { ratingMax: 1000, maxMoves: 4 };
+
 const MODES = [
+  { id: 'easy', label: 'Easy sprint', desc: '20 short puzzles rated 600–1000. Quick wins that build pattern speed: hanging pieces, forks, mate in one.', timed: false, maxLives: 99, fixedCount: 20 },
   { id: 'rush5', label: '5-minute Rush', desc: 'Solve as many as you can in 5 minutes. Three strikes and you\'re out.', timed: true, maxLives: 3 },
   { id: 'survival', label: 'Survival', desc: 'No timer — just keep solving until you make 3 mistakes.', timed: false, maxLives: 3 },
   { id: 'themed', label: 'Themed sprint', desc: 'Pick one tactical motif and drill 20 puzzles in a row.', timed: false, maxLives: 99, fixedCount: 20 },
 ];
 
 export default function PuzzleRush() {
+  const [params] = useSearchParams();
   const [phase, setPhase] = useState('setup'); // setup | playing | done
-  const [mode, setMode] = useState(MODES[0]);
+  const [mode, setMode] = useState(() => MODES.find(m => m.id === params.get('mode')) || MODES[1]);
   const [theme, setTheme] = useState(null);
   const [puzzle, setPuzzle] = useState(null);
   const [rating, setRating] = useState(() => loadStore().rating || 1000);
@@ -46,9 +53,11 @@ export default function PuzzleRush() {
     setSeenIds(new Set());
     setShowHint(false);
 
-    const first = theme
-      ? pickPuzzles({ theme, n: 1 })[0]
-      : pickNearRating(rating, new Set());
+    const first = mode.id === 'easy'
+      ? pickPuzzles({ ...EASY, n: 1 })[0]
+      : theme
+        ? pickPuzzles({ theme, n: 1 })[0]
+        : pickNearRating(rating, new Set());
     setPuzzle(first);
 
     if (mode.timed) {
@@ -66,9 +75,11 @@ export default function PuzzleRush() {
   }
 
   function nextPuzzle(currentRating, exclude) {
-    const next = theme
-      ? pickPuzzles({ theme, n: 1, exclude })[0]
-      : pickNearRating(currentRating, exclude);
+    const next = mode.id === 'easy'
+      ? pickPuzzles({ ...EASY, n: 1, exclude })[0]
+      : theme
+        ? pickPuzzles({ theme, n: 1, exclude })[0]
+        : pickNearRating(currentRating, exclude);
     setPuzzle(next);
     setShowHint(false);
   }
@@ -77,12 +88,17 @@ export default function PuzzleRush() {
     clearInterval(timerRef.current);
     setPhase('done');
     progressService.logActivity?.(`Puzzle Rush: ${solved} solved, best streak ${bestStreak}`);
+    markItemDone('puzzles');
     const s = loadStore();
+    const today = new Date().toISOString().slice(0, 10);
     const newStore = {
+      ...s,
       rating,
       bestSolved: Math.max(s.bestSolved || 0, solved),
       bestStreak: Math.max(s.bestStreak || 0, bestStreak),
       totalSolved: (s.totalSolved || 0) + solved,
+      // days an easy sprint was finished (the focus track counts these per week)
+      easyDays: mode.id === 'easy' ? [...new Set([...(s.easyDays || []), today])].slice(-60) : (s.easyDays || []),
     };
     saveStore(newStore);
   }

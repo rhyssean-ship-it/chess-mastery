@@ -9,6 +9,8 @@ import { analyzeGame } from '../services/gameAnalysisService';
 import { CLASS, CLASS_META } from '../services/moveClassification';
 import { saveAnalysisMistakes } from '../services/mistakeStore';
 import { saveAnalysedGame } from '../services/savedGames';
+import { recordGame } from '../services/gameLog';
+import { markItemDone } from '../services/dailyPlanService';
 import { explainPlayedMove, explainBestMove, patternsFromAnalyses } from '../services/moveExplanation';
 import { failedStep, tallySteps, STEP_META } from '../services/spyScanSafe';
 
@@ -90,7 +92,10 @@ export default function GameAnalysis() {
             label: gameData.label,
             result: gameData.result,
             date: Date.now(),
+            playerColor: gameData.playerColor,
           });
+          recordGame({ label: gameData.label, playerColor: gameData.playerColor, analyses: result.analyses });
+          markItemDone('play-game');
           setMistakesSaved(added);
           // Persist the whole analysis for re-review later
           saveAnalysedGame({

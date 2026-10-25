@@ -32,9 +32,9 @@ export const THEME_GROUPS = [
 ].filter(g => byTheme[g.key]?.length > 0);
 
 // Pick n random puzzles, optionally filtered by theme and rating range.
-export function pickPuzzles({ theme = null, ratingMin = 0, ratingMax = 3000, n = 1, exclude = new Set() } = {}) {
+export function pickPuzzles({ theme = null, ratingMin = 0, ratingMax = 3000, maxMoves = 99, n = 1, exclude = new Set() } = {}) {
   let pool = theme ? (byTheme[theme] || []) : puzzles;
-  pool = pool.filter(p => p.rating >= ratingMin && p.rating <= ratingMax && !exclude.has(p.id));
+  pool = pool.filter(p => p.rating >= ratingMin && p.rating <= ratingMax && p.moves.length <= maxMoves && !exclude.has(p.id));
   // Shuffle with Fisher-Yates and take n
   const copy = pool.slice();
   for (let i = copy.length - 1; i > 0; i--) {

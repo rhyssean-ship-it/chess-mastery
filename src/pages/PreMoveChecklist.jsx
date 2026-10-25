@@ -5,6 +5,7 @@ import ChessBoard from '../components/ChessBoard';
 import preMoveChecklist from '../data/preMoveChecklist';
 import walkthroughs from '../data/spyScanSafeGames';
 import { STEPS, safetyCheck } from '../services/spyScanSafe';
+import { ownWalkthrough } from '../services/ownWalkthrough';
 import { progressService } from '../services/progressService';
 
 const TABS = [
@@ -97,11 +98,23 @@ function Routine({ onStart }) {
 
 function Walkthroughs() {
   const [gameId, setGameId] = useState(null);
-  const game = walkthroughs.find(g => g.id === gameId);
+  const own = useMemo(() => ownWalkthrough(), []);
+  const game = gameId === own?.id ? own : walkthroughs.find(g => g.id === gameId);
   if (game) return <WalkthroughPlayer key={game.id} game={game} onExit={() => setGameId(null)} />;
   return (
     <div className="max-w-3xl space-y-2">
-      <p className="text-sm text-text-dim mb-3">Real opening traps, paused at the moments that matter. Play your move, then see how the routine would have found it.</p>
+      {own ? (
+        <button onClick={() => setGameId(own.id)} className="w-full text-left card-base p-4 hover:bg-bg-hover/30 transition-all bg-gold/5">
+          <div className="font-semibold">{own.title}</div>
+          <div className="text-xs text-text-dim mt-0.5">{own.subtitle}</div>
+          <div className="text-sm text-text-dim mt-2">{own.intro}</div>
+        </button>
+      ) : (
+        <div className="card-base p-4 text-sm text-text-dim">
+          Analyse a game and your own mistakes will appear here as a walkthrough. <Link to="/practice-play" className="text-gold">Play a coached game</Link>
+        </div>
+      )}
+      <p className="text-sm text-text-dim pt-3 mb-1">Real opening traps, paused at the moments that matter. Play your move, then see how the routine would have found it.</p>
       {walkthroughs.map(g => (
         <button key={g.id} onClick={() => setGameId(g.id)} className="w-full text-left card-base p-4 hover:bg-bg-hover/30 transition-all">
           <div className="font-semibold">{g.title}</div>
@@ -113,8 +126,11 @@ function Walkthroughs() {
   );
 }
 
-// Replay start moves + earlier moments to get the position at moment `idx`.
+// Replay start moves + earlier moments to get the position at moment `idx`. Moments taken from
+// the player's own games carry their own fen instead.
 function positionAt(game, idx) {
+  const own = game.moments[idx];
+  if (own.fen) return { fen: own.fen, lastMove: own.lastMove, sans: [] };
   const g = new Chess();
   let last = null;
   const play = (san) => { const m = g.move(san); last = [m.from, m.to]; return m; };
@@ -180,6 +196,7 @@ function WalkthroughPlayer({ game, onExit }) {
   }
 
   function continueGame() {
+    if (!moment.gameMove) { next(); return; }
     const g = new Chess(pos.fen);
     const seq = [moment.gameMove, ...moment.continuation];
     seq.forEach((san, i) => {
@@ -226,7 +243,7 @@ function WalkthroughPlayer({ game, onExit }) {
         <div className="board-fit-mobile lg:mx-0 max-w-[560px] sm:mx-auto">
           <ChessBoard
             fen={boardFen}
-            orientation={game.orientation}
+            orientation={moment.orientation || game.orientation}
             movable={!result && !replay}
             dests={!result && !replay ? dests() : new Map()}
             turnColor={boardFen.split(' ')[1] === 'w' ? 'white' : 'black'}
@@ -277,7 +294,9 @@ function WalkthroughPlayer({ game, onExit }) {
           })}
 
           {result && !replay && (
-            <button onClick={continueGame} className="btn btn-primary btn-block">See what happened in the game</button>
+            <button onClick={continueGame} className="btn btn-primary btn-block">
+              {moment.gameMove ? 'See what happened in the game' : momentIdx + 1 < game.moments.length ? 'Next position' : 'Finish'}
+            </button>
           )}
           {replay && (
             <div className="card-base p-4">
