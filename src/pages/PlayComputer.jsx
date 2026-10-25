@@ -30,11 +30,6 @@ const COACH_DEPTH = 11;
 const BLUNDER_DROP_CP = 150; // warn when a move drops >= 1.5 pawns
 const BLUNDER_KEEP_CP = 200; // …unless you're still clearly winning afterwards
 
-const RATED_PREF_KEY = 'chess-mastery:ratedGames';
-function loadRatedPref() {
-  try { return localStorage.getItem(RATED_PREF_KEY) === 'on'; } catch { return false; }
-}
-
 // ?elo= wins; otherwise the bot nearest your rating once you have rated games.
 function targetElo(searchParams) {
   return parseInt(searchParams.get('elo')) || (listRatedGames().length ? currentRating() : null);
@@ -92,14 +87,14 @@ export default function PlayComputer() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [phase, setPhase] = useState('setup');
-  const [colorChoice, setColorChoice] = useState('white');
+  const [colorChoice, setColorChoice] = useState('random');
   const [playerColor, setPlayerColor] = useState('white');
   const [levelIndex, setLevelIndex] = useState(() => getInitialLevel(searchParams));
   const [opponentMode, setOpponentMode] = useState(() => getInitialMode(searchParams)); // 'persona' | 'engine'
   const [personaId, setPersonaId] = useState(() => getInitialPersona(searchParams));
   const [personality, setPersonality] = useState('balanced');
   const [coachMode, setCoachMode] = useState(false);
-  const [rated, setRated] = useState(loadRatedPref);
+  const [rated, setRated] = useState(true); // every game is rated unless switched off for that game
   const [ratingRow, setRatingRow] = useState(null); // { before, after } once a rated game ends, or { aborted: true }
   const [tcId, setTcId] = useState(DEFAULT_TC_ID);
   const [fen, setFen] = useState(STANDARD_INITIAL);
@@ -729,10 +724,7 @@ export default function PlayComputer() {
               role="switch"
               aria-checked={rated && !customStartFen}
               disabled={!!customStartFen}
-              onClick={() => setRated(r => {
-                try { localStorage.setItem(RATED_PREF_KEY, r ? 'off' : 'on'); } catch { /* storage unavailable */ }
-                return !r;
-              })}
+              onClick={() => setRated(r => !r)}
               className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${rated && !customStartFen ? 'bg-gold' : 'bg-bg-hover'}`}
             >
               <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-bg transition-transform ${rated && !customStartFen ? 'translate-x-5' : ''}`} />
